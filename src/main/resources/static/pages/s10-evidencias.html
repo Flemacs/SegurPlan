@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SEGURPLAN — Carga de evidencias</title>
+  <link rel="stylesheet" href="../assets/styles.css" />
+  <style>
+    .file-icon.img { background: #e8f4e8; color: #2a7a2a; }
+    .upload-zone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 22px; text-align: center; background: var(--bg); }
+    .upload-zone p { font-size: 13px; color: var(--text-sub); margin: 8px 0 12px; }
+    .upload-zone .uz-icon { font-size: 28px; margin-bottom: 4px; }
+    .upload-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .sec-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--primary); margin: 0 0 12px; padding-bottom: 6px; border-bottom: 2px solid var(--primary); }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+  <div class="header-right">
+    <span class="user-name" id="header-user">Usuario</span>
+    <button class="bell-btn" title="Notificaciones">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </button>
+    <button class="profile-btn">MI PERFIL</button>
+  </div>
+</header>
+
+<div class="page-wrap narrow">
+  <nav class="breadcrumb">SEGURPLAN &rsaquo; Siniestros &rsaquo; Carga de evidencias</nav>
+  <h1 class="page-title">Carga de evidencias</h1>
+  <p class="page-subtitle">Adjunte los documentos obligatorios y las evidencias del accidente para continuar con el proceso.</p>
+
+  <!-- ═══ 1. Documentos obligatorios ═══ -->
+  <div class="card">
+    <div class="card-header">
+      <h2>Documentos obligatorios</h2>
+      <p>Archivos en PDF, JPG o PNG — máx. 10 MB por archivo</p>
+    </div>
+    <div class="card-body">
+      <div id="docs-list" class="file-list"></div>
+      <div id="docs-status"></div>
+    </div>
+  </div>
+
+  <!-- ═══ 2. Denuncia policial (condicional) ═══ -->
+  <div class="card" id="sec-denuncia" style="margin-top:20px;display:none;">
+    <div class="card-header">
+      <h2>Denuncia / acta policial</h2>
+      <p>Requerida porque se indicó intervención policial en el registro del siniestro</p>
+    </div>
+    <div class="card-body">
+      <p style="font-size:13px;color:var(--text-sub);margin-bottom:14px;">Adjunte el acta policial, parte policial o denuncia en PDF, JPG o PNG.</p>
+      <div class="upload-zone">
+        <div class="uz-icon">📋</div>
+        <p>Arrastra aquí el acta policial o haz clic para seleccionar</p>
+        <div class="upload-btns">
+          <button class="btn btn-secondary" onclick="addDenuncia()">+ ADJUNTAR ACTA / DENUNCIA</button>
+        </div>
+      </div>
+      <div id="denuncia-list" class="file-list" style="margin-top:10px;"></div>
+      <div id="denuncia-status"></div>
+    </div>
+  </div>
+
+  <!-- ═══ 3. Fotografías del accidente ═══ -->
+  <div class="card" style="margin-top:20px;">
+    <div class="card-header">
+      <h2>Fotografías del accidente</h2>
+      <p>Formatos aceptados: JPG, PNG, HEIC — máx. 20 MB por archivo</p>
+    </div>
+    <div class="card-body">
+      <p style="font-size:13px;color:var(--text-sub);margin-bottom:14px;">Suba fotos del estado del vehículo, daños visibles, placa, contexto del lugar y cualquier evidencia fotográfica relevante.</p>
+      <div class="upload-zone">
+        <div class="uz-icon">📷</div>
+        <p>Arrastra tus fotos aquí o haz clic para seleccionar</p>
+        <div class="upload-btns">
+          <button class="btn btn-secondary" onclick="addFoto()">+ ADJUNTAR FOTOGRAFÍA</button>
+        </div>
+      </div>
+      <div id="media-list" class="file-list" style="margin-top:10px;"></div>
+    </div>
+  </div>
+
+  <!-- ═══ 4. Videos del accidente ═══ -->
+  <div class="card" style="margin-top:20px;">
+    <div class="card-header">
+      <h2>Videos del accidente</h2>
+      <p>Formatos aceptados: MP4, MOV, AVI — máx. 100 MB por archivo</p>
+    </div>
+    <div class="card-body">
+      <p style="font-size:13px;color:var(--text-sub);margin-bottom:14px;">Suba grabaciones del momento del impacto, cámaras de seguridad, dashcam u otras filmaciones relacionadas al siniestro.</p>
+      <div class="upload-zone">
+        <div class="uz-icon">🎥</div>
+        <p>Arrastra tus videos aquí o haz clic para seleccionar</p>
+        <div class="upload-btns">
+          <button class="btn btn-secondary" onclick="addVideo()">+ ADJUNTAR VIDEO</button>
+        </div>
+      </div>
+      <div id="video-list" class="file-list" style="margin-top:10px;"></div>
+    </div>
+    <div class="card-footer">
+      <button class="btn btn-primary" onclick="guardarEvidencias()">GUARDAR Y CONTINUAR →</button>
+      <button class="btn btn-outline" onclick="history.back()">← Volver</button>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+  <nav class="footer-links">
+    <a href="../index.html">Inicio</a>
+    <a href="s01-login.html">Iniciar sesión</a>
+    <a href="s00-registro.html">Registrarse</a>
+  </nav>
+  <div class="footer-meta">
+    <span>© 2026 SEGURPLAN. Todos los derechos reservados.</span>
+  </div>
+</footer>
+<script src="../assets/app.js"></script>
+<script src="../assets/s10.js"></script>
+<script>
+  /* Videos separados de fotos */
+  let videos = [];
+  let videoCounter = 1;
+
+  /* Override addVideo para usar lista separada */
+  function addVideo() {
+    const exts = ['MP4', 'MP4', 'MOV', 'AVI'];
+    const ext  = exts[videoCounter % exts.length];
+    videos.push({ nombre: 'video_accidente_' + String(videoCounter).padStart(2,'0') + '.' + ext.toLowerCase(), ext });
+    videoCounter++;
+    renderVideos();
+  }
+
+  function renderVideos() {
+    const list = document.getElementById('video-list');
+    if (!list) return;
+    list.innerHTML = '';
+    if (videos.length === 0) {
+      list.innerHTML = '<div style="padding:14px 0;color:var(--text-muted);font-size:13px;text-align:center;">No hay videos cargados.</div>';
+      return;
+    }
+    videos.forEach((v, i) => {
+      const row = document.createElement('div');
+      row.className = 'file-item';
+      const left = document.createElement('div');
+      left.className = 'file-info';
+      left.innerHTML = `<div class="file-icon vid">${v.ext}</div>
+        <div>
+          <div style="font-weight:600;font-size:13px;">${v.nombre}</div>
+          <div style="font-size:11px;color:var(--text-muted);">Video del accidente</div>
+        </div>`;
+      const btn = document.createElement('button');
+      btn.className = 'btn btn-sm btn-outline';
+      btn.textContent = 'Eliminar';
+      btn.onclick = () => { videos.splice(i, 1); renderVideos(); };
+      row.appendChild(left); row.appendChild(btn);
+      list.appendChild(row);
+    });
+  }
+
+  function guardarEvidencias() {
+    const pendientes = docs.filter(d => d.obligatorio && !d.cargado).length;
+    if (pendientes > 0) {
+      alert('Aún faltan ' + pendientes + ' documento(s) obligatorio(s) por adjuntar.');
+      return;
+    }
+    if (huboPolicia && denunciaArchivos.length === 0) {
+      if (!confirm('No adjuntó el acta policial. ¿Desea continuar de todas formas?')) return;
+    }
+    window.location.href = 's11-revision.html';
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const sess = sp_getSession();
+    if (sess) document.getElementById('header-user').textContent = sess.nombres + ' ' + sess.apellidos;
+    initS10();
+    renderVideos();
+  });
+
+</script>
+</body>
+</html>

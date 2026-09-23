@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SEGURPLAN — Resultado AFP</title>
+  <link rel="stylesheet" href="../assets/styles.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+  <div class="header-right">
+    <span class="user-name">Usuario: Juan García</span>
+    <button class="bell-btn" title="Notificaciones">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </button>
+    <button class="profile-btn">MI PERFIL</button>
+  </div>
+</header>
+
+<div class="page-wrap narrow">
+  <nav class="breadcrumb">SEGURPLAN &rsaquo; AFP &rsaquo; Resultado</nav>
+  <h1 class="page-title">Resultado de simulación</h1>
+
+  <div class="result-hero">
+    <div class="rh-label">PENSIÓN MENSUAL ESTIMADA</div>
+    <div class="rh-amount" id="rh-amount">S/ 1,850.00</div>
+    <div class="rh-sub">Resultado referencial — no oficial</div>
+  </div>
+
+  <dl class="data-grid" style="margin:20px 0;">
+    <dt>Fondo considerado</dt><dd id="res-fondo">S/ —</dd>
+    <dt>Años de aporte</dt><dd id="res-anios">—</dd>
+  </dl>
+
+  <div class="notice warning">&#9888; Este resultado es referencial. No representa una pensión oficial ni un compromiso de la AFP.</div>
+
+  <div class="btn-row" style="margin-top:20px;">
+    <button class="btn btn-primary">SOLICITAR ORIENTACIÓN</button>
+    <button class="btn btn-outline" onclick="history.back()">← Nueva simulación</button>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+  <nav class="footer-links">
+    <a href="../index.html">Inicio</a>
+    <a href="s01-login.html">Iniciar sesión</a>
+    <a href="s00-registro.html">Registrarse</a>
+  </nav>
+  <div class="footer-meta">
+    <span>© 2026 SEGURPLAN. Todos los derechos reservados.</span>
+  </div>
+</footer>
+<script src="../assets/app.js"></script>
+<script>
+  const monto = sessionStorage.getItem('afp_monto') || 'S/ 1,850.00';
+  const fondo = sessionStorage.getItem('afp_fondo') || 'S/ —';
+  const anios = sessionStorage.getItem('afp_anios') || '—';
+  document.getElementById('rh-amount').textContent = monto;
+  document.getElementById('res-fondo').textContent = fondo;
+  document.getElementById('res-anios').textContent = anios;
+</script>
+</body>
+</html>

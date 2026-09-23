@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SEGURPLAN — Panel de usuario</title>
+  <link rel="stylesheet" href="../assets/styles.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+  <div class="header-right">
+    <span class="user-name" id="header-user">Usuario</span>
+    <button class="bell-btn" title="Notificaciones">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </button>
+    <button class="profile-btn">MI PERFIL</button>
+  </div>
+</header>
+
+<div class="page-wrap">
+  <nav class="breadcrumb">SEGURPLAN &rsaquo; Panel principal</nav>
+  <h1 class="page-title" id="saludo">Hola</h1>
+  <p class="page-subtitle">¿Qué deseas realizar hoy?</p>
+
+  <div class="menu-grid">
+    <a class="menu-card" href="s03-cotizacion.html">
+      <div class="mc-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div class="mc-body">
+        <div class="mc-title">COTIZACIONES</div>
+        <div class="mc-sub">Solicitar y consultar seguros</div>
+      </div>
+      <span class="mc-arrow">&#8250;</span>
+    </a>
+
+    <a class="menu-card" href="s09-siniestro.html">
+      <div class="mc-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div class="mc-body">
+        <div class="mc-title">SINIESTROS</div>
+        <div class="mc-sub">Registrar un accidente vehicular</div>
+      </div>
+      <span class="mc-arrow">&#8250;</span>
+    </a>
+
+    <a class="menu-card" href="s06-afp-perfil.html">
+      <div class="mc-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      </div>
+      <div class="mc-body">
+        <div class="mc-title">AFP</div>
+        <div class="mc-sub">Simulación previsional</div>
+      </div>
+      <span class="mc-arrow">&#8250;</span>
+    </a>
+
+    <a class="menu-card" href="s12-seguimiento.html">
+      <div class="mc-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div class="mc-body">
+        <div class="mc-title">HISTORIAL</div>
+        <div class="mc-sub">Consultar mis procesos</div>
+      </div>
+      <span class="mc-arrow">&#8250;</span>
+    </a>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+  <nav class="footer-links">
+    <a href="../index.html">Inicio</a>
+    <a href="s01-login.html">Iniciar sesión</a>
+    <a href="s00-registro.html">Registrarse</a>
+  </nav>
+  <div class="footer-meta">
+    <span>© 2026 SEGURPLAN. Todos los derechos reservados.</span>
+  </div>
+</footer>
+<script src="../assets/app.js"></script>
+<script>
+  const sess = sp_requireAuth();
+  if (sess) {
+    document.getElementById('saludo').textContent = 'Hola, ' + sess.nombres + ' ' + sess.apellidos;
+    document.getElementById('header-user').textContent = sess.nombres + ' ' + sess.apellidos;
+  }
+  document.querySelector('.profile-btn').addEventListener('click', () => {
+    if (confirm('¿Desea cerrar sesión?')) sp_logout();
+  });
+</script>
+</body>
+</html>

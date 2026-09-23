@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SEGURPLAN — Solicitar cotización</title>
+  <link rel="stylesheet" href="../assets/styles.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+  <div class="header-right">
+    <span class="user-name">Usuario: Juan García</span>
+    <button class="bell-btn" title="Notificaciones">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </button>
+    <button class="profile-btn">MI PERFIL</button>
+  </div>
+</header>
+
+<div class="page-wrap narrow">
+  <nav class="breadcrumb">SEGURPLAN &rsaquo; Cotizaciones &rsaquo; Solicitar cotización</nav>
+  <h1 class="page-title">Solicitar cotización</h1>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Solicitar cotización</h2>
+      <p>Complete los datos para recibir una propuesta</p>
+    </div>
+    <div class="card-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="sel-empresa">Empresa aseguradora</label>
+          <select class="form-control" id="sel-empresa">
+            <option value="">— Seleccione —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="sel-tipo">Tipo de seguro</label>
+          <select class="form-control" id="sel-tipo">
+            <option value="">— Seleccione —</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="seguros-panel" class="seguros-panel" style="display:none;">
+        <div class="sp-title" id="sp-title"></div>
+        <ul id="seguros-ul"></ul>
+      </div>
+
+      <h3 class="section-title">Datos del cliente</h3>
+      <div class="form-group">
+        <label for="nombre">Nombre completo</label>
+        <input class="form-control" type="text" id="nombre" placeholder="Juan García López" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="dni">DNI</label>
+          <input class="form-control" type="text" id="dni" maxlength="8" placeholder="12345678" />
+        </div>
+        <div class="form-group">
+          <label for="telefono">Teléfono</label>
+          <input class="form-control" type="tel" id="telefono" placeholder="987 654 321" />
+        </div>
+      </div>
+
+      <div id="datos-req" style="display:none;">
+        <h3 class="section-title" id="req-title"></h3>
+        <div id="req-campos"></div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <button class="btn btn-primary" onclick="enviarCotizacion()">ENVIAR SOLICITUD</button>
+      <button class="btn btn-secondary" onclick="history.back()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+  <nav class="footer-links">
+    <a href="../index.html">Inicio</a>
+    <a href="s01-login.html">Iniciar sesión</a>
+    <a href="s00-registro.html">Registrarse</a>
+  </nav>
+  <div class="footer-meta">
+    <span>© 2026 SEGURPLAN. Todos los derechos reservados.</span>
+  </div>
+</footer>
+<script src="../assets/app.js"></script>
+<script src="../assets/s03.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', async function () {
+
+    const session = sp_getSession();
+
+    if (!session) {
+        window.location.href = 's01-login.html';
+        return;
+    }
+
+    // Mostrar usuario real
+    const userName = document.querySelector('.user-name');
+
+    if (userName) {
+        userName.textContent =
+            'Usuario: ' +
+            session.nombres + ' ' +
+            session.apellidos;
+    }
+
+    // Mostrar nombre real en formulario
+    document.getElementById('nombre').value =
+        session.nombres + ' ' + session.apellidos;
+
+    try {
+
+        // =============================
+        // ASEGURADORAS
+        // =============================
+
+        const responseAseguradoras =
+            await fetch('/api/catalogos/aseguradoras');
+
+        if (!responseAseguradoras.ok) {
+            throw new Error('Error cargando aseguradoras');
+        }
+
+        const aseguradoras =
+            await responseAseguradoras.json();
+
+        const selectEmpresa =
+            document.getElementById('sel-empresa');
+
+        selectEmpresa.innerHTML =
+            '<option value="">— Seleccione —</option>';
+
+        aseguradoras.forEach(function (aseguradora) {
+
+            const option =
+                document.createElement('option');
+
+            option.value =
+                aseguradora.idAseguradora;
+
+            option.textContent =
+                aseguradora.nombre;
+
+            selectEmpresa.appendChild(option);
+        });
+
+
+        // =============================
+        // TIPOS DE SEGURO
+        // =============================
+
+        const responseTipos =
+            await fetch('/api/catalogos/tipos-seguro');
+
+        if (!responseTipos.ok) {
+            throw new Error('Error cargando tipos de seguro');
+        }
+
+        const tipos =
+            await responseTipos.json();
+
+        const selectTipo =
+            document.getElementById('sel-tipo');
+
+        selectTipo.innerHTML =
+            '<option value="">— Seleccione —</option>';
+
+        tipos.forEach(function (tipo) {
+
+            const option =
+                document.createElement('option');
+
+            option.value =
+                tipo.idTipoSeguro;
+
+            option.textContent =
+                tipo.nombre;
+
+            selectTipo.appendChild(option);
+        });
+
+    } catch (error) {
+
+        console.error(
+            'Error cargando catálogos:',
+            error
+        );
+
+        alert(
+            'No se pudieron cargar los datos de cotización.'
+        );
+    }
+});
+  async function enviarCotizacion() {
+
+    const idAseguradora =
+        document.getElementById('sel-empresa').value;
+
+    const idTipoSeguro =
+        document.getElementById('sel-tipo').value;
+
+    const nombre =
+        document.getElementById('nombre').value.trim();
+
+    const dni =
+        document.getElementById('dni').value.trim();
+
+    const telefono =
+        document.getElementById('telefono').value.trim();
+
+
+    if (!idAseguradora || !idTipoSeguro) {
+
+        alert(
+            'Seleccione empresa y tipo de seguro.'
+        );
+
+        return;
+    }
+
+
+    if (!nombre) {
+
+        alert(
+            'Ingrese el nombre del cliente.'
+        );
+
+        return;
+    }
+
+
+    const descripcion =
+        'Solicitud de cotización. ' +
+        'Cliente: ' + nombre +
+        '. DNI: ' + dni +
+        '. Teléfono: ' + telefono + '.';
+
+
+    const result =
+        await sp_saveCotizacion({
+
+            idAseguradora:
+                Number(idAseguradora),
+
+            idTipoSeguro:
+                Number(idTipoSeguro),
+
+            descripcionSolicitud:
+                descripcion
+        });
+
+
+    if (!result.ok) {
+
+        alert(
+            result.error ||
+            'No se pudo registrar la cotización.'
+        );
+
+        return;
+    }
+
+
+    sessionStorage.setItem(
+        'sp_last_quote',
+        result.cotizacion.idCotizacion
+    );
+
+
+    window.location.href =
+        's04-cotizacion-recibida.html';
+}
+</script>
+</body>
+</html>

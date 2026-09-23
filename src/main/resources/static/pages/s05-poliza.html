@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SEGURPLAN — Contratación</title>
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+  <div class="header-right">
+    <span class="user-name">Usuario</span>
+    <button class="bell-btn" title="Notificaciones">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+    </button>
+    <button class="profile-btn">MI PERFIL</button>
+  </div>
+</header>
+
+<div class="page-wrap narrow">
+  <nav class="breadcrumb">SEGURPLAN &rsaquo; Cotizaciones &rsaquo; Contratación</nav>
+  <h1 class="page-title">Confirmar contratación</h1>
+
+  <div class="status-block info" id="estado-contratacion">
+    Revise la información antes de continuar
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2 id="titulo-cotizacion">Cotización</h2>
+      <p id="tipo-seguro">—</p>
+    </div>
+
+    <div class="card-body">
+      <dl class="data-grid">
+        <dt>Nº Cotización</dt><dd id="cotizacion-id">—</dd>
+        <dt>Aseguradora</dt><dd id="aseguradora">—</dd>
+        <dt>Tipo de seguro</dt><dd id="tipo">—</dd>
+        <dt>Contratante</dt><dd id="contratante">—</dd>
+        <dt>Cobertura</dt><dd id="cobertura">—</dd>
+        <dt>Vigencia</dt><dd id="vigencia">—</dd>
+        <dt>Estado</dt><dd id="estado">—</dd>
+      </dl>
+
+      <hr class="divider">
+
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="aceptar-condiciones">
+          Acepto las condiciones de contratación de la cotización.
+        </label>
+      </div>
+    </div>
+
+    <div class="card-footer">
+      <button class="btn btn-primary" id="btn-confirmar" type="button">
+        CONFIRMAR CONTRATACIÓN
+      </button>
+      <button class="btn btn-secondary" type="button" onclick="history.back()">
+        ← VOLVER
+      </button>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+  <nav class="footer-links">
+    <a href="../index.html">Inicio</a>
+    <a href="s02-panel-usuario.html">Mi panel</a>
+  </nav>
+  <div class="footer-meta">
+    <span>© 2026 SEGURPLAN. Todos los derechos reservados.</span>
+  </div>
+</footer>
+
+<script src="../assets/app.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+  const session = sp_getSession();
+
+  if (!session) {
+    window.location.href = 's01-login.html';
+    return;
+  }
+
+  document.querySelector('.user-name').textContent =
+    'Usuario: ' + session.nombres + ' ' + session.apellidos;
+
+  const idCotizacion = sessionStorage.getItem('sp_last_quote');
+
+  if (!idCotizacion) {
+    alert('No se encontró una cotización seleccionada.');
+    window.location.href = 's02-panel-usuario.html';
+    return;
+  }
+
+  const result = await sp_getCotizacion(idCotizacion);
+
+  if (!result.ok) {
+    alert(result.error);
+    return;
+  }
+
+  const q = result.cotizacion;
+
+  if (Number(q.idUsuario) !== Number(session.id_usuario)) {
+    alert('La cotización no pertenece al usuario actual.');
+    window.location.href = 's02-panel-usuario.html';
+    return;
+  }
+
+  if (q.estado !== 'Disponible') {
+    alert('Esta cotización no está disponible para contratación.');
+    window.location.href = 's04-cotizacion-recibida.html';
+    return;
+  }
+
+  const ref = 'COT-' + String(q.idCotizacion).padStart(6, '0');
+
+  document.getElementById('titulo-cotizacion').textContent = ref;
+  document.getElementById('cotizacion-id').textContent = ref;
+  document.getElementById('tipo-seguro').textContent = q.tipoSeguro || '—';
+  document.getElementById('aseguradora').textContent = q.aseguradora || '—';
+  document.getElementById('tipo').textContent = q.tipoSeguro || '—';
+  document.getElementById('contratante').textContent = q.nombreSolicitante || '—';
+  document.getElementById('cobertura').textContent = q.cobertura || '—';
+  document.getElementById('vigencia').textContent = formatearFecha(q.vigencia);
+  document.getElementById('estado').textContent = q.estado;
+
+  document.getElementById('btn-confirmar').addEventListener('click', async function() {
+    await confirmarContratacion(q.idCotizacion, session.id_usuario);
+  });
+});
+
+async function confirmarContratacion(idCotizacion, idUsuario) {
+  const acepta = document.getElementById('aceptar-condiciones').checked;
+
+  if (!acepta) {
+    alert('Debe aceptar las condiciones para continuar.');
+    return;
+  }
+
+  const boton = document.getElementById('btn-confirmar');
+  boton.disabled = true;
+  boton.textContent = 'PROCESANDO...';
+
+  try {
+    const response = await fetch('/api/contrataciones', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        idCotizacion: Number(idCotizacion),
+        idUsuario: Number(idUsuario),
+        aceptaCondiciones: true
+      })
+    });
+
+    const resultado = await response.json();
+
+    if (!response.ok) {
+      alert(resultado.mensaje || 'No se pudo registrar la contratación.');
+      boton.disabled = false;
+      boton.textContent = 'CONFIRMAR CONTRATACIÓN';
+      return;
+    }
+
+    sessionStorage.setItem(
+      'sp_last_contratacion',
+      String(resultado.idContratacion)
+    );
+
+    document.getElementById('estado-contratacion').textContent =
+      'Contratación registrada correctamente';
+
+    document.getElementById('estado').textContent =
+      'Aceptada';
+
+    boton.textContent = 'CONTRATACIÓN CONFIRMADA';
+    boton.disabled = true;
+
+    alert(
+      'Contratación registrada correctamente. N° ' +
+      resultado.idContratacion
+    );
+
+  } catch (error) {
+    console.error(error);
+    alert('No se pudo conectar con el servidor.');
+    boton.disabled = false;
+    boton.textContent = 'CONFIRMAR CONTRATACIÓN';
+  }
+}
+
+function formatearFecha(fecha) {
+  if (!fecha) return '—';
+
+  const partes = fecha.split('-');
+
+  if (partes.length !== 3) return fecha;
+
+  return partes[2] + '/' + partes[1] + '/' + partes[0];
+}
+</script>
+
+</body>
+</html>

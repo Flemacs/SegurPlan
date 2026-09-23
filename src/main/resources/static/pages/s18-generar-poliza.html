@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SEGURPLAN — Generar póliza</title>
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+  <div class="header-right">
+    <span class="user-name">Administrador</span>
+    <button class="profile-btn" onclick="window.location.href='s14-administracion.html'">MI PANEL</button>
+  </div>
+</header>
+
+<div class="page-wrap narrow">
+  <nav class="breadcrumb">SEGURPLAN &rsaquo; Administración &rsaquo; Generar póliza</nav>
+  <h1 class="page-title">Generar póliza</h1>
+  <p class="page-subtitle">Registre los datos de la póliza de una contratación aceptada.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Datos de la contratación</h2>
+      <p>Seleccione una contratación pendiente de póliza.</p>
+    </div>
+    <div class="card-body">
+      <div class="form-group">
+        <label for="contratacion">Contratación</label>
+        <select class="form-control" id="contratacion" required>
+          <option value="">Cargando contrataciones...</option>
+        </select>
+      </div>
+
+      <h3 class="section-title">Datos de la póliza</h3>
+      <form id="form-poliza">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fecha-inicio">Fecha de inicio</label>
+            <input class="form-control" type="date" id="fecha-inicio" required>
+          </div>
+          <div class="form-group">
+            <label for="fecha-fin">Fecha de finalización</label>
+            <input class="form-control" type="date" id="fecha-fin" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="prima">Prima (S/)</label>
+            <input class="form-control" type="number" id="prima" min="0.01" step="0.01" required>
+          </div>
+          <div class="form-group">
+            <label for="deducible">Deducible (S/)</label>
+            <input class="form-control" type="number" id="deducible" min="0" step="0.01">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="cobertura">Cobertura</label>
+          <textarea class="form-control" id="cobertura" rows="3" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="condiciones">Condiciones</label>
+          <textarea class="form-control" id="condiciones" rows="4"></textarea>
+        </div>
+        <div class="card-footer">
+          <button class="btn btn-primary" id="btn-generar" type="submit">GENERAR PÓLIZA</button>
+          <button class="btn btn-secondary" type="button" onclick="window.location.href='s14-administracion.html'">CANCELAR</button>
+        </div>
+      </form>
+      <div id="resultado" style="display:none;margin-top:20px;" role="status"></div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+  <div class="footer-meta">© 2026 SEGURPLAN. Todos los derechos reservados.</div>
+</footer>
+
+<script src="../assets/app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+  const session = sp_getSession();
+  if (!session || session.rol !== 'Administrador') {
+    window.location.replace('s01-login.html');
+    return;
+  }
+  document.querySelector('.user-name').textContent =
+    'Usuario: ' + session.nombres + ' ' + session.apellidos + ' — Administrador';
+  await cargarContrataciones();
+  document.getElementById('form-poliza').addEventListener('submit', generarPoliza);
+});
+
+async function cargarContrataciones() {
+  const select = document.getElementById('contratacion');
+  try {
+    const response = await fetch('/api/contrataciones/pendientes');
+    if (!response.ok) throw new Error('No se pudieron cargar las contrataciones.');
+    const datos = await response.json();
+    select.innerHTML = '<option value="">— Seleccione una contratación —</option>';
+    datos.forEach(c => {
+      const option = document.createElement('option');
+      option.value = c.idContratacion;
+      option.textContent = 'Contrato ' + c.idContratacion + ' | COT-' +
+        String(c.idCotizacion).padStart(6, '0') + ' | ' +
+        c.cliente + ' | ' + c.tipoSeguro;
+      select.appendChild(option);
+    });
+    if (datos.length === 0) {
+      select.innerHTML = '<option value="">No hay contrataciones pendientes</option>';
+    }
+  } catch (error) {
+    console.error(error);
+    select.innerHTML = '<option value="">Error al cargar contrataciones</option>';
+    alert(error.message);
+  }
+}
+
+async function generarPoliza(event) {
+  event.preventDefault();
+  const idContratacion = document.getElementById('contratacion').value;
+  const fechaInicio = document.getElementById('fecha-inicio').value;
+  const fechaFin = document.getElementById('fecha-fin').value;
+  const prima = Number(document.getElementById('prima').value);
+  const deducibleTexto = document.getElementById('deducible').value;
+  const cobertura = document.getElementById('cobertura').value.trim();
+  const condiciones = document.getElementById('condiciones').value.trim();
+
+  if (!idContratacion) {
+    alert('Seleccione una contratación.');
+    return;
+  }
+  if (!fechaInicio || !fechaFin || fechaFin < fechaInicio) {
+    alert('La fecha de fin debe ser igual o posterior al inicio.');
+    return;
+  }
+  if (!Number.isFinite(prima) || prima <= 0 || !cobertura) {
+    alert('Ingrese una prima válida y la cobertura.');
+    return;
+  }
+
+  const boton = document.getElementById('btn-generar');
+  boton.disabled = true;
+  boton.textContent = 'GENERANDO...';
+
+  try {
+    const response = await fetch('/api/polizas', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        idContratacion: Number(idContratacion),
+        fechaInicio,
+        fechaFin,
+        prima,
+        cobertura,
+        deducible: deducibleTexto === '' ? null : Number(deducibleTexto),
+        condiciones
+      })
+    });
+    const resultado = await response.json();
+    if (!response.ok) throw new Error(resultado.mensaje || 'No se pudo generar la póliza.');
+
+    const mensaje = document.getElementById('resultado');
+    mensaje.style.display = 'block';
+    mensaje.textContent = 'Póliza generada correctamente: ' + resultado.numeroPoliza;
+    document.getElementById('form-poliza').reset();
+    await cargarContrataciones();
+  } catch (error) {
+    console.error(error);
+    alert(error.message);
+  } finally {
+    boton.disabled = false;
+    boton.textContent = 'GENERAR PÓLIZA';
+  }
+}
+</script>
+</body>
+</html>

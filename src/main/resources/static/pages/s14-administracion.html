@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SEGURPLAN — Administración</title>
+  <link rel="stylesheet" href="../assets/styles.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+  <div class="header-right">
+    <span class="user-name">Usuario: Luis Mendoza — Administrador</span>
+    <button class="bell-btn" title="Notificaciones">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </button>
+    <button class="profile-btn">MI PERFIL</button>
+  </div>
+</header>
+
+<div class="page-wrap">
+  <nav class="breadcrumb">SEGURPLAN &rsaquo; Administración</nav>
+  <h1 class="page-title">Panel de administración</h1>
+  <p class="page-subtitle">Gestione usuarios, roles y consulte reportes del sistema</p>
+
+  <div class="admin-grid">
+      <a class="admin-btn" href="#cotizaciones">
+  <div class="ab-title">GESTIONAR COTIZACIONES</div>
+  <div class="ab-sub">
+    Revisar y responder solicitudes de cotización
+  </div>
+</a>
+    <a class="admin-btn" href="#">
+      <div class="ab-title">GESTIONAR USUARIOS</div>
+      <div class="ab-sub">Consultar, modificar, activar o desactivar cuentas</div>
+    </a>
+    <a class="admin-btn" href="#">
+      <div class="ab-title">GESTIONAR ASESORES</div>
+      <div class="ab-sub">Administrar cuentas y datos de asesores</div>
+    </a>
+    <a class="admin-btn" href="#">
+      <div class="ab-title">ROLES Y PERMISOS</div>
+      <div class="ab-sub">Definir permisos por tipo de usuario</div>
+    </a>
+    <a class="admin-btn" href="s15-reporte-general.html">
+      <div class="ab-title">REPORTES</div>
+      <div class="ab-sub">Consultar información consolidada de operaciones</div>
+    </a>
+    <a class="admin-btn" href="#" style="grid-column:span 2;">
+      <div class="ab-title">HISTORIAL DEL SISTEMA</div>
+      <div class="ab-sub">Trazabilidad de operaciones realizadas</div>
+      <a class="admin-btn" href="s18-generar-poliza.html">
+  <div class="ab-title">GENERAR PÓLIZAS</div>
+  <div class="ab-sub">Registrar pólizas de contrataciones aceptadas</div>
+</a>
+ 
+  </div>
+  <section id="cotizaciones" style="margin-top:40px;">
+
+  <h2 class="section-title">
+    Solicitudes de cotización
+  </h2>
+
+  <p class="page-subtitle">
+    Cotizaciones registradas por los clientes
+  </p>
+
+  <div class="card">
+
+    <div class="card-body">
+
+      <div style="overflow-x:auto;">
+
+        <table style="width:100%; border-collapse:collapse;">
+
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Cliente</th>
+              <th>Seguro</th>
+              <th>Aseguradora</th>
+              <th>Fecha</th>
+              <th>Estado</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+
+          <tbody id="tabla-cotizaciones">
+
+            <tr>
+              <td colspan="7">
+                Cargando cotizaciones...
+              </td>
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+  <section
+  id="panel-revision"
+  style="margin-top:40px; display:none;">
+
+  <h2 class="section-title">
+    Revisar cotización
+  </h2>
+
+  <div class="card">
+
+    <div class="card-header">
+      <h2 id="revision-id">
+        Cotización
+      </h2>
+
+      <p>
+        Complete la evaluación de la solicitud
+      </p>
+    </div>
+
+    <div class="card-body">
+
+      <dl class="data-grid">
+
+        <dt>Cliente</dt>
+        <dd id="revision-cliente">—</dd>
+
+        <dt>Tipo de seguro</dt>
+        <dd id="revision-tipo">—</dd>
+
+        <dt>Aseguradora</dt>
+        <dd id="revision-aseguradora">—</dd>
+
+        <dt>Estado actual</dt>
+        <dd id="revision-estado">—</dd>
+
+        <dt>Solicitud</dt>
+        <dd id="revision-descripcion">—</dd>
+
+      </dl>
+
+
+      <h3 class="section-title">
+        Respuesta
+      </h3>
+
+
+      <div class="form-group">
+
+        <label for="revision-cobertura">
+          Cobertura
+        </label>
+
+        <textarea
+          class="form-control"
+          id="revision-cobertura"
+          rows="4"
+          placeholder="Ejemplo: Cobertura por accidentes, daños materiales y responsabilidad civil.">
+        </textarea>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="revision-vigencia">
+          Vigencia
+        </label>
+
+        <input
+          class="form-control"
+          type="date"
+          id="revision-vigencia"
+        />
+
+      </div>
+
+    </div>
+
+
+    <div class="card-footer">
+
+      <button
+        class="btn btn-secondary"
+        onclick="cambiarEstadoCotizacion('En revisión')">
+
+        MARCAR EN REVISIÓN
+
+      </button>
+
+
+      <button
+        class="btn btn-primary"
+        onclick="cambiarEstadoCotizacion('Disponible')">
+
+        PUBLICAR COTIZACIÓN
+
+      </button>
+
+
+      <button
+        class="btn btn-secondary"
+        onclick="cerrarRevision()">
+
+        CANCELAR
+
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+  <nav class="footer-links">
+    <a href="../index.html">Inicio</a>
+    <a href="s01-login.html">Iniciar sesión</a>
+    <a href="s00-registro.html">Registrarse</a>
+  </nav>
+  <div class="footer-meta">
+    <span>© 2026 SEGURPLAN. Todos los derechos reservados.</span>
+  </div>
+</footer>
+<script src="../assets/app.js"></script>
+
+<script>
+
+const session = sp_getSession();
+
+if (!session) {
+
+    window.location.href =
+        's01-login.html';
+
+} else if (session.rol !== 'Administrador') {
+
+    window.location.href =
+        's02-panel-usuario.html';
+
+} else {
+
+    const userName =
+        document.querySelector('.user-name');
+
+    if (userName) {
+
+        userName.textContent =
+            'Usuario: ' +
+            session.nombres + ' ' +
+            session.apellidos +
+            ' — Administrador';
+    }
+
+    cargarCotizaciones();
+}
+
+
+async function cargarCotizaciones() {
+
+    const tbody =
+        document.getElementById(
+            'tabla-cotizaciones'
+        );
+
+    try {
+
+        const response =
+            await fetch('/api/cotizaciones');
+
+        if (!response.ok) {
+            throw new Error(
+                'No se pudieron obtener las cotizaciones'
+            );
+        }
+
+        const cotizaciones =
+            await response.json();
+
+
+        if (cotizaciones.length === 0) {
+
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7">
+                        No existen cotizaciones registradas.
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+
+        tbody.innerHTML = '';
+
+
+        cotizaciones.forEach(function (c) {
+
+            const fila =
+                document.createElement('tr');
+
+
+            let fecha = '—';
+
+            if (c.fechaSolicitud) {
+
+                fecha =
+                    new Date(
+                        c.fechaSolicitud
+                    ).toLocaleString('es-PE');
+            }
+
+
+            fila.innerHTML = `
+
+                <td>
+                    COT-${String(
+                        c.idCotizacion
+                    ).padStart(6, '0')}
+                </td>
+
+                <td>
+                    ${c.cliente || '—'}
+                </td>
+
+                <td>
+                    ${c.tipoSeguro || '—'}
+                </td>
+
+                <td>
+                    ${c.aseguradora || '—'}
+                </td>
+
+                <td>
+                    ${fecha}
+                </td>
+
+                <td>
+                    <span class="badge">
+                        ${c.estado}
+                    </span>
+                </td>
+
+                <td>
+                    <button
+                        class="btn btn-primary"
+                        onclick="revisarCotizacion(
+                            ${c.idCotizacion}
+                        )">
+                        REVISAR
+                    </button>
+                </td>
+            `;
+
+            tbody.appendChild(fila);
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            'Error:',
+            error
+        );
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7">
+                    Error al cargar las cotizaciones.
+                </td>
+            </tr>
+        `;
+    }
+}
+
+
+async function revisarCotizacion(idCotizacion) {
+
+    try {
+
+        const response =
+            await fetch(
+                '/api/cotizaciones/' +
+                idCotizacion
+            );
+
+        const q =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            alert(
+                q.mensaje ||
+                'No se pudo cargar la cotización.'
+            );
+
+            return;
+        }
+
+
+        sessionStorage.setItem(
+            'sp_admin_quote',
+            idCotizacion
+        );
+
+
+        const ref =
+            'COT-' +
+            String(idCotizacion)
+                .padStart(6, '0');
+
+
+        document.getElementById(
+            'revision-id'
+        ).textContent = ref;
+
+
+        document.getElementById(
+            'revision-cliente'
+        ).textContent =
+            q.nombreSolicitante || '—';
+
+
+        document.getElementById(
+            'revision-tipo'
+        ).textContent =
+            q.tipoSeguro || '—';
+
+
+        document.getElementById(
+            'revision-aseguradora'
+        ).textContent =
+            q.aseguradora || '—';
+
+
+        document.getElementById(
+            'revision-estado'
+        ).textContent =
+            q.estado || '—';
+
+
+        document.getElementById(
+            'revision-descripcion'
+        ).textContent =
+            q.descripcionSolicitud || '—';
+
+
+        document.getElementById(
+            'revision-cobertura'
+        ).value =
+            q.cobertura || '';
+
+
+        document.getElementById(
+            'revision-vigencia'
+        ).value =
+            q.vigencia || '';
+
+
+        const panel =
+            document.getElementById(
+                'panel-revision'
+            );
+
+        panel.style.display = 'block';
+
+
+        panel.scrollIntoView({
+            behavior: 'smooth'
+        });
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            'No se pudo conectar con el servidor.'
+        );
+    }
+}
+async function cambiarEstadoCotizacion(estado) {
+
+    const idCotizacion =
+        sessionStorage.getItem(
+            'sp_admin_quote'
+        );
+
+
+    if (!idCotizacion) {
+
+        alert(
+            'Seleccione una cotización.'
+        );
+
+        return;
+    }
+
+
+    const cobertura =
+        document.getElementById(
+            'revision-cobertura'
+        ).value.trim();
+
+
+    const vigencia =
+        document.getElementById(
+            'revision-vigencia'
+        ).value;
+
+
+    if (estado === 'Disponible') {
+
+        if (!cobertura) {
+
+            alert(
+                'Ingrese la cobertura antes de publicar.'
+            );
+
+            return;
+        }
+
+
+        if (!vigencia) {
+
+            alert(
+                'Seleccione la vigencia.'
+            );
+
+            return;
+        }
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                '/api/cotizaciones/' +
+                idCotizacion +
+                '/respuesta',
+                {
+
+                    method: 'PUT',
+
+                    headers: {
+                        'Content-Type':
+                            'application/json'
+                    },
+
+                    body: JSON.stringify({
+                        cobertura: cobertura,
+                        vigencia:
+                            vigencia || null,
+                        estado: estado
+                    })
+                }
+            );
+
+
+        const resultado =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            alert(
+                resultado.mensaje ||
+                'No se pudo actualizar la cotización.'
+            );
+
+            return;
+        }
+
+
+        alert(
+            resultado.mensaje
+        );
+
+
+        document.getElementById(
+            'revision-estado'
+        ).textContent =
+            resultado.estado;
+
+
+        await cargarCotizaciones();
+
+
+        if (resultado.estado === 'Disponible') {
+
+            cerrarRevision();
+        }
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            'No se pudo conectar con el servidor.'
+        );
+    }
+}
+function cerrarRevision() {
+
+    document.getElementById(
+        'panel-revision'
+    ).style.display = 'none';
+
+    sessionStorage.removeItem(
+        'sp_admin_quote'
+    );
+}
+</script>
+</body>
+</html>

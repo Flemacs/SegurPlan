@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SEGURPLAN</title>
+  <style>
+    /* ── Reset y base ────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #000;
+      --white: #fff;
+      --gray-50: #f9f9f9;
+      --gray-100: #f0f0f0;
+      --gray-200: #e0e0e0;
+      --gray-400: #999;
+      --gray-600: #555;
+      --red: #b00020;
+      --green: #2a7a2a;
+      --border: 1px solid #000;
+      --font: 'Segoe UI', Arial, sans-serif;
+    }
+
+    html, body { height: 100%; font-family: var(--font); font-size: 14px; color: var(--black); background: var(--white); }
+
+    /* ── Barra de navegación ────────────── */
+    #nav-bar {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      padding: 7px 12px; border-bottom: var(--border); background: var(--white);
+      position: sticky; top: 0; z-index: 100;
+    }
+    #nav-bar .nav-title { font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; margin-right: 6px; }
+    #nav-bar select, #nav-bar button {
+      border: var(--border); background: var(--white); font-size: 11px;
+      padding: 4px 8px; cursor: pointer; font-family: var(--font);
+    }
+    #nav-bar button:hover { background: var(--gray-100); }
+    #nav-bar button:disabled { opacity: .4; cursor: default; }
+    #nav-counter { font-size: 11px; color: var(--gray-400); }
+
+    /* ── Contenedor de pantallas ─────────────────────── */
+    #app { overflow: auto; }
+    .screen { display: none; min-height: calc(100vh - 44px); }
+    .screen.active { display: block; }
+
+    /* ── Layout base ─────────────────────────────────── */
+    .wrap { background: var(--gray-50); min-height: 100%; display: flex; align-items: flex-start; justify-content: center; padding: 36px 16px; }
+    .card { border: var(--border); background: var(--white); width: 100%; max-width: 480px; }
+    .card-header { border-bottom: var(--border); padding: 11px 16px; font-weight: 700; font-size: 13px; letter-spacing: .02em; }
+    .card-body { padding: 20px; }
+    .center { text-align: center; }
+
+    /* ── Formularios ─────────────────────────────────── */
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 13px; margin-bottom: 4px; }
+    .field input, .field textarea, .field select {
+      width: 100%; border: var(--border); padding: 8px 10px; font-size: 13px;
+      font-family: var(--font); background: var(--white); appearance: none;
+    }
+    .field textarea { resize: vertical; min-height: 72px; }
+    .field select:disabled { background: var(--gray-100); color: var(--gray-400); }
+    .inline-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .field-row label { width: 155px; flex-shrink: 0; font-size: 13px; }
+    .field-row input, .field-row select {
+      flex: 1; border: var(--border); padding: 7px 10px;
+      font-size: 13px; font-family: var(--font); background: var(--white); appearance: none;
+    }
+
+    /* ── Botones ─────────────────────────────────────── */
+    .btn         { border: var(--border); padding: 8px 20px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font); letter-spacing: .04em; background: var(--white); color: var(--black); display: inline-block; }
+    .btn:hover   { background: var(--gray-100); }
+    .btn-primary { border: var(--border); padding: 8px 20px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font); letter-spacing: .04em; background: var(--black); color: var(--white); display: inline-block; }
+    .btn-primary:hover { background: #333; }
+    .btn-block   { display: block; width: 100%; text-align: center; border: var(--border); padding: 10px 16px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font); background: var(--white); color: var(--black); margin-bottom: 8px; }
+    .btn-block:hover { background: var(--gray-100); }
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* ── Sección header interno ───────────────────────── */
+    .section-bar { background: var(--gray-100); border: var(--border); padding: 7px 12px; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 10px; margin-top: 4px; }
+    .section-bar.green { background: #e6f4ea; }
+
+    /* ── Datos en pares ──────────────────────────────── */
+    .data-row { display: flex; gap: 8px; margin-bottom: 9px; font-size: 13px; align-items: baseline; }
+    .data-row .lbl { font-weight: 600; width: 155px; flex-shrink: 0; }
+    .data-row .val { border-bottom: var(--border); flex: 1; min-height: 20px; }
+    .data-row .val.fixed { border-bottom: none; }
+
+    /* ── Tablas ──────────────────────────────────────── */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { border: var(--border); padding: 8px 10px; text-align: left; }
+    th { background: var(--gray-100); font-weight: 700; }
+    tr:hover td { background: var(--gray-50); }
+    .tag { font-size: 11px; font-weight: 600; padding: 2px 7px; border: var(--border); display: inline-block; }
+    .tag-gray   { background: var(--gray-100); }
+    .tag-yellow { background: #fff9c4; }
+    .tag-green  { background: #e6f4ea; }
+    .tag-blue   { background: #e3f0ff; }
+
+    /* ── Barras de progreso ───────────────────────────── */
+    .bar-row { margin-bottom: 9px; }
+    .bar-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 3px; }
+    .bar-track { height: 16px; border: var(--border); background: var(--gray-50); }
+    .bar-fill { height: 100%; background: var(--black); }
+
+    /* ── Timeline ─────────────────────────────────────── */
+    .timeline { list-style: none; }
+    .timeline li { display: flex; gap: 12px; }
+    .tl-left { display: flex; flex-direction: column; align-items: center; }
+    .tl-dot { width: 22px; height: 22px; border: var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+    .tl-dot.done    { background: var(--black); color: var(--white); }
+    .tl-dot.active  { background: var(--gray-200); color: var(--black); }
+    .tl-dot.pending { background: var(--white); color: var(--gray-400); }
+    .tl-line { width: 1px; flex: 1; background: var(--black); min-height: 22px; }
+    .tl-text { font-size: 13px; padding: 2px 0 18px; }
+    .tl-text.done    { color: var(--black); }
+    .tl-text.active  { font-weight: 700; color: var(--black); }
+    .tl-text.pending { color: var(--gray-400); }
+
+    /* ── Lista de archivos ────────────────────────────── */
+    .file-list { border: var(--border); }
+    .file-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-bottom: 1px solid var(--gray-200); font-size: 13px; }
+    .file-item:last-child { border-bottom: none; }
+    .file-check { width: 18px; height: 18px; border: var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; margin-right: 8px; flex-shrink: 0; }
+    .file-check.ok { background: var(--black); color: var(--white); }
+    .file-ext { font-size: 10px; border: var(--border); padding: 1px 4px; background: var(--gray-100); font-family: monospace; margin-right: 6px; }
+    .file-btn { border: var(--border); background: var(--white); font-size: 11px; padding: 3px 8px; cursor: pointer; font-family: var(--font); }
+    .file-btn:hover { background: var(--gray-100); }
+    .warn    { font-size: 12px; color: var(--red);   margin: 5px 0 12px; }
+    .ok-msg  { font-size: 12px; color: var(--green); margin: 5px 0 12px; }
+
+    /* ── Upload zone ──────────────────────────────────── */
+    .upload-zone { border: 1px dashed var(--black); padding: 18px; text-align: center; background: var(--white); margin-bottom: 10px; }
+    .upload-zone p { font-size: 12px; color: var(--gray-600); margin-bottom: 10px; }
+
+    /* ── Panel usuario ────────────────────────────────── */
+    .user-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: var(--border); }
+    .logo { font-size: 18px; font-weight: 700; letter-spacing: .14em; }
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .bell-btn { background: none; border: none; cursor: pointer; display: flex; align-items: center; }
+    .perfil-btn { border: var(--border); padding: 5px 12px; font-size: 12px; font-weight: 700; cursor: pointer; background: var(--white); font-family: var(--font); letter-spacing: .06em; }
+    .perfil-btn:hover { background: var(--gray-100); }
+    .greeting { padding: 24px 20px 10px; }
+    .greeting h1 { font-size: 20px; font-weight: 700; }
+    .greeting p  { font-size: 13px; color: var(--gray-600); margin-top: 4px; }
+    .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 14px 20px 28px; max-width: 340px; }
+    .menu-card { border: var(--border); background: var(--white); padding: 22px 16px; cursor: pointer; text-align: left; font-family: var(--font); }
+    .menu-card:hover { background: var(--gray-50); }
+    .mc-title { font-size: 13px; font-weight: 700; letter-spacing: .06em; }
+    .mc-sub   { font-size: 12px; color: var(--gray-600); margin-top: 8px; }
+
+    /* ── AFP perfil cards ─────────────────────────────── */
+    .perfil-card { border: var(--border); padding: 18px; margin-bottom: 14px; }
+    .perfil-card h3 { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+    .perfil-card p  { font-size: 12px; color: var(--gray-600); margin-bottom: 14px; }
+
+    /* ── Resultado AFP ────────────────────────────────── */
+    .result-box { border: var(--border); text-align: center; padding: 22px; margin-bottom: 14px; }
+    .result-box .amount { font-size: 32px; font-weight: 700; }
+    .notice-box { border: var(--border); padding: 10px 14px; background: var(--gray-50); margin-bottom: 14px; font-size: 12px; }
+    .notice-box strong { display: block; margin-bottom: 4px; }
+
+    /* ── Status badge ─────────────────────────────────── */
+    .status-badge { display: inline-block; border: var(--border); padding: 6px 14px; font-size: 12px; font-weight: 700; background: var(--gray-50); margin-bottom: 16px; }
+
+    /* ── Pasos siniestro ──────────────────────────────── */
+    .steps { display: flex; border: var(--border); overflow: hidden; margin-bottom: 18px; }
+    .step-tab { flex: 1; padding: 8px 4px; font-size: 11px; font-weight: 600; text-align: center; cursor: pointer; border-right: var(--border); background: var(--white); font-family: var(--font); border: none; border-right: 1px solid #000; }
+    .step-tab:last-child { border-right: none; }
+    .step-tab.active { background: var(--black); color: var(--white); }
+    .step-tab:hover:not(.active) { background: var(--gray-100); }
+    .step-panel { display: none; }
+    .step-panel.active { display: block; }
+
+    /* ── Panel Asesor ─────────────────────────────────── */
+    .summary-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 18px; }
+    .summary-box { border: var(--border); padding: 12px; text-align: center; }
+    .s-label { font-size: 11px; font-weight: 700; margin-bottom: 6px; }
+    .s-num   { font-size: 26px; font-weight: 700; }
+
+    /* ── Reportes ─────────────────────────────────────── */
+    .stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 18px; }
+    .stat-box { border: var(--border); padding: 12px; text-align: center; }
+    .st-label { font-size: 11px; font-weight: 700; margin-bottom: 4px; }
+    .st-num   { font-size: 22px; font-weight: 700; }
+
+    /* ── Seguros disponibles ──────────────────────────── */
+    .seguros-box { border: var(--border); padding: 10px 14px; background: var(--gray-50); margin-bottom: 14px; }
+    .seguros-box .sb-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+    .seguros-box ul { columns: 2; column-gap: 14px; list-style: none; }
+    .seguros-box ul li { font-size: 12px; padding: 1px 0; }
+    .seguros-box ul li.sel { font-weight: 700; }
+    .seguros-box ul li::before { content: '· '; }
+    .seguros-box ul li.sel::before { content: '▶ '; }
+
+    /* ── Periodo selector ─────────────────────────────── */
+    .periodo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .periodo-row span { font-size: 13px; }
+    .periodo-row select { border: var(--border); padding: 6px 10px; font-size: 13px; font-family: var(--font); background: var(--white); appearance: none; }
+
+    /* ── Responsive ───────────────────────────────────── */
+    @media (max-width: 540px) {
+      .inline-fields { grid-template-columns: 1fr; }
+      .stat-grid, .summary-grid { grid-template-columns: 1fr; }
+      .menu-grid { max-width: 100%; }
+      .steps { flex-direction: column; }
+      .step-tab { border-right: none; border-bottom: 1px solid #000; }
+      .step-tab:last-child { border-bottom: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Barra de navegación ──────────────────────── -->
+<div id="nav-bar">
+  <span class="nav-title">SEGURPLAN</span>
+  <span style="font-size:11px;">Pantalla:</span>
+  <select id="screen-select" onchange="goTo(this.value)"></select>
+  <span id="nav-counter"></span>
+  <button onclick="prev()">← Anterior</button>
+  <button onclick="next()">Siguiente →</button>
+</div>
+
+<div id="app">
+
+<!-- ══════════════════════════════════════════════════════
+     3.2.1 — Inicio de sesión
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="s1">
+  <div class="wrap">
+    <div class="card">
+      <div class="card-body">
+        <div class="center" style="margin-bottom:22px;">
+          <div style="font-size:22px;font-weight:700;letter-spacing:.14em;">SEGURPLAN</div>
+        </div>
+        <div class="center" style="margin-bottom:18px;">
+          <strong style="letter-spacing:.08em;font-size:14px;">INICIAR SESIÓN</strong>
+        </div>
+        <div class="field">
+          <label>Correo electrónico</label>
+          <input type="email" placeholder="usuario@correo.com" />
+        </div>
+        <div class="field">
+          <label>Contraseña</label>
+          <input type="password" value="•••••••••" />
+        </div>
+        <div class="center" style="margin:18px 0 14px;">
+          <button class="btn-primary" onclick="goTo('s2')">INICIAR SESIÓN</button>
+        </div>
+        <p class="center" style="font-size:12px;">
+          ¿No tienes cuenta? <a href="#" onclick="goTo('s2');return false;" style="color:var(--black);">Registrarse</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     3.2.2 — Panel principal del usuario
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="s2">
+  <div class="user-header">
+    <span class="logo">SEGURPLAN</span>
+    <div class="header-right">
+      <button class="bell-btn" title="Notificaciones">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+      </button>
+      <button class="perfil-btn">MI PERFIL</button>
+    </div>
+  </div>
+  <div class="greeting">
+    <h1>Hola, Usuario</h1>
+    <p>¿Qué deseas realizar?</p>
+  </div>
+  <div class="menu-grid">
+    <button class="menu-card" onclick="goTo('s3')">
+      <div class="mc-title">COTIZACIONES</div>
+      <div class="mc-sub">Solicitar seguro</div>
+    </button>
+    <button class="menu-card" onclick="goTo('s9')">
+      <div class="mc-title">SINIESTROS</div>
+      <div class="mc-sub">Registrar accidente</div>
+    </button>
+    <button class="menu-card" onclick="goTo('s6')">
+      <div class="mc-title">AFP</div>
+      <div class="mc-sub">Simulación</div>
+    </button>
+    <button class="menu-card" onclick="goTo('s12')">
+      <div class="mc-title">HISTORIAL</div>
+      <div class="mc-sub">Mis procesos</div>
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     3.2.3 — Solicitud de cotización
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="s3">
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header">SEGURPLAN &gt; SOLICITAR COTIZACIÓN</div>
+      <div class="card-body">
+
+        <div class="inline-fields" style="margin-bottom:4px;">
+          <div class="field">
+            <label>Empresa aseguradora</label>
+            <select id="sel-empresa" onchange="onEmpresaChange()">
+              <option value="">-- Seleccionar --</option>
+              <option>Rímac Seguros</option>
+              <option>Pacífico Seguros</option>
+              <option>La Positiva</option>
+              <option>Mapfre Perú</option>
+              <option>Interseguro</option>
+              <option>Seguros SURA</option>
+              <option>BNP Paribas Cardif</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Tipo de seguro</label>
+            <select id="sel-tipo" onchange="onTipoChange()" disabled>
+              <option value="">-- Seleccionar --</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="seguros-box" id="seguros-box" style="display:none;">
+          <div class="sb-title" id="sb-title"></div>
+          <ul id="sb-ul"></ul>
+        </div>
+
+        <div class="section-bar">Datos del cliente</div>
+        <div class="field-row"><label>Nombre:</label><input type="text" /></div>
+        <div class="field-row"><label>DNI:</label><input type="text" maxlength="8" /></div>
+        <div class="field-row" style="margin-bottom:14px;"><label>Teléfono:</label><input type="tel" /></div>
+
+        <div id="datos-req" style="display:none;">
+          <div class="section-bar" id="req-title">Datos requeridos</div>
+          <div id="req-campos"></div>
+        </div>
+
+        <div class="center" style="margin-top:14px;">
+          <button class="btn-primary" onclick="goTo('s4')">ENVIAR SOLICITUD</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     3.2.4 — Cotización recibida
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="s4">
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header">SEGURPLAN &gt; COTIZACIÓN #000125</div>
+      <div class="card-body">
+        <div class="data-row"><span class="lbl">Aseguradora:</span><span class="val"></span></div>
+        <div class="data-row"><span class="lbl">Tipo:</span><span class="val fixed">Seguro Vehicular</span></div>
+        <div style="border:var(--border);padding:12px;margin:12px 0;">
+          <div class="data-row"><span class="lbl">Prima:</span><span class="val fixed">S/ _________</span></div>
+          <div class="data-row"><span class="lbl">Cobertura:</span><span class="val"></span></div>
+          <div class="data-row"><span class="lbl">Deducible:</span><span class="val fixed">S/ _________</span></div>
+          <div class="data-row"><span class="lbl">Vigencia:</span><span class="val"></span></div>
+        </div>
+        <div class="status-badge">Estado: COTIZACIÓN DISPONIBLE</div>
+        <div class="btn-row" style="flex-direction:column;max-width:200px;gap:8px;">
+          <button class="btn">VER CONDICIONES</button>
+          <button class="btn-primary" onclick="goTo('s5')">COMPRAR</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     3.2.5 — Contrato / póliza
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="s5">
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header">SEGURPLAN &gt; CONTRATO / PÓLIZA</div>
+      <div class="card-body">
+        <div class="data-row"><span class="lbl">Nº Póliza:</span><span class="val fixed">00045821</span></div>
+        <div class="data-row"><span class="lbl">Aseguradora:</span><span class="val"></span></div>
+        <div class="data-row"><span class="lbl">Contratante:</span><span class="val"></span></div>
+        <div class="data-row"><span class="lbl">Asegurado:</span><span class="val"></span></div>
+        <div class="data-row">
+          <span class="lbl">Inicio:</span><span class="val" style="max-width:90px;"></span>
+          <span style="margin:0 8px;font-weight:600;">Fin:</span><span class="val"></span>
+        </div>
+        <div class="data-row" style="margin-bottom:18px;"><span class="lbl">Prima:</span><span class="val fixed">S/ __________</span></div>
+        <p style="font-size:13px;font-weight:600;margin-bottom:10px;">Documento de póliza</p>
+        <div class="btn-row" style="flex-direction:column;max-width:180px;gap:8px;">
+          <button class="btn">VER DOCUMENTO</button>
+          <button class="btn">DESCARGAR</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     3.2.6 — Selección de perfil AFP
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="s6">
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header">SEGURPLAN &gt; AFP</div>
+      <div class="card-body">
+        <p class="center" style="font-size:13px;font-weight:600;margin-bottom:20px;">¿Cuál es tu perfil?</p>
+        <div class="perfil-card">
+          <h3>NUEVO INVERSOR</h3>
+          <p>Conoce alternativas y simula tu futuro previsional</p>
+          <button class="btn" onclick="selectPerfil('nuevo')">SELECCIONAR</button>
+        </div>
+        <div class="perfil-card">
+          <h3>PERSONA DE TERCERA EDAD</h3>
+          <p>Consulta tu pensión estimada</p>
+          <button class="btn" onclick="selectPerfil('tercera')">SELECCIONAR</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     3.2.7 — Datos para simulación AFP
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="s7">
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header">SEGURPLAN &gt; SIMULACIÓN AFP</div>
+      <div class="card-body">
+        <div class="status-badge" id="perfil-badge">Perfil: PERSONA DE TERCERA EDAD</div>
+        <div class="field-row"><label>Edad:</label><input id="sim-edad" type="number" min="18" max="99" placeholder="65" /></div>
+        <div class="field-row"><label>Años de aporte:</label><input id="sim-anios" type="number" min="0" placeholder="20" /></div>
+        <div class="field-row"><label>Fondo acumulado (S/):</label><input id="sim-fondo" type="number" placeholder="120000" /></div>
+        <div class="field-row" style="margin-bottom:20px;"><label>Aporte aproximado (S/):</label><input id="sim-aporte" type="number" placeholder="500" /></div>
+        <div class="center">
+          <button class="btn-primary" onclick="simularAFP()">SIMULAR</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     3.2.8 — Resultado de pensión mensual
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="s8">
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header">SEGURPLAN &gt; RESULTADO AFP</div>
+      <div class="card-body">
+        <p style="font-weight:700;margin-bottom:16px;">ESTIMACIÓN PREVISIONAL</p>
+        <p style="font-size:12px;font-weight:600;letter-spacing:.06em;margin-bottom:8px;">PENSIÓN MENSUAL ESTIMADA</p>
+        <div class="result-box">
+          <div class="amount" id="resultado-monto">S/ 1,850.00</div>
+        </div>
+        <div class="data-row"><span class="lbl">Fondo considerado:</span><span class="val fixed" id="res-fondo">S/ —</span></div>
+        <div class="data-row" style="margin-bottom:16px;"><span class="lbl">Años de aporte:</span><span class="val fixed" id="res-anios">—</span></div>
+        <div class="notice-box">
+          <strong>⚠ RESULTADO REFERENCIAL</strong>
+          No representa una pensión oficial.
+        </div>
+        <button class="btn">SOLICITAR ORIENTACIÓN</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     3.2.9 — Registro de siniestro
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="s9">
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header">SEGURPLAN &gt; REGISTRAR SINIESTRO</div>
+      <div class="card-body">
+        <div class="steps" id="steps">
+          <button class="step-tab active" onclick="goStep(1)">1. Vehículo</button>
+          <button class="step-tab"        onclick="goStep(2)">2. Accidente</button>
+          <button class="step-tab"        onclick="goStep(3)">3. Aseguradora</button>
+          <button class="step-tab"        onclick="goStep(4)">4. Confirmar</button>
+        </div>
+
+        <div class="step-panel active" id="step1">
+          <div class="section-bar">DATOS DEL VEHÍCULO</div>
+          <div class="field-row"><label>Placa:</label><input type="text" placeholder="ABC-123" /></div>
+          <div class="field-row"><label>Marca:</label><input type="text" /></div>
+          <div class="field-row"><label>Modelo:</label><input type="text" /></div>
+          <div style="margin-top:16px;"><button class="btn-primary" onclick="goStep(2)">Siguiente →</button></div>
+        </div>
+
+        <div class="step-panel" id="step2">
+          <div class="section-bar">DATOS DEL ACCIDENTE</div>
+          <div class="field-row"><label>Fecha:</label><input type="date" /></div>
+          <div class="field-row"><label>Hora:</label><input type="time" /></div>
+          <div class="field-row"><label>Ubicación:</label><input type="text" /></div>
+          <div class="field" style="margin-top:6px;">
+            <label>Descripción</label>
+            <textarea placeholder="Describa cómo ocurrió el accidente..."></textarea>
+          </div>
+          <div class="btn-row" style="margin-top:12px;">
+            <button class="btn" onclick="goStep(1)">← Anterior</button>
+            <button class="btn-primary" onclick="goStep(3)">Siguiente →</button>
+          </div>
+        </div>
+
+        <div class="step-panel" id="step3">
+          <div class="section-bar">IDENTIFICAR ASEGURADORA</div>
+          <div class="field-row"><label>Nº de póliza:</label><input type="text" placeholder="POL-000123" /></div>
+          <div class="field">
+            <label>Aseguradora</label>
+            <select>
+              <option>-- Seleccionar --</option>
+              <option>Rímac Seguros</option>
+              <option>Pacífico Seguros</option>
+              <option>La Positiva</option>
+              <option>Mapfre Perú</option>
+              <option>Interseguro</option>
+              <option>Seguros SURA</option>
+            </select>
+          </div>
+          <div class="field-row"><label>Vigencia póliza:</label><input type="date" /></div>
+          <div class="btn-row" style="margin-top:12px;">
+            <button class="btn" onclick="goStep(2)">← Anterior</button>
+            <button class="btn-primary" onclick="goStep(4)">Siguiente →</button>
+          </div>
+        </div>
+
+        <div class="step-panel" id="step4">
+          <div class="section-bar green">✓ DATOS REGISTRADOS</div>
+          <p style="font-size:13px;margin-bottom:16px;color:var(--green);">
+            La información del siniestro ha sido registrada. Continúe para adjuntar las evidencias.
+          </p>
+          <div class="btn-row">
+            <button class="btn" onclick="goStep(3)">← Anterior</button>
+            <button class="btn-primary" onclick="goTo('s10')">CONTINUAR →</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     3.2.10 — Carga de evidencias
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="s10">
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header">SEGURPLAN &gt; EVIDENCIAS</div>
+      <div class="card-body">
+        <p style="font-size:13px;margin-bottom:16px;">Adjunta evidencias del accidente</p>
+
+        <div class="section-bar">Documentos obligatorios</div>
+        <div class="file-list" id="docs-list"></div>
+        <div id="docs-status"></div>
+
+        <div class="section-bar" style="margin-top:18px;">Archivo multimedia</div>
+        <p style="font-size:12px;color:var(--gray-600);margin-bottom:10px;">
+          Sube videos del momento del accidente (formatos: .mp4, .mov, .avi — máx. 100 MB por archivo).
+        </p>
+        <div class="upload-zone">
+          <p>Arrastra tus videos aquí o haz clic para seleccionar</p>
+          <button class="btn" onclick="addMedia()">+ SUBIR ARCHIVO MULTIMEDIA</button>
+        </div>
+        <div class="file-list" id="media-list"></div>
+
+        <div style="margin-top:18px;">
+          <button class="btn-primary" onclick="goTo('s11')">GUARDAR Y CONTINUAR</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     3.2.11 — Revisión preliminar del siniestro
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="s11">
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header">SEGURPLAN &gt; REVISIÓN #000248</div>
+      <div class="card-body">
+        <div class="data-row"><span class="lbl">Usuario:</span><span class="val fixed">Juan Pérez</span></div>
+        <div class="data-row"><span class="lbl">Vehículo:</span><span class="val fixed">Toyota Corolla - ABC123</span></div>
+        <div class="data-row"><span class="lbl">Fecha accidente:</span><span class="val fixed">25/08/2026</span></div>
+        <div class="data-row" style="margin-bottom:16px;"><span class="lbl">Aseguradora asociada:</span><span class="val"></span></div>
+        <p style="font-size:13px;font-weight:600;margin-bottom:8px;">Documentación</p>
+        <ul style="list-style:none;font-size:13px;margin-bottom:16px;line-height:2.2;">
+          <li>✓ Datos del vehículo</li>
+          <li>✓ Datos del accidente</li>
+          <li>✓ Fotografías</li>
+        </ul>
+        <div class="status-badge">Estado: INFORMACIÓN COMPLETA</div>
+        <div class="btn-row" style="flex-direction:column;max-width:220px;gap:8px;">
+          <button class="btn">SOLICITAR INFORMACIÓN</button>
+          <button class="btn-primary" onclick="goTo('s12')">DERIVAR A ASEGURADORA</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     3.2.12 — Seguimiento del siniestro
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="s12">
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header">SEGURPLAN &gt; SINIESTRO #000248</div>
+      <div class="card-body">
+        <div class="status-badge">ESTADO ACTUAL: EN REVISIÓN</div>
+        <ul class="timeline">
+          <li>
+            <div class="tl-left"><div class="tl-dot done">✓</div><div class="tl-line"></div></div>
+            <div class="tl-text done">Siniestro registrado</div>
+          </li>
+          <li>
+            <div class="tl-left"><div class="tl-dot done">✓</div><div class="tl-line"></div></div>
+            <div class="tl-text done">Información revisada</div>
+          </li>
+          <li>
+            <div class="tl-left"><div class="tl-dot done">✓</div><div class="tl-line"></div></div>
+            <div class="tl-text done">Derivado a aseguradora</div>
+          </li>
+          <li>
+            <div class="tl-left"><div class="tl-dot active">●</div><div class="tl-line"></div></div>
+            <div class="tl-text active">Evaluación por aseguradora</div>
+          </li>
+          <li>
+            <div class="tl-left"><div class="tl-dot pending">○</div></div>
+            <div class="tl-text pending">Resultado</div>
+          </li>
+        </ul>
+        <p style="font-size:12px;color:var(--gray-600);margin-top:12px;">Última actualización: 29/08/2026</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     3.2.13 — Panel del asesor
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="s13">
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header">SEGURPLAN - PANEL DEL ASESOR</div>
+      <div class="card-body">
+        <div class="section-bar">SOLICITUDES PENDIENTES</div>
+        <div class="summary-grid">
+          <div class="summary-box"><div class="s-label">COTIZACIONES</div><div class="s-num">08</div></div>
+          <div class="summary-box"><div class="s-label">SINIESTROS</div><div class="s-num">05</div></div>
+          <div class="summary-box"><div class="s-label">AFP</div><div class="s-num">04</div></div>
+        </div>
+        <button class="btn-block">COTIZACIONES</button>
+        <button class="btn-block">SINIESTROS</button>
+        <button class="btn-block">AFP</button>
+        <button class="btn-block">DOCUMENTOS</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     3.2.14 — Administración
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="s14">
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header">SEGURPLAN - ADMINISTRACIÓN</div>
+      <div class="card-body">
+        <button class="btn-block">GESTIONAR USUARIOS</button>
+        <button class="btn-block">GESTIONAR ASESORES</button>
+        <button class="btn-block">ROLES Y PERMISOS</button>
+        <button class="btn-block">REPORTES</button>
+        <button class="btn-block">HISTORIAL DEL SISTEMA</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     3.2.15 — Reporte general
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="s15">
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header">SEGURPLAN &gt; REPORTES</div>
+      <div class="card-body">
+        <p style="font-weight:700;margin-bottom:14px;">REPORTE GENERAL</p>
+        <div class="periodo-row">
+          <span>Periodo:</span>
+          <select>
+            <option>Agosto 2026</option><option>Julio 2026</option><option>Junio 2026</option>
+          </select>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-box"><div class="st-label">COTIZACIONES</div><div class="st-num">125</div></div>
+          <div class="stat-box"><div class="st-label">SINIESTROS</div><div class="st-num">38</div></div>
+          <div class="stat-box"><div class="st-label">AFP</div><div class="st-num">57</div></div>
+        </div>
+        <p style="font-size:11px;font-weight:700;text-transform:uppercase;margin-bottom:8px;">COTIZACIONES</p>
+        <div class="bar-row"><div class="bar-label"><span>Atendidas</span><span>80%</span></div><div class="bar-track"><div class="bar-fill" style="width:80%"></div></div></div>
+        <p style="font-size:11px;font-weight:700;text-transform:uppercase;margin:12px 0 8px;">SINIESTROS</p>
+        <div class="bar-row"><div class="bar-label"><span>En revisión</span><span>60%</span></div><div class="bar-track"><div class="bar-fill" style="width:60%"></div></div></div>
+        <div class="bar-row"><div class="bar-label"><span>Derivados</span><span>40%</span></div><div class="bar-track"><div class="bar-fill" style="width:40%"></div></div></div>
+        <p style="font-size:11px;font-weight:700;text-transform:uppercase;margin:12px 0 8px;">AFP</p>
+        <div style="font-size:13px;margin-bottom:16px;line-height:2.2;">
+          <div>Nuevos inversores: <strong>32</strong></div>
+          <div>Personas tercera edad: <strong>25</strong></div>
+        </div>
+        <button class="btn">EXPORTAR REPORTE</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     3.2.16 — Reporte de siniestros
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="s16">
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header">SEGURPLAN &gt; REPORTE DE SINIESTROS</div>
+      <div class="card-body">
+        <div class="periodo-row">
+          <span>Periodo:</span>
+          <select><option>Agosto 2026</option><option>Julio 2026</option></select>
+        </div>
+        <div style="font-size:13px;margin-bottom:18px;">
+          <div class="data-row"><span class="lbl">Total registrados:</span><span class="val fixed"><strong>38</strong></span></div>
+          <div class="data-row"><span class="lbl">En revisión:</span><span class="val fixed"><strong>12</strong></span></div>
+          <div class="data-row"><span class="lbl">Derivados:</span><span class="val fixed"><strong>18</strong></span></div>
+          <div class="data-row"><span class="lbl">Con resultado:</span><span class="val fixed"><strong>8</strong></span></div>
+        </div>
+        <p style="font-size:11px;font-weight:700;text-transform:uppercase;margin-bottom:10px;">Estado de casos</p>
+        <div class="bar-row"><div class="bar-label"><span>Registrado</span></div><div class="bar-track"><div class="bar-fill" style="width:25%"></div></div></div>
+        <div class="bar-row"><div class="bar-label"><span>En revisión</span></div><div class="bar-track"><div class="bar-fill" style="width:35%"></div></div></div>
+        <div class="bar-row"><div class="bar-label"><span>Derivado</span></div><div class="bar-track"><div class="bar-fill" style="width:55%"></div></div></div>
+        <div class="bar-row"><div class="bar-label"><span>Resultado</span></div><div class="bar-track"><div class="bar-fill" style="width:20%"></div></div></div>
+        <div style="margin-top:16px;"><button class="btn">EXPORTAR</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     3.2.17 — Reporte AFP
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="s17">
+  <div class="wrap">
+    <div class="card">
+      <div class="card-header">SEGURPLAN &gt; REPORTE AFP</div>
+      <div class="card-body">
+        <div class="periodo-row">
+          <span>Periodo:</span>
+          <select><option>Agosto 2026</option><option>Julio 2026</option></select>
+        </div>
+        <div style="font-size:13px;margin-bottom:16px;">
+          <div class="data-row"><span class="lbl" style="font-weight:700;">NUEVOS INVERSORES:</span><span class="val fixed"><strong>32</strong></span></div>
+          <div class="data-row"><span class="lbl" style="font-weight:700;">TERCERA EDAD:</span><span class="val fixed"><strong>25</strong></span></div>
+          <div class="data-row"><span class="lbl">Simulaciones realizadas:</span><span class="val fixed"><strong>48</strong></span></div>
+          <div class="data-row"><span class="lbl">Orientaciones solicitadas:</span><span class="val fixed"><strong>21</strong></span></div>
+        </div>
+        <p style="font-size:11px;font-weight:700;text-transform:uppercase;margin-bottom:10px;">Perfil de usuarios</p>
+        <div class="bar-row"><div class="bar-label"><span>Nuevo inversor</span><span>57%</span></div><div class="bar-track"><div class="bar-fill" style="width:57%"></div></div></div>
+        <div class="bar-row"><div class="bar-label"><span>Tercera edad</span><span>43%</span></div><div class="bar-track"><div class="bar-fill" style="width:43%"></div></div></div>
+        <div style="margin-top:16px;"><button class="btn">EXPORTAR</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- #app -->
+
+<script>
+/* ══════════════════════════════════════════════════════
+   DATOS
+══════════════════════════════════════════════════════ */
+const SCREENS_DEF = [
+  {id:'s1',  label:'3.2.1 Inicio de sesión'},
+  {id:'s2',  label:'3.2.2 Panel principal del usuario'},
+  {id:'s3',  label:'3.2.3 Solicitud de cotización'},
+  {id:'s4',  label:'3.2.4 Cotización recibida'},
+  {id:'s5',  label:'3.2.5 Contrato / póliza'},
+  {id:'s6',  label:'3.2.6 Selección de perfil AFP'},
+  {id:'s7',  label:'3.2.7 Datos para simulación AFP'},
+  {id:'s8',  label:'3.2.8 Resultado de pensión mensual'},
+  {id:'s9',  label:'3.2.9 Registro de siniestro'},
+  {id:'s10', label:'3.2.10 Carga de evidencias'},
+  {id:'s11', label:'3.2.11 Revisión preliminar del siniestro'},
+  {id:'s12', label:'3.2.12 Seguimiento del siniestro'},
+  {id:'s13', label:'3.2.13 Panel del asesor'},
+  {id:'s14', label:'3.2.14 Administración'},
+  {id:'s15', label:'3.2.15 Reporte general'},
+  {id:'s16', label:'3.2.16 Reporte de siniestros'},
+  {id:'s17', label:'3.2.17 Reporte AFP'},
+];
+
+const ASEGURADORAS = {
+  'Rímac Seguros':      ['Seguro vehicular','SOAT','Seguro de vida','Seguro de salud','Seguro de hogar','Seguro de accidentes personales','Seguro de viaje','Seguro de desgravamen'],
+  'Pacífico Seguros':   ['Seguro vehicular','SOAT','Seguro de vida','Seguro de salud','Seguro oncológico','Seguro de hogar','Seguro de accidentes personales','Seguro de viaje'],
+  'La Positiva':        ['Seguro vehicular','SOAT','Seguro de vida','Seguro de salud','Seguro de hogar','Seguro agrícola','Seguro de accidentes personales','Seguro estudiantil'],
+  'Mapfre Perú':        ['Seguro vehicular','SOAT','Seguro de vida','Seguro de hogar','Seguro de accidentes personales','Seguro de viaje','Seguro de desgravamen'],
+  'Interseguro':        ['Seguro de vida','Seguro de vida con ahorro','Seguro de desgravamen','Seguro oncológico','Seguro de accidentes personales','Seguro de sepelio'],
+  'Seguros SURA':       ['Seguro vehicular','SOAT','Seguro de vida','Seguro de salud','Seguro de hogar','Seguro de accidentes personales','Seguro de viaje'],
+  'BNP Paribas Cardif': ['Seguro de desgravamen','Seguro de vida','Seguro de accidentes personales','Seguro de desempleo','Seguro oncológico'],
+};
+
+const CAMPOS = {
+  'Seguro vehicular':          [['Placa:','text'],['Marca:','text'],['Modelo:','text']],
+  'SOAT':                      [['Placa:','text'],['Marca:','text'],['Modelo:','text']],
+  'Seguro de vida':            [['Fecha de nacimiento:','date'],['Suma asegurada (S/):','number']],
+  'Seguro de vida con ahorro': [['Fecha de nacimiento:','date'],['Suma asegurada (S/):','number']],
+  'Seguro de salud':           [['Fecha de nacimiento:','date'],['N° de beneficiarios:','number']],
+  'Seguro de hogar':           [['Dirección del inmueble:','text'],['Tipo de inmueble:','text']],
+  'Seguro oncológico':         [['Fecha de nacimiento:','date'],['Observaciones:','text']],
+  'Seguro de accidentes personales': [['Fecha de nacimiento:','date'],['Observaciones:','text']],
+  'Seguro estudiantil':        [['Fecha de nacimiento:','date'],['Centro educativo:','text']],
+  'Seguro de sepelio':         [['Fecha de nacimiento:','date'],['Observaciones:','text']],
+  'Seguro de desempleo':       [['Fecha de nacimiento:','date'],['Observaciones:','text']],
+  'Seguro de desgravamen':     [['Entidad financiera:','text'],['Monto del crédito (S/):','number']],
+  'Seguro de viaje':           [['Destino:','text'],['Fecha de salida:','date'],['Fecha de retorno:','date']],
+  'Seguro agrícola':           [['Tipo de cultivo:','text'],['Hectáreas:','number']],
+};
+
+let docsState = [
+  {id:'dni',      label:'DNI del titular',                   obligatorio:true,  cargado:true  },
+  {id:'licencia', label:'Licencia de conducir',              obligatorio:true,  cargado:true  },
+  {id:'tarjeta',  label:'Tarjeta de propiedad del vehículo', obligatorio:true,  cargado:false },
+  {id:'soat',     label:'SOAT vigente',                      obligatorio:true,  cargado:false },
+  {id:'denuncia', label:'Denuncia policial (si aplica)',      obligatorio:false, cargado:true  },
+];
+
+let mediaState = [
+  {nombre:'video_accidente_01.mp4'},
+  {nombre:'video_accidente_02.mp4'},
+];
+let mediaCount = 3;
+
+/* ══════════════════════════════════════════════════════
+   NAVEGACIÓN
+══════════════════════════════════════════════════════ */
+let currentIdx = 0;
+
+function buildNav() {
+  const sel = document.getElementById('screen-select');
+  SCREENS_DEF.forEach((s, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = s.label;
+    sel.appendChild(opt);
+  });
+}
+
+function showScreen(idx) {
+  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+  document.getElementById(SCREENS_DEF[idx].id).classList.add('active');
+  document.getElementById('screen-select').value = idx;
+  document.getElementById('nav-counter').textContent = '[' + (idx+1) + '/' + SCREENS_DEF.length + ']';
+  currentIdx = idx;
+  window.scrollTo(0, 0);
+  if (SCREENS_DEF[idx].id === 's10') renderS10();
+}
+
+function goTo(val) {
+  if (typeof val === 'string' && val.startsWith('s')) {
+    const idx = SCREENS_DEF.findIndex(s => s.id === val);
+    if (idx >= 0) showScreen(idx);
+  } else {
+    showScreen(Number(val));
+  }
+}
+
+function prev() { if (currentIdx > 0) showScreen(currentIdx - 1); }
+function next() { if (currentIdx < SCREENS_DEF.length - 1) showScreen(currentIdx + 1); }
+
+/* ══════════════════════════════════════════════════════
+   PANTALLA 3 — Cotización dinámica
+══════════════════════════════════════════════════════ */
+function onEmpresaChange() {
+  const empresa = document.getElementById('sel-empresa').value;
+  const selTipo = document.getElementById('sel-tipo');
+  const box     = document.getElementById('seguros-box');
+  const ul      = document.getElementById('sb-ul');
+  const title   = document.getElementById('sb-title');
+
+  selTipo.innerHTML = '<option value="">-- Seleccionar --</option>';
+  selTipo.disabled = !empresa;
+  document.getElementById('datos-req').style.display = 'none';
+
+  if (!empresa) { box.style.display = 'none'; return; }
+
+  (ASEGURADORAS[empresa] || []).forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s; opt.textContent = s;
+    selTipo.appendChild(opt);
+  });
+
+  title.textContent = 'Seguros disponibles — ' + empresa;
+  ul.innerHTML = '';
+  (ASEGURADORAS[empresa] || []).forEach(s => {
+    const li = document.createElement('li');
+    li.textContent = s; li.dataset.tipo = s;
+    ul.appendChild(li);
+  });
+  box.style.display = 'block';
+}
+
+function onTipoChange() {
+  const tipo = document.getElementById('sel-tipo').value;
+  const ul   = document.getElementById('sb-ul');
+
+  ul.querySelectorAll('li').forEach(li => {
+    li.className = li.dataset.tipo === tipo ? 'sel' : '';
+  });
+
+  const reqDiv = document.getElementById('datos-req');
+  if (!tipo) { reqDiv.style.display = 'none'; return; }
+
+  document.getElementById('req-title').textContent = 'Datos requeridos — ' + tipo;
+  const campos = CAMPOS[tipo] || [['Información adicional:','text']];
+  const cont = document.getElementById('req-campos');
+  cont.innerHTML = '';
+  campos.forEach(([lbl, type]) => {
+    const row = document.createElement('div');
+    row.className = 'field-row';
+    row.innerHTML = '<label>' + lbl + '</label><input type="' + type + '" />';
+    cont.appendChild(row);
+  });
+  reqDiv.style.display = 'block';
+}
+
+/* ══════════════════════════════════════════════════════
+   PANTALLAS 6–8 — AFP
+══════════════════════════════════════════════════════ */
+function selectPerfil(tipo) {
+  document.getElementById('perfil-badge').textContent =
+    tipo === 'nuevo' ? 'Perfil: NUEVO INVERSOR' : 'Perfil: PERSONA DE TERCERA EDAD';
+  goTo('s7');
+}
+
+function simularAFP() {
+  const anios = document.getElementById('sim-anios').value || '—';
+  const fondo = document.getElementById('sim-fondo').value;
+  const fondoFmt = fondo
+    ? 'S/ ' + Number(fondo).toLocaleString('es-PE', {minimumFractionDigits:2})
+    : 'S/ —';
+  const monto = fondo
+    ? 'S/ ' + (Number(fondo) * 0.015).toLocaleString('es-PE', {minimumFractionDigits:2, maximumFractionDigits:2})
+    : 'S/ 1,850.00';
+
+  document.getElementById('resultado-monto').textContent = monto;
+  document.getElementById('res-fondo').textContent = fondoFmt;
+  document.getElementById('res-anios').textContent = anios;
+  goTo('s8');
+}
+
+/* ══════════════════════════════════════════════════════
+   PANTALLA 9 — Pasos siniestro
+══════════════════════════════════════════════════════ */
+function goStep(n) {
+  document.querySelectorAll('.step-tab').forEach((t, i) => t.classList.toggle('active', i+1 === n));
+  document.querySelectorAll('.step-panel').forEach((p, i) => p.classList.toggle('active', i+1 === n));
+}
+
+/* ══════════════════════════════════════════════════════
+   PANTALLA 10 — Evidencias
+══════════════════════════════════════════════════════ */
+function renderS10() {
+  renderDocs();
+  renderMedia();
+}
+
+function renderDocs() {
+  const list   = document.getElementById('docs-list');
+  const status = document.getElementById('docs-status');
+  list.innerHTML = '';
+
+  docsState.forEach((doc, i) => {
+    const row = document.createElement('div');
+    row.className = 'file-item';
+
+    const left = document.createElement('div');
+    left.style.cssText = 'display:flex;align-items:center;gap:8px;';
+
+    const chk = document.createElement('span');
+    chk.className = 'file-check' + (doc.cargado ? ' ok' : '');
+    chk.textContent = doc.cargado ? '✓' : '';
+
+    const txt = document.createElement('span');
+    txt.textContent = doc.label;
+    txt.style.color = doc.cargado ? '' : 'var(--gray-600)';
+
+    left.appendChild(chk);
+    left.appendChild(txt);
+
+    if (doc.obligatorio && !doc.cargado) {
+      const warn = document.createElement('span');
+      warn.textContent = '* obligatorio';
+      warn.style.cssText = 'font-size:11px;color:var(--red);font-weight:600;';
+      left.appendChild(warn);
+    }
+
+    const btn = document.createElement('button');
+    btn.className = 'file-btn';
+    btn.textContent = doc.cargado ? 'Eliminar' : '+ Adjuntar';
+    btn.onclick = () => { docsState[i].cargado = !docsState[i].cargado; renderDocs(); };
+
+    row.appendChild(left);
+    row.appendChild(btn);
+    list.appendChild(row);
+  });
+
+  const faltantes = docsState.filter(d => d.obligatorio && !d.cargado).length;
+  status.innerHTML = faltantes > 0
+    ? '<p class="warn">⚠ Faltan ' + faltantes + ' documento' + (faltantes>1?'s':'') + ' obligatorio' + (faltantes>1?'s':'') + ' por adjuntar.</p>'
+    : '<p class="ok-msg">✓ Documentación completa.</p>';
+}
+
+function renderMedia() {
+  const list = document.getElementById('media-list');
+  list.innerHTML = '';
+  mediaState.forEach((m, i) => {
+    const ext = m.nombre.split('.').pop().toUpperCase();
+    const row = document.createElement('div');
+    row.className = 'file-item';
+
+    const left = document.createElement('div');
+    left.style.cssText = 'display:flex;align-items:center;gap:8px;';
+    left.innerHTML = '<span class="file-ext">' + ext + '</span><span>' + m.nombre + '</span>';
+
+    const btn = document.createElement('button');
+    btn.className = 'file-btn';
+    btn.textContent = 'Eliminar';
+    btn.onclick = () => { mediaState.splice(i, 1); renderMedia(); };
+
+    row.appendChild(left);
+    row.appendChild(btn);
+    list.appendChild(row);
+  });
+}
+
+function addMedia() {
+  const nombres = ['video_accidente_03.mp4','clip_choque.mov','evidencia_lateral.mp4','grabacion_impacto.avi'];
+  mediaState.push({nombre: nombres[(mediaCount - 1) % nombres.length]});
+  mediaCount++;
+  renderMedia();
+}
+
+/* ══════════════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════════════ */
+buildNav();
+showScreen(0);
+</script>
+</body>
+</html>

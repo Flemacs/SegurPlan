@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SEGURPLAN — Reporte AFP</title>
+  <link rel="stylesheet" href="../assets/styles.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+  <div class="header-right">
+    <span class="user-name">Usuario: Luis Mendoza — Administrador</span>
+    <button class="bell-btn" title="Notificaciones">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </button>
+    <button class="profile-btn">MI PERFIL</button>
+  </div>
+</header>
+
+<div class="page-wrap">
+  <nav class="breadcrumb">SEGURPLAN &rsaquo; Reportes &rsaquo; Reporte AFP</nav>
+  <h1 class="page-title">Reporte AFP</h1>
+
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
+    <label style="font-weight:600;font-size:14px;">Período:</label>
+    <select class="form-control" style="width:auto;">
+      <option>Agosto 2026</option>
+      <option>Julio 2026</option>
+      <option>Junio 2026</option>
+    </select>
+    <button class="btn btn-primary">GENERAR</button>
+  </div>
+
+  <div class="stats-grid cols-4">
+    <div class="stat-box">
+      <div class="stat-value">32</div>
+      <div class="stat-label">Nuevos inversores</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-value">25</div>
+      <div class="stat-label">Tercera edad</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-value">48</div>
+      <div class="stat-label">Simulaciones</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-value">21</div>
+      <div class="stat-label">Orientaciones</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Perfil de usuarios AFP</h2>
+    </div>
+    <div class="card-body">
+      <div class="bar-group">
+        <span class="bar-label">Nuevo inversor</span>
+        <div class="bar-track"><div class="bar-fill" style="width:57%;"></div></div>
+        <span class="bar-pct">57%</span>
+      </div>
+      <div class="bar-group">
+        <span class="bar-label">Tercera edad</span>
+        <div class="bar-track"><div class="bar-fill" style="width:43%;background:var(--accent);"></div></div>
+        <span class="bar-pct">43%</span>
+      </div>
+
+      <hr class="divider" />
+
+      <h3 class="section-title">Detalle de orientaciones</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Cantidad</th>
+              <th>%</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Orientación brindada</td>
+              <td>14</td>
+              <td>67%</td>
+            </tr>
+            <tr>
+              <td>Simulación realizada</td>
+              <td>5</td>
+              <td>24%</td>
+            </tr>
+            <tr>
+              <td>Pendiente atención</td>
+              <td>2</td>
+              <td>9%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card-footer">
+      <button class="btn btn-primary">EXPORTAR</button>
+      <button class="btn btn-outline">IMPRIMIR</button>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+  <nav class="footer-links">
+    <a href="../index.html">Inicio</a>
+    <a href="s01-login.html">Iniciar sesión</a>
+    <a href="s00-registro.html">Registrarse</a>
+  </nav>
+  <div class="footer-meta">
+    <span>© 2026 SEGURPLAN. Todos los derechos reservados.</span>
+  </div>
+</footer>
+<script src="../assets/app.js"></script>
+</body>
+</html>
