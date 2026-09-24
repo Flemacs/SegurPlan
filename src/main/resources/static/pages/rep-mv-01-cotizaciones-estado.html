@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SEGURPLAN — REP-MV-01 Cotizaciones por estado</title>
+
+    <link rel="stylesheet" href="../assets/styles.css">
+
+    <style>
+        .report-nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 0 0 24px;
+        }
+
+        .report-nav a {
+            padding: 9px 12px;
+            border: 1px solid #d7dce5;
+            border-radius: 6px;
+            background: #fff;
+            color: #183153;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .report-nav a:hover {
+            background: #eef2f8;
+        }
+
+        .report-code {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #eef2f8;
+            color: #183153;
+            font-size: 12px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .report-toolbar {
+            display: flex;
+            gap: 12px;
+            align-items: end;
+            flex-wrap: wrap;
+            margin: 22px 0;
+        }
+
+        .report-toolbar .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .report-toolbar label {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .report-kpis {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin: 18px 0 24px;
+        }
+
+        .report-kpi {
+            background: #fff;
+            border: 1px solid #dfe3ea;
+            border-radius: 8px;
+            padding: 18px;
+        }
+
+        .report-kpi strong {
+            display: block;
+            font-size: 25px;
+            color: #183153;
+            margin-bottom: 5px;
+        }
+
+        .report-kpi span {
+            font-size: 11px;
+            color: #687386;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .chart-panel {
+            height: 250px;
+            display: flex;
+            align-items: flex-end;
+            gap: 18px;
+            padding: 28px 24px 12px;
+            border: 1px solid #e1e5eb;
+            border-radius: 8px;
+            background: #fafbfc;
+            margin-bottom: 24px;
+        }
+
+        .chart-col {
+            flex: 1;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .chart-bar {
+            margin: auto;
+            width: min(65px, 80%);
+            background: #183153;
+            border-radius: 6px 6px 0 0;
+            min-height: 5px;
+            transition: height .4s ease;
+        }
+
+        .chart-col small {
+            display: block;
+            margin-top: 8px;
+            font-size: 10px;
+            color: #687386;
+        }
+
+        .report-note {
+            font-size: 12px;
+            color: #687386;
+            margin-top: 12px;
+        }
+
+        .status-pill {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            background: #eef2f8;
+            font-weight: 700;
+            font-size: 11px;
+        }
+
+        @media(max-width:760px) {
+
+            .report-kpis {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .chart-panel {
+                gap: 8px;
+            }
+
+            .site-header {
+                height: auto;
+            }
+
+            .header-right {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="site-header">
+
+    <div class="logo">
+        SEGURPLAN
+        <span>Plataforma de seguros y AFP</span>
+    </div>
+
+    <div class="header-right">
+
+        <span class="user-name" id="header-user">
+            Usuario
+        </span>
+
+        <button class="profile-btn" type="button">
+            MI PERFIL
+        </button>
+
+        <button class="btn-logout" type="button">
+            CERRAR SESIÓN
+        </button>
+
+    </div>
+
+</header>
+
+
+<div class="page-wrap">
+
+    <nav class="breadcrumb">
+        SEGURPLAN &rsaquo;
+        Reportes &rsaquo;
+        Marketing y Ventas &rsaquo;
+        Cotizaciones por estado
+    </nav>
+
+
+    <div class="report-nav">
+
+        <a href="rep-mv-01-cotizaciones-estado.html">
+            Marketing y Ventas
+        </a>
+
+        <a href="rep-la-01-documentos.html">
+            Logística
+        </a>
+
+        <a href="rep-po-01-afp.html">
+            Operaciones
+        </a>
+
+        <a href="rep-dg-01-general.html">
+            Gerencia
+        </a>
+
+        <a href="rep-ot-02-trazabilidad.html">
+            Trazabilidad
+        </a>
+
+        <a href="s14-administracion.html">
+            Administración
+        </a>
+
+    </div>
+
+
+    <span class="report-code">
+        REP-MV-01
+    </span>
+
+
+    <h1 class="page-title">
+        Cotizaciones por estado
+    </h1>
+
+    <p class="page-subtitle">
+        Visualiza la distribución de solicitudes de cotización según su estado.
+    </p>
+
+
+    <!-- ============================= -->
+    <!-- FILTROS -->
+    <!-- ============================= -->
+
+    <div class="report-toolbar">
+
+        <div class="field">
+
+            <label for="periodo">
+                Período
+            </label>
+
+            <input
+                    class="form-control"
+                    id="periodo"
+                    type="month">
+
+        </div>
+
+
+        <button
+                class="btn btn-primary"
+                id="btn-generar"
+                type="button">
+
+            GENERAR
+
+        </button>
+
+
+        <button
+                class="btn btn-secondary"
+                id="btn-exportar"
+                type="button">
+
+            EXPORTAR CSV
+
+        </button>
+
+    </div>
+
+
+    <!-- ============================= -->
+    <!-- KPI -->
+    <!-- ============================= -->
+
+    <div class="report-kpis">
+
+        <div class="report-kpi">
+
+            <strong id="kpi-total">
+                0
+            </strong>
+
+            <span>
+                Total cotizaciones
+            </span>
+
+        </div>
+
+
+        <div class="report-kpi">
+
+            <strong id="kpi-solicitadas">
+                0
+            </strong>
+
+            <span>
+                Solicitadas
+            </span>
+
+        </div>
+
+
+        <div class="report-kpi">
+
+            <strong id="kpi-revision">
+                0
+            </strong>
+
+            <span>
+                En revisión
+            </span>
+
+        </div>
+
+
+        <div class="report-kpi">
+
+            <strong id="kpi-aceptadas">
+                0
+            </strong>
+
+            <span>
+                Aceptadas
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- ============================= -->
+    <!-- GRÁFICO -->
+    <!-- ============================= -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <h2>
+                Resumen visual
+            </h2>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="chart-panel">
+
+
+                <div class="chart-col">
+
+                    <div
+                            id="barra-solicitadas"
+                            class="chart-bar">
+                    </div>
+
+                    <small>
+                        Solicitadas
+                    </small>
+
+                </div>
+
+
+                <div class="chart-col">
+
+                    <div
+                            id="barra-revision"
+                            class="chart-bar">
+                    </div>
+
+                    <small>
+                        En revisión
+                    </small>
+
+                </div>
+
+
+                <div class="chart-col">
+
+                    <div
+                            id="barra-disponibles"
+                            class="chart-bar">
+                    </div>
+
+                    <small>
+                        Disponibles
+                    </small>
+
+                </div>
+
+
+                <div class="chart-col">
+
+                    <div
+                            id="barra-aceptadas"
+                            class="chart-bar">
+                    </div>
+
+                    <small>
+                        Aceptadas
+                    </small>
+
+                </div>
+
+
+                <div class="chart-col">
+
+                    <div
+                            id="barra-rechazadas"
+                            class="chart-bar">
+                    </div>
+
+                    <small>
+                        Rechazadas
+                    </small>
+
+                </div>
+
+
+                <div class="chart-col">
+
+                    <div
+                            id="barra-vencidas"
+                            class="chart-bar">
+                    </div>
+
+                    <small>
+                        Vencidas
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <p class="report-note" id="nota-periodo">
+                Seleccione un período para consultar las cotizaciones.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ============================= -->
+    <!-- TABLA -->
+    <!-- ============================= -->
+
+    <div
+            class="card"
+            style="margin-top:20px">
+
+        <div class="card-header">
+
+            <h2>
+                Detalle del reporte
+            </h2>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="table-wrap">
+
+                <table id="tabla-reporte">
+
+                    <thead>
+
+                    <tr>
+
+                        <th>Estado</th>
+
+                        <th>Cantidad</th>
+
+                        <th>Porcentaje</th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody id="tabla-body">
+
+                    <!-- JavaScript carga los datos -->
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="../assets/app.js"></script>
+
+
+<script>
+
+    // =====================================================
+    // AUTENTICACIÓN
+    // =====================================================
+
+    const sesion =
+        sp_requireAuth('s01-login.html');
+
+
+    if (sesion) {
+
+        document.getElementById(
+            'header-user'
+        ).textContent =
+            (sesion.nombres || 'Usuario')
+            + ' '
+            + (sesion.apellidos || '');
+
+    }
+
+
+    document.querySelector(
+        '.btn-logout'
+    ).addEventListener(
+        'click',
+        sp_logout
+    );
+
+
+    // =====================================================
+    // PERÍODO ACTUAL
+    // =====================================================
+
+    const periodo =
+        document.getElementById('periodo');
+
+
+    const fechaActual =
+        new Date();
+
+
+    periodo.value =
+        fechaActual.getFullYear()
+        + '-'
+        + String(
+            fechaActual.getMonth() + 1
+        ).padStart(2, '0');
+
+
+    // =====================================================
+    // GENERAR REPORTE
+    // =====================================================
+
+    async function cargarReporte() {
+
+        if (!periodo.value) {
+
+            alert(
+                'Seleccione un período.'
+            );
+
+            return;
+        }
+
+
+        const partes =
+            periodo.value.split('-');
+
+
+        const anio =
+            partes[0];
+
+
+        const mes =
+            partes[1];
+
+
+        try {
+
+            const respuesta =
+                await fetch(
+                    '/api/reportes/marketing/cotizaciones-estado'
+                    + '?anio='
+                    + anio
+                    + '&mes='
+                    + mes
+                );
+
+
+            const data =
+                await respuesta.json();
+
+
+            if (!respuesta.ok) {
+
+                throw new Error(
+                    data.mensaje
+                    || 'No se pudo generar el reporte.'
+                );
+
+            }
+
+
+            actualizarReporte(data);
+
+
+        } catch (error) {
+
+            console.error(
+                'Error REP-MV-01:',
+                error
+            );
+
+
+            alert(
+                'No se pudo cargar el reporte.\n'
+                + error.message
+            );
+
+        }
+
+    }
+
+
+    // =====================================================
+    // ACTUALIZAR REPORTE
+    // =====================================================
+
+    function actualizarReporte(data) {
+
+        const estados =
+            data.estados || {};
+
+
+        const total =
+            Number(
+                data.total || 0
+            );
+
+
+        const solicitadas =
+            Number(
+                estados['Solicitada'] || 0
+            );
+
+
+        const revision =
+            Number(
+                estados['En revisión'] || 0
+            );
+
+
+        const disponibles =
+            Number(
+                estados['Disponible'] || 0
+            );
+
+
+        const aceptadas =
+            Number(
+                estados['Aceptada'] || 0
+            );
+
+
+        const rechazadas =
+            Number(
+                estados['Rechazada'] || 0
+            );
+
+
+        const vencidas =
+            Number(
+                estados['Vencida'] || 0
+            );
+
+
+        // =================================================
+        // KPI
+        // =================================================
+
+        document.getElementById(
+            'kpi-total'
+        ).textContent = total;
+
+
+        document.getElementById(
+            'kpi-solicitadas'
+        ).textContent = solicitadas;
+
+
+        document.getElementById(
+            'kpi-revision'
+        ).textContent = revision;
+
+
+        document.getElementById(
+            'kpi-aceptadas'
+        ).textContent = aceptadas;
+
+
+        // =================================================
+        // GRÁFICO
+        // =================================================
+
+        const valores = [
+            solicitadas,
+            revision,
+            disponibles,
+            aceptadas,
+            rechazadas,
+            vencidas
+        ];
+
+
+        const maximo =
+            Math.max(
+                ...valores,
+                1
+            );
+
+
+        actualizarBarra(
+            'barra-solicitadas',
+            solicitadas,
+            maximo
+        );
+
+
+        actualizarBarra(
+            'barra-revision',
+            revision,
+            maximo
+        );
+
+
+        actualizarBarra(
+            'barra-disponibles',
+            disponibles,
+            maximo
+        );
+
+
+        actualizarBarra(
+            'barra-aceptadas',
+            aceptadas,
+            maximo
+        );
+
+
+        actualizarBarra(
+            'barra-rechazadas',
+            rechazadas,
+            maximo
+        );
+
+
+        actualizarBarra(
+            'barra-vencidas',
+            vencidas,
+            maximo
+        );
+
+
+        // =================================================
+        // TABLA
+        // =================================================
+
+        const tbody =
+            document.getElementById(
+                'tabla-body'
+            );
+
+
+        tbody.innerHTML = '';
+
+
+        const lista = [
+
+            ['Solicitada', solicitadas],
+
+            ['En revisión', revision],
+
+            ['Disponible', disponibles],
+
+            ['Aceptada', aceptadas],
+
+            ['Rechazada', rechazadas],
+
+            ['Vencida', vencidas]
+
+        ];
+
+
+        lista.forEach(item => {
+
+            const estado =
+                item[0];
+
+
+            const cantidad =
+                item[1];
+
+
+            const porcentaje =
+                total > 0
+                    ? (
+                        cantidad
+                        / total
+                        * 100
+                    ).toFixed(1)
+                    : '0.0';
+
+
+            const fila =
+                document.createElement(
+                    'tr'
+                );
+
+
+            fila.innerHTML = `
+
+                <td>
+                    <span class="status-pill">
+                        ${estado}
+                    </span>
+                </td>
+
+                <td>
+                    ${cantidad}
+                </td>
+
+                <td>
+                    ${porcentaje}%
+                </td>
+
+            `;
+
+
+            tbody.appendChild(
+                fila
+            );
+
+        });
+
+
+        // =================================================
+        // PERÍODO MOSTRADO
+        // =================================================
+
+        document.getElementById(
+            'nota-periodo'
+        ).textContent =
+            'Datos obtenidos de PostgreSQL para '
+            + String(data.mes).padStart(2, '0')
+            + '/'
+            + data.anio
+            + '.';
+
+    }
+
+
+    // =====================================================
+    // ACTUALIZAR BARRAS
+    // =====================================================
+
+    function actualizarBarra(
+        id,
+        valor,
+        maximo
+    ) {
+
+        const barra =
+            document.getElementById(id);
+
+
+        let altura = 0;
+
+
+        if (valor > 0) {
+
+            altura =
+                Math.max(
+                    15,
+                    (valor / maximo) * 170
+                );
+
+        }
+
+
+        barra.style.height =
+            altura + 'px';
+
+
+        barra.title =
+            valor + ' cotización(es)';
+
+    }
+
+
+    // =====================================================
+    // BOTÓN GENERAR
+    // =====================================================
+
+    document.getElementById(
+        'btn-generar'
+    ).addEventListener(
+        'click',
+        cargarReporte
+    );
+
+
+    // =====================================================
+    // EXPORTAR CSV
+    // =====================================================
+
+    document.getElementById(
+        'btn-exportar'
+    ).addEventListener(
+        'click',
+        function () {
+
+            const filas =
+                [
+                    ...document.querySelectorAll(
+                        '#tabla-reporte tr'
+                    )
+                ];
+
+
+            const csv =
+                filas.map(fila =>
+
+                    [...fila.children]
+                        .map(celda =>
+
+                            '"'
+                            + celda.innerText
+                                .replaceAll(
+                                    '"',
+                                    '""'
+                                )
+                            + '"'
+
+                        )
+                        .join(';')
+
+                ).join('\n');
+
+
+            const blob =
+                new Blob(
+
+                    ['\uFEFF' + csv],
+
+                    {
+                        type:
+                            'text/csv;charset=utf-8'
+                    }
+
+                );
+
+
+            const url =
+                URL.createObjectURL(
+                    blob
+                );
+
+
+            const enlace =
+                document.createElement(
+                    'a'
+                );
+
+
+            enlace.href =
+                url;
+
+
+            enlace.download =
+                'REP-MV-01_'
+                + periodo.value
+                + '.csv';
+
+
+            enlace.click();
+
+
+            URL.revokeObjectURL(
+                url
+            );
+
+        }
+    );
+
+
+    // =====================================================
+    // CARGA INICIAL
+    // =====================================================
+
+    cargarReporte();
+
+</script>
+
+</body>
+</html>

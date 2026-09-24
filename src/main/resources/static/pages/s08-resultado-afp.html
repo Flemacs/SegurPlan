@@ -1,65 +1,941 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SEGURPLAN — Resultado AFP</title>
-  <link rel="stylesheet" href="../assets/styles.css" />
-</head>
-<body>
-<header class="site-header">
-  <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
-  <div class="header-right">
-    <span class="user-name">Usuario: Juan García</span>
-    <button class="bell-btn" title="Notificaciones">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-    </button>
-    <button class="profile-btn">MI PERFIL</button>
-  </div>
-</header>
 
-<div class="page-wrap narrow">
-  <nav class="breadcrumb">SEGURPLAN &rsaquo; AFP &rsaquo; Resultado</nav>
-  <h1 class="page-title">Resultado de simulación</h1>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <div class="result-hero">
-    <div class="rh-label">PENSIÓN MENSUAL ESTIMADA</div>
-    <div class="rh-amount" id="rh-amount">S/ 1,850.00</div>
-    <div class="rh-sub">Resultado referencial — no oficial</div>
-  </div>
+        <title>SEGURPLAN — Resultado AFP</title>
 
-  <dl class="data-grid" style="margin:20px 0;">
-    <dt>Fondo considerado</dt><dd id="res-fondo">S/ —</dd>
-    <dt>Años de aporte</dt><dd id="res-anios">—</dd>
-  </dl>
+        <link rel="stylesheet" href="../assets/styles.css" />
+    </head>
 
-  <div class="notice warning">&#9888; Este resultado es referencial. No representa una pensión oficial ni un compromiso de la AFP.</div>
+    <body>
 
-  <div class="btn-row" style="margin-top:20px;">
-    <button class="btn btn-primary">SOLICITAR ORIENTACIÓN</button>
-    <button class="btn btn-outline" onclick="history.back()">← Nueva simulación</button>
-  </div>
-</div>
+        <!-- =========================================================
+             CABECERA
+        ========================================================= -->
+        <header class="site-header">
 
-<footer class="site-footer">
-  <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
-  <nav class="footer-links">
-    <a href="../index.html">Inicio</a>
-    <a href="s01-login.html">Iniciar sesión</a>
-    <a href="s00-registro.html">Registrarse</a>
-  </nav>
-  <div class="footer-meta">
-    <span>© 2026 SEGURPLAN. Todos los derechos reservados.</span>
-  </div>
-</footer>
-<script src="../assets/app.js"></script>
-<script>
-  const monto = sessionStorage.getItem('afp_monto') || 'S/ 1,850.00';
-  const fondo = sessionStorage.getItem('afp_fondo') || 'S/ —';
-  const anios = sessionStorage.getItem('afp_anios') || '—';
-  document.getElementById('rh-amount').textContent = monto;
-  document.getElementById('res-fondo').textContent = fondo;
-  document.getElementById('res-anios').textContent = anios;
-</script>
-</body>
+            <div class="logo">
+                SEGURPLAN
+                <span>Plataforma de seguros y AFP</span>
+            </div>
+
+            <div class="header-right">
+
+                <span class="user-name" id="header-user">
+                    Usuario
+                </span>
+
+                <button
+                    class="bell-btn"
+                    type="button"
+                    title="Notificaciones">
+
+                    <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round">
+
+                    <path
+                        d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9">
+                    </path>
+
+                    <path
+                        d="M13.73 21a2 2 0 0 1-3.46 0">
+                    </path>
+
+                    </svg>
+
+                </button>
+
+                <button
+                    class="profile-btn"
+                    type="button">
+                    MI PERFIL
+                </button>
+
+                <button
+                    class="btn-logout"
+                    type="button">
+                    CERRAR SESIÓN
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- =========================================================
+             CONTENIDO
+        ========================================================= -->
+        <div class="page-wrap narrow">
+
+            <nav class="breadcrumb">
+                SEGURPLAN &rsaquo; AFP &rsaquo; Resultado
+            </nav>
+
+            <h1 class="page-title">
+                Resultado de simulación
+            </h1>
+
+            <p class="page-subtitle">
+                Resultado referencial de tu simulación previsional.
+            </p>
+
+
+            <!-- =======================================================
+                 MENSAJE
+            ======================================================== -->
+            <div
+                id="mensaje-resultado"
+                style="display:none; margin-bottom:20px;">
+            </div>
+
+
+            <!-- =======================================================
+                 RESULTADO PRINCIPAL
+            ======================================================== -->
+            <div
+                class="result-hero"
+                id="resultado-principal">
+
+                <div class="rh-label">
+                    PENSIÓN MENSUAL ESTIMADA
+                </div>
+
+                <div
+                    class="rh-amount"
+                    id="rh-amount">
+
+                    Cargando...
+
+                </div>
+
+                <div class="rh-sub">
+                    Resultado referencial — no oficial
+                </div>
+
+            </div>
+
+
+            <!-- =======================================================
+                 DATOS DE LA SIMULACIÓN
+            ======================================================== -->
+            <dl
+                class="data-grid"
+                style="margin:20px 0;">
+
+                <dt>
+                    Sistema previsional
+                </dt>
+
+                <dd id="res-sistema">
+                    —
+                </dd>
+
+
+                <dt>
+                    Edad
+                </dt>
+
+                <dd id="res-edad">
+                    —
+                </dd>
+
+
+                <dt>
+                    Ingreso mensual
+                </dt>
+
+                <dd id="res-ingreso">
+                    S/ —
+                </dd>
+
+
+                <dt>
+                    Años de aporte
+                </dt>
+
+                <dd id="res-anios">
+                    —
+                </dd>
+
+
+                <dt>
+                    Estado
+                </dt>
+
+                <dd id="res-estado">
+                    —
+                </dd>
+
+
+                <dt>
+                    Fecha de simulación
+                </dt>
+
+                <dd id="res-fecha">
+                    —
+                </dd>
+
+            </dl>
+
+
+            <!-- =======================================================
+                 RESULTADO DETALLADO
+            ======================================================== -->
+            <div
+                class="card"
+                style="margin-top:20px;">
+
+                <div class="card-header">
+
+                    <h2>
+                        Detalle de la simulación
+                    </h2>
+
+                </div>
+
+                <div class="card-body">
+
+                    <p
+                        id="res-resultado"
+                        style="margin:0;">
+
+                        Cargando resultado...
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =======================================================
+                 CONSULTA
+            ======================================================== -->
+            <div
+                class="card"
+                id="consulta-card"
+                style="margin-top:20px; display:none;">
+
+                <div class="card-header">
+
+                    <h2>
+                        Objetivo previsional
+                    </h2>
+
+                </div>
+
+                <div class="card-body">
+
+                    <p
+                        id="res-consulta"
+                        style="margin:0;">
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =======================================================
+                 ADVERTENCIA
+            ======================================================== -->
+            <div
+                class="notice warning"
+                style="margin-top:20px;">
+
+                &#9888;
+                Este resultado es referencial.
+                No representa una pensión oficial ni un compromiso
+                de una AFP.
+
+            </div>
+
+
+            <!-- =======================================================
+                 BOTONES
+            ======================================================== -->
+            <div
+                class="btn-row"
+                style="margin-top:20px;">
+
+                <button
+                    class="btn btn-primary"
+                    type="button"
+                    id="btn-orientacion">
+
+                    SOLICITAR ORIENTACIÓN
+
+                </button>
+
+                <button
+                    class="btn btn-outline"
+                    type="button"
+                    id="btn-nueva-simulacion">
+
+                    ← Nueva simulación
+
+                </button>
+
+                <button
+                    class="btn btn-outline"
+                    type="button"
+                    id="btn-panel">
+
+                    VOLVER AL PANEL
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================================
+             FOOTER
+        ========================================================= -->
+        <footer class="site-footer">
+
+            <div class="footer-brand">
+
+                SEGURPLAN
+
+                <span>
+                    Plataforma de seguros y AFP
+                </span>
+
+            </div>
+
+            <nav class="footer-links">
+
+                <a href="s02-panel-usuario.html">
+                    Panel principal
+                </a>
+
+                <a href="s06-afp-perfil.html">
+                    AFP
+                </a>
+
+                <a
+                    href="#"
+                    class="btn-logout">
+
+                    Cerrar sesión
+
+                </a>
+
+            </nav>
+
+            <div class="footer-meta">
+
+                <span>
+                    © 2026 SEGURPLAN. Todos los derechos reservados.
+                </span>
+
+            </div>
+
+        </footer>
+
+
+        <!-- =========================================================
+             APP GLOBAL
+        ========================================================= -->
+        <script src="../assets/app.js"></script>
+
+
+        <!-- =========================================================
+             LÓGICA DEL RESULTADO AFP
+        ========================================================= -->
+        <script>
+
+            document.addEventListener(
+                    'DOMContentLoaded',
+                    async function () {
+
+                        // =====================================================
+                        // VALIDAR SESIÓN
+                        // =====================================================
+
+                        const session = sp_requireAuth();
+
+                        if (!session) {
+                            return;
+                        }
+
+
+                        // =====================================================
+                        // MOSTRAR USUARIO
+                        // =====================================================
+
+                        const headerUser =
+                                document.getElementById('header-user');
+
+                        if (headerUser) {
+
+                            headerUser.textContent =
+                                    session.nombres + ' ' + session.apellidos;
+
+                        }
+
+
+                        // =====================================================
+                        // OBTENER ID DE LA SIMULACIÓN
+                        // =====================================================
+
+                        const idPrevision =
+                                sessionStorage.getItem(
+                                        'afp_id_prevision'
+                                        );
+
+
+                        if (!idPrevision) {
+
+                            mostrarMensaje(
+                                    'No se encontró una simulación AFP reciente.',
+                                    'error'
+                                    );
+
+                            document.getElementById(
+                                    'rh-amount'
+                                    ).textContent = 'Sin resultado';
+
+                            document.getElementById(
+                                    'res-resultado'
+                                    ).textContent =
+                                    'Realice una nueva simulación para consultar el resultado.';
+
+                            return;
+                        }
+
+
+                        // =====================================================
+                        // CONSULTAR POSTGRESQL A TRAVÉS DEL BACKEND
+                        // =====================================================
+
+                        await cargarResultado(
+                                idPrevision
+                                );
+
+
+                        // =====================================================
+                        // BOTÓN NUEVA SIMULACIÓN
+                        // =====================================================
+
+                        document.getElementById(
+                                'btn-nueva-simulacion'
+                                ).addEventListener(
+                                'click',
+                                function () {
+
+                                    /*
+                                     * Eliminamos solamente el identificador
+                                     * del resultado anterior.
+                                     */
+
+                                    sessionStorage.removeItem(
+                                            'afp_id_prevision'
+                                            );
+
+                                    window.location.href =
+                                            's06-afp-perfil.html';
+
+                                }
+                        );
+
+
+                        // =====================================================
+                        // VOLVER AL PANEL
+                        // =====================================================
+
+                        document.getElementById(
+                                'btn-panel'
+                                ).addEventListener(
+                                'click',
+                                function () {
+
+                                    window.location.href =
+                                            's02-panel-usuario.html';
+
+                                }
+                        );
+
+
+                        // =====================================================
+                        // ORIENTACIÓN
+                        // =====================================================
+
+                        document.getElementById(
+                                'btn-orientacion'
+                                ).addEventListener(
+                                'click',
+                                async function () {
+
+                                    const boton = this;
+
+                                    const idPrevision =
+                                            sessionStorage.getItem(
+                                                    'afp_id_prevision'
+                                                    );
+
+                                    if (!idPrevision) {
+
+                                        mostrarMensaje(
+                                                'No se encontró la simulación AFP.',
+                                                'error'
+                                                );
+
+                                        return;
+                                    }
+
+                                    const textoOriginal =
+                                            boton.textContent;
+
+                                    boton.disabled = true;
+
+                                    boton.textContent =
+                                            'ENVIANDO...';
+
+                                    try {
+
+                                        const csrf =
+                                                await sp_getCsrfToken();
+
+                                        const response =
+                                                await fetch(
+                                                        '/api/previsiones/' +
+                                                        encodeURIComponent(idPrevision) +
+                                                        '/solicitar-orientacion',
+                                                        {
+                                                            method: 'PUT',
+
+                                                            credentials:
+                                                                    'same-origin',
+
+                                                            headers: {
+                                                                [csrf.headerName]:
+                                                                        csrf.token
+                                                            }
+                                                        }
+                                                );
+
+                                        let data = {};
+
+                                        try {
+                                            data = await response.json();
+                                        } catch (e) {
+                                            data = {};
+                                        }
+
+                                        if (!response.ok) {
+
+                                            throw new Error(
+                                                    data.mensaje ||
+                                                    'No se pudo solicitar orientación.'
+                                                    );
+                                        }
+
+                                        mostrarMensaje(
+                                                'Solicitud de orientación enviada correctamente.',
+                                                'success'
+                                                );
+
+                                        document.getElementById(
+                                                'res-estado'
+                                                ).textContent =
+                                                data.estado || 'En revisión';
+
+                                        boton.textContent =
+                                                'ORIENTACIÓN SOLICITADA';
+
+                                        boton.disabled = true;
+
+                                    } catch (error) {
+
+                                        console.error(
+                                                'Error solicitando orientación:',
+                                                error
+                                                );
+
+                                        mostrarMensaje(
+                                                error.message,
+                                                'error'
+                                                );
+
+                                        boton.disabled = false;
+
+                                        boton.textContent =
+                                                textoOriginal;
+                                    }
+                                }
+                        );
+
+                    }
+            );
+
+
+            // =========================================================
+            // CARGAR RESULTADO DESDE SPRING BOOT
+            // =========================================================
+
+            async function cargarResultado(
+                    idPrevision
+                    ) {
+
+                try {
+
+                    const response =
+                            await fetch(
+                                    '/api/previsiones/' +
+                                    encodeURIComponent(idPrevision),
+                                    {
+
+                                        method: 'GET',
+
+                                        credentials:
+                                                'same-origin'
+
+                                    }
+                            );
+
+
+                    // =====================================================
+                    // SESIÓN EXPIRADA
+                    // =====================================================
+
+                    if (response.status === 401) {
+
+                        localStorage.removeItem(
+                                'sp_session'
+                                );
+
+                        window.location.href =
+                                's01-login.html';
+
+                        return;
+                    }
+
+
+                    // =====================================================
+                    // ACCESO DENEGADO
+                    // =====================================================
+
+                    if (response.status === 403) {
+
+                        throw new Error(
+                                'No tiene permiso para consultar esta simulación.'
+                                );
+
+                    }
+
+
+                    let data = {};
+
+
+                    try {
+
+                        data =
+                                await response.json();
+
+                    } catch (error) {
+
+                        data = {};
+
+                    }
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                                data.mensaje ||
+                                'No se pudo obtener el resultado de la simulación.'
+                                );
+
+                    }
+
+
+                    // =====================================================
+                    // MOSTRAR DATOS
+                    // =====================================================
+
+                    mostrarResultado(
+                            data
+                            );
+
+
+                } catch (error) {
+
+                    console.error(
+                            'Error cargando resultado AFP:',
+                            error
+                            );
+
+
+                    mostrarMensaje(
+                            error.message ||
+                            'Ocurrió un error al consultar la simulación.',
+                            'error'
+                            );
+
+
+                    document.getElementById(
+                            'rh-amount'
+                            ).textContent =
+                            'Error';
+
+
+                    document.getElementById(
+                            'res-resultado'
+                            ).textContent =
+                            'No fue posible cargar el resultado.';
+
+                }
+
+            }
+
+
+            // =========================================================
+            // MOSTRAR RESULTADO
+            // =========================================================
+
+            function mostrarResultado(
+                    data
+                    ) {
+
+                // =======================================================
+                // PENSIÓN
+                // =======================================================
+
+                document.getElementById(
+                        'rh-amount'
+                        ).textContent =
+                        formatoMoneda(
+                                data.montoPensionEstimado
+                                );
+
+
+                // =======================================================
+                // SISTEMA
+                // =======================================================
+
+                document.getElementById(
+                        'res-sistema'
+                        ).textContent =
+                        data.tipoSistema || 'AFP';
+
+
+                // =======================================================
+                // EDAD
+                // =======================================================
+
+                document.getElementById(
+                        'res-edad'
+                        ).textContent =
+                        data.edad != null
+                        ? data.edad + ' años'
+                        : '—';
+
+
+                // =======================================================
+                // INGRESO
+                // =======================================================
+
+                document.getElementById(
+                        'res-ingreso'
+                        ).textContent =
+                        formatoMoneda(
+                                data.ingresoMensual
+                                );
+
+
+                // =======================================================
+                // AÑOS DE APORTE
+                // =======================================================
+
+                document.getElementById(
+                        'res-anios'
+                        ).textContent =
+                        data.aniosAporte != null
+                        ? data.aniosAporte + ' años'
+                        : '—';
+
+
+                // =======================================================
+                // ESTADO
+                // =======================================================
+
+                document.getElementById(
+                        'res-estado'
+                        ).textContent =
+                        data.estado || '—';
+
+
+                // =======================================================
+                // FECHA
+                // =======================================================
+
+                document.getElementById(
+                        'res-fecha'
+                        ).textContent =
+                        formatoFecha(
+                                data.fechaRegistro
+                                );
+
+
+                // =======================================================
+                // RESULTADO DETALLADO
+                // =======================================================
+
+                document.getElementById(
+                        'res-resultado'
+                        ).textContent =
+                        data.resultadoSimulacion ||
+                        'No se registró información adicional.';
+
+
+                // =======================================================
+                // CONSULTA
+                // =======================================================
+
+                if (
+                        data.consulta &&
+                        data.consulta.trim() !== ''
+                        ) {
+
+                    document.getElementById(
+                            'consulta-card'
+                            ).style.display =
+                            'block';
+
+
+                    document.getElementById(
+                            'res-consulta'
+                            ).textContent =
+                            data.consulta;
+
+                }
+
+            }
+
+
+            // =========================================================
+            // FORMATO MONEDA
+            // =========================================================
+
+            function formatoMoneda(
+                    valor
+                    ) {
+
+                const numero =
+                        Number(valor);
+
+
+                if (!Number.isFinite(numero)) {
+
+                    return 'S/ —';
+
+                }
+
+
+                return new Intl.NumberFormat(
+                        'es-PE',
+                        {
+
+                            style: 'currency',
+
+                            currency: 'PEN',
+
+                            minimumFractionDigits: 2,
+
+                            maximumFractionDigits: 2
+
+                        }
+                ).format(numero);
+
+            }
+
+
+            // =========================================================
+            // FORMATO FECHA
+            // =========================================================
+
+            function formatoFecha(
+                    valor
+                    ) {
+
+                if (!valor) {
+                    return '—';
+                }
+
+
+                const fecha =
+                        new Date(valor);
+
+
+                if (
+                        Number.isNaN(
+                                fecha.getTime()
+                                )
+                        ) {
+
+                    return valor;
+
+                }
+
+
+                return fecha.toLocaleString(
+                        'es-PE',
+                        {
+
+                            dateStyle:
+                                    'medium',
+
+                            timeStyle:
+                                    'short'
+
+                        }
+                );
+
+            }
+
+
+            // =========================================================
+            // MENSAJES
+            // =========================================================
+
+            function mostrarMensaje(
+                    mensaje,
+                    tipo
+                    ) {
+
+                const contenedor =
+                        document.getElementById(
+                                'mensaje-resultado'
+                                );
+                contenedor.style.display =
+                        'block';
+                if (tipo === 'success') {
+
+                    contenedor.className =
+                            'notice success';
+
+                } else {
+                    contenedor.className =
+                            'notice error';
+                }
+                contenedor.textContent =
+                        mensaje;
+            }
+
+        </script>
+
+    </body>
 </html>

@@ -5,6 +5,7 @@
 package com.segurplan.service;
 
 import com.segurplan.dto.PolizaRequest;
+import com.segurplan.dto.PolizaResumenDTO;
 import com.segurplan.model.Contratacion;
 import com.segurplan.model.Poliza;
 import com.segurplan.repository.ContratacionRepository;
@@ -12,6 +13,7 @@ import com.segurplan.repository.PolizaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class PolizaService {
@@ -99,4 +101,30 @@ public class PolizaService {
 
         return polizaRepository.save(poliza);
     }
+    
+@Transactional(readOnly = true)
+public List<PolizaResumenDTO> listarPorUsuario(Long idUsuario) {
+
+    if (idUsuario == null || idUsuario <= 0) {
+        throw new IllegalArgumentException(
+                "El identificador del usuario no es válido."
+        );
+    }
+
+    return polizaRepository.findByUsuario(idUsuario)
+            .stream()
+            .map(p -> new PolizaResumenDTO(
+                    p.getIdPoliza(),
+                    p.getNumeroPoliza(),
+                    p.getContratacion().getIdContratacion(),
+                    p.getFechaInicio(),
+                    p.getFechaFin(),
+                    p.getPrima(),
+                    p.getCobertura(),
+                    p.getDeducible(),
+                    p.getCondiciones(),
+                    p.getEstado()
+            ))
+            .toList();
+}
 }

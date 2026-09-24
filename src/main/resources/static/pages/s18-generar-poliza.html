@@ -1,397 +1,458 @@
 
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SEGURPLAN — Generar póliza</title>
-  <link rel="stylesheet" href="../assets/styles.css">
-</head>
-<body>
-<header class="site-header">
-  <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
-  <div class="header-right">
-    <span class="user-name">Administrador</span>
-    <button class="profile-btn" type="button" onclick="window.location.href='s14-administracion.html'">MI PANEL</button>
-  </div>
-</header>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>SEGURPLAN — Generar póliza</title>
+        <link rel="stylesheet" href="../assets/styles.css">
+    </head>
+    <body>
+        <header class="site-header">
+            <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+            <div class="header-right">
+                <span class="user-name">Administrador</span>
+                <button class="profile-btn" type="button" onclick="window.location.href = 's14-administracion.html'">MI PANEL</button>
+            </div>
+        </header>
 
-<div class="page-wrap narrow">
-  <nav class="breadcrumb">SEGURPLAN &rsaquo; Administración &rsaquo; Generar póliza</nav>
-  <h1 class="page-title">Generar póliza</h1>
-  <p class="page-subtitle">Registre los datos de la póliza de una contratación aceptada.</p>
-  <div class="card">
-    <div class="card-header">
-      <h2>Datos de la contratación</h2>
-      <p>Seleccione una contratación pendiente de póliza.</p>
-    </div>
-    <div class="card-body">
-      <form id="form-poliza">
-        <div class="form-group">
-          <label for="contratacion">Contratación</label>
-          <select class="form-control" id="contratacion" required>
-            <option value="">Cargando contrataciones...</option>
-          </select>
+        <div class="page-wrap narrow">
+            <nav class="breadcrumb">SEGURPLAN &rsaquo; Administración &rsaquo; Generar póliza</nav>
+            <h1 class="page-title">Generar póliza</h1>
+            <p class="page-subtitle">Registre los datos de la póliza de una contratación aceptada.</p>
+            <div class="card">
+                <div class="card-header">
+                    <h2>Datos de la contratación</h2>
+                    <p>Seleccione una contratación pendiente de póliza.</p>
+                </div>
+                <div class="card-body">
+                    <form id="form-poliza">
+                        <div class="form-group">
+                            <label for="contratacion">Contratación</label>
+                            <select class="form-control" id="contratacion" required>
+                                <option value="">Cargando contrataciones...</option>
+                            </select>
+                        </div>
+
+                        <h3 class="section-title">Datos de la póliza</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="fecha-inicio">Fecha de inicio</label>
+                                <input class="form-control" type="date" id="fecha-inicio" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="fecha-fin">Fecha de finalización</label>
+                                <input class="form-control" type="date" id="fecha-fin" required disabled>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="prima">Prima (S/)</label>
+                                <input class="form-control" type="number" id="prima" min="0.01" step="0.01" placeholder="0.00" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="deducible">Deducible (S/)</label>
+                                <input class="form-control" type="number" id="deducible" min="0" step="0.01" placeholder="0.00">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cobertura">Cobertura</label>
+                            <textarea class="form-control" id="cobertura" rows="3" placeholder="Ingrese la cobertura de la póliza" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="condiciones">Condiciones</label>
+                            <textarea class="form-control" id="condiciones" rows="4" placeholder="Ingrese las condiciones de la póliza"></textarea>
+                        </div>
+
+                        <div id="resultado" role="status" aria-live="polite" style="display:none;margin:16px 0;padding:12px;border-radius:6px;"></div>
+
+                        <div class="card-footer">
+                            <button class="btn btn-primary" id="btn-generar" type="submit">GENERAR PÓLIZA</button>
+                            <button class="btn btn-secondary" type="button" onclick="window.location.href = 's14-administracion.html'">CANCELAR</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
 
-        <h3 class="section-title">Datos de la póliza</h3>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="fecha-inicio">Fecha de inicio</label>
-            <input class="form-control" type="date" id="fecha-inicio" required>
-          </div>
-          <div class="form-group">
-            <label for="fecha-fin">Fecha de finalización</label>
-            <input class="form-control" type="date" id="fecha-fin" required disabled>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label for="prima">Prima (S/)</label>
-            <input class="form-control" type="number" id="prima" min="0.01" step="0.01" placeholder="0.00" required>
-          </div>
-          <div class="form-group">
-            <label for="deducible">Deducible (S/)</label>
-            <input class="form-control" type="number" id="deducible" min="0" step="0.01" placeholder="0.00">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="cobertura">Cobertura</label>
-          <textarea class="form-control" id="cobertura" rows="3" placeholder="Ingrese la cobertura de la póliza" required></textarea>
-        </div>
-        <div class="form-group">
-          <label for="condiciones">Condiciones</label>
-          <textarea class="form-control" id="condiciones" rows="4" placeholder="Ingrese las condiciones de la póliza"></textarea>
-        </div>
-
-        <div id="resultado" role="status" aria-live="polite" style="display:none;margin:16px 0;padding:12px;border-radius:6px;"></div>
-
-        <div class="card-footer">
-          <button class="btn btn-primary" id="btn-generar" type="submit">GENERAR PÓLIZA</button>
-          <button class="btn btn-secondary" type="button" onclick="window.location.href='s14-administracion.html'">CANCELAR</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-<footer class="site-footer">
-  <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
-  <div class="footer-meta">© 2026 SEGURPLAN. Todos los derechos reservados.</div>
-</footer>
-
-<script src="../assets/app.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', async function() {
-  const session = sp_getSession();
-
-  if (!session || session.rol !== 'Administrador') {
-    window.location.replace('s01-login.html');
-    return;
-  }
-
-  document.querySelector('.user-name').textContent =
-    'Usuario: ' + session.nombres + ' ' +
-    session.apellidos + ' — Administrador';
-
-  configurarFechas();
-
-  document.getElementById('form-poliza')
-    .addEventListener('submit', generarPoliza);
-
-  await cargarContrataciones();
-});
-
-function fechaLocal(fecha) {
-  return [
-    fecha.getFullYear(),
-    String(fecha.getMonth() + 1).padStart(2, '0'),
-    String(fecha.getDate()).padStart(2, '0')
-  ].join('-');
-}
-
-function fechaMinimaInicio() {
-  const manana = new Date();
-  manana.setHours(12, 0, 0, 0);
-  manana.setDate(manana.getDate() + 1);
-  return fechaLocal(manana);
-}
-
-function configurarFechas() {
-  const inicio = document.getElementById('fecha-inicio');
-  const fin = document.getElementById('fecha-fin');
-
-  function actualizarLimites() {
-    const minima = fechaMinimaInicio();
-
-    inicio.min = minima;
-
-    if (inicio.value && inicio.value < minima) {
-      inicio.value = '';
-    }
-
-    fin.disabled = !inicio.value;
-    fin.min = inicio.value || minima;
-
-    if (!inicio.value ||
-        (fin.value && fin.value < inicio.value)) {
-      fin.value = '';
-    }
-  }
-
-  inicio.addEventListener('change', actualizarLimites);
-
-  fin.addEventListener('change', function() {
-    if (fin.value && fin.value < inicio.value) {
-      mostrarMensaje(
-        'La fecha de finalización debe ser igual o posterior al inicio.',
-        'error'
-      );
-      fin.value = '';
-    }
-  });
-
-  actualizarLimites();
-}
-
-function mostrarMensaje(texto, tipo) {
-  const mensaje = document.getElementById('resultado');
-
-  mensaje.style.display = 'block';
-  mensaje.textContent = texto;
-
-  if (tipo === 'error') {
-    mensaje.style.backgroundColor = '#fde8e8';
-    mensaje.style.color = '#991b1b';
-    mensaje.style.border = '1px solid #f5b5b5';
-  } else {
-    mensaje.style.backgroundColor = '#e8f5eb';
-    mensaje.style.color = '#166534';
-    mensaje.style.border = '1px solid #a7d8b3';
-  }
-}
-
-async function cargarContrataciones() {
-  const select = document.getElementById('contratacion');
-
-  select.disabled = true;
-  select.innerHTML =
-    '<option value="">Cargando contrataciones...</option>';
-
-  try {
-    const response = await fetch(
-      '/api/contrataciones/pendientes',
-      { cache: 'no-store' }
-    );
-
-    if (!response.ok) {
-      throw new Error(
-        'No se pudieron cargar las contrataciones. HTTP ' +
-        response.status
-      );
-    }
-
-    const datos = await response.json();
-
-    if (!Array.isArray(datos)) {
-      throw new Error('El servidor devolvió un formato inesperado.');
-    }
-
-    select.innerHTML =
-      '<option value="">— Seleccione una contratación —</option>';
-
-    datos.forEach(c => {
-      const option = document.createElement('option');
-
-      option.value = c.idContratacion;
-      option.textContent =
-        'Contrato ' + c.idContratacion +
-        ' | COT-' +
-        String(c.idCotizacion).padStart(6, '0') +
-        ' | ' + c.cliente +
-        ' | ' + c.tipoSeguro;
-
-      select.appendChild(option);
-    });
-
-    if (datos.length === 0) {
-      select.innerHTML =
-        '<option value="">No hay contrataciones pendientes</option>';
-    } else {
-      select.disabled = false;
-    }
-
-  } catch (error) {
-    console.error('Error al cargar contrataciones:', error);
-
-    select.innerHTML =
-      '<option value="">Error al cargar contrataciones</option>';
-
-    mostrarMensaje(error.message, 'error');
-  }
-}
-
-async function generarPoliza(event) {
-  event.preventDefault();
-
-  const idContratacion =
-    document.getElementById('contratacion').value;
-
-  const fechaInicio =
-    document.getElementById('fecha-inicio').value;
-
-  const fechaFin =
-    document.getElementById('fecha-fin').value;
-
-  const primaTexto =
-    document.getElementById('prima').value;
-
-  const deducibleTexto =
-    document.getElementById('deducible').value;
-
-  const cobertura =
-    document.getElementById('cobertura').value.trim();
-
-  const condiciones =
-    document.getElementById('condiciones').value.trim();
-
-  const prima = Number(primaTexto);
-
-  const deducible =
-    deducibleTexto === '' ? null : Number(deducibleTexto);
-
-  const minima = fechaMinimaInicio();
-
-  if (!idContratacion) {
-    mostrarMensaje('Seleccione una contratación.', 'error');
-    return;
-  }
-
-  if (!fechaInicio || fechaInicio < minima) {
-    mostrarMensaje(
-      'La fecha de inicio debe ser posterior a la fecha actual.',
-      'error'
-    );
-    return;
-  }
-
-  if (!fechaFin || fechaFin < fechaInicio) {
-    mostrarMensaje(
-      'La fecha de finalización debe ser igual o posterior al inicio.',
-      'error'
-    );
-    return;
-  }
-
-  if (primaTexto === '' ||
-      !Number.isFinite(prima) ||
-      prima <= 0) {
-    mostrarMensaje(
-      'Ingrese una prima mayor que cero.',
-      'error'
-    );
-    return;
-  }
-
-  if (deducible !== null &&
-      (!Number.isFinite(deducible) || deducible < 0)) {
-    mostrarMensaje(
-      'El deducible no puede ser negativo.',
-      'error'
-    );
-    return;
-  }
-
-  if (!cobertura) {
-    mostrarMensaje(
-      'La cobertura es obligatoria.',
-      'error'
-    );
-    return;
-  }
-
-  const boton = document.getElementById('btn-generar');
-
-  boton.disabled = true;
-  boton.textContent = 'GENERANDO...';
-
-  try {
-    const response = await fetch('/api/polizas', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        idContratacion: Number(idContratacion),
-        fechaInicio: fechaInicio,
-        fechaFin: fechaFin,
-        prima: prima,
-        cobertura: cobertura,
-        deducible: deducible,
-        condiciones: condiciones
-      })
-    });
-
-    const texto = await response.text();
-    let resultado;
-
-    try {
-      resultado = texto ? JSON.parse(texto) : {};
-    } catch {
-      resultado = { mensaje: texto };
-    }
-
-    if (!response.ok) {
-      console.error('Error HTTP:', response.status);
-      console.error('Respuesta del servidor:', resultado);
-
-      throw new Error(
-        resultado.mensaje ||
-        resultado.detail ||
-        resultado.error ||
-        'No se pudo generar la póliza. HTTP ' + response.status
-      );
-    }
-
-    if (!resultado.numeroPoliza) {
-      throw new Error(
-        'El servidor no devolvió el número de póliza. ' +
-        'Compruebe el registro antes de volver a intentarlo.'
-      );
-    }
-
-    mostrarMensaje(
-      'Póliza generada correctamente: ' +
-      resultado.numeroPoliza,
-      'exito'
-    );
-
-    document.getElementById('form-poliza').reset();
-    configurarFechasTrasReset();
-
-    await cargarContrataciones();
-
-  } catch (error) {
-    console.error('Error al generar póliza:', error);
-    mostrarMensaje(error.message, 'error');
-
-  } finally {
-    boton.disabled = false;
-    boton.textContent = 'GENERAR PÓLIZA';
-  }
-}
-
-function configurarFechasTrasReset() {
-  const inicio = document.getElementById('fecha-inicio');
-  const fin = document.getElementById('fecha-fin');
-
-  inicio.min = fechaMinimaInicio();
-  fin.value = '';
-  fin.min = inicio.min;
-  fin.disabled = true;
-}
-</script>
-</body>
+        <footer class="site-footer">
+            <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+            <div class="footer-meta">© 2026 SEGURPLAN. Todos los derechos reservados.</div>
+        </footer>
+
+        <script src="../assets/app.js"></script>
+        <script>
+                      document.addEventListener('DOMContentLoaded', async function () {
+                          const session = sp_getSession();
+
+                          if (!session || session.rol !== 'Administrador') {
+                              window.location.replace('s01-login.html');
+                              return;
+                          }
+
+                          document.querySelector('.user-name').textContent =
+                                  'Usuario: ' + session.nombres + ' ' +
+                                  session.apellidos + ' — Administrador';
+
+                          configurarFechas();
+
+                          document.getElementById('form-poliza')
+                                  .addEventListener('submit', generarPoliza);
+
+                          await cargarContrataciones();
+                      });
+
+                      function fechaLocal(fecha) {
+                          return [
+                              fecha.getFullYear(),
+                              String(fecha.getMonth() + 1).padStart(2, '0'),
+                              String(fecha.getDate()).padStart(2, '0')
+                          ].join('-');
+                      }
+
+                      function fechaMinimaInicio() {
+                          const manana = new Date();
+                          manana.setHours(12, 0, 0, 0);
+                          manana.setDate(manana.getDate() + 1);
+                          return fechaLocal(manana);
+                      }
+
+                      function configurarFechas() {
+                          const inicio = document.getElementById('fecha-inicio');
+                          const fin = document.getElementById('fecha-fin');
+
+                          function actualizarLimites() {
+                              const minima = fechaMinimaInicio();
+
+                              inicio.min = minima;
+
+                              if (inicio.value && inicio.value < minima) {
+                                  inicio.value = '';
+                              }
+
+                              fin.disabled = !inicio.value;
+                              fin.min = inicio.value || minima;
+
+                              if (!inicio.value ||
+                                      (fin.value && fin.value < inicio.value)) {
+                                  fin.value = '';
+                              }
+                          }
+
+                          inicio.addEventListener('change', actualizarLimites);
+
+                          fin.addEventListener('change', function () {
+                              if (fin.value && fin.value < inicio.value) {
+                                  mostrarMensaje(
+                                          'La fecha de finalización debe ser igual o posterior al inicio.',
+                                          'error'
+                                          );
+                                  fin.value = '';
+                              }
+                          });
+
+                          actualizarLimites();
+                      }
+
+                      function mostrarMensaje(texto, tipo) {
+                          const mensaje = document.getElementById('resultado');
+
+                          mensaje.style.display = 'block';
+                          mensaje.textContent = texto;
+
+                          if (tipo === 'error') {
+                              mensaje.style.backgroundColor = '#fde8e8';
+                              mensaje.style.color = '#991b1b';
+                              mensaje.style.border = '1px solid #f5b5b5';
+                          } else {
+                              mensaje.style.backgroundColor = '#e8f5eb';
+                              mensaje.style.color = '#166534';
+                              mensaje.style.border = '1px solid #a7d8b3';
+                          }
+                      }
+
+                      async function cargarContrataciones() {
+                          const select = document.getElementById('contratacion');
+
+                          select.disabled = true;
+                          select.innerHTML =
+                                  '<option value="">Cargando contrataciones...</option>';
+
+                          try {
+                              const response = await fetch(
+                                      '/api/contrataciones/pendientes',
+                                      {cache: 'no-store'}
+                              );
+
+                              if (!response.ok) {
+                                  throw new Error(
+                                          'No se pudieron cargar las contrataciones. HTTP ' +
+                                          response.status
+                                          );
+                              }
+
+                              const datos = await response.json();
+
+                              if (!Array.isArray(datos)) {
+                                  throw new Error('El servidor devolvió un formato inesperado.');
+                              }
+
+                              select.innerHTML =
+                                      '<option value="">— Seleccione una contratación —</option>';
+
+                              datos.forEach(c => {
+                                  const option = document.createElement('option');
+
+                                  option.value = c.idContratacion;
+                                  option.textContent =
+                                          'Contrato ' + c.idContratacion +
+                                          ' | COT-' +
+                                          String(c.idCotizacion).padStart(6, '0') +
+                                          ' | ' + c.cliente +
+                                          ' | ' + c.tipoSeguro;
+
+                                  select.appendChild(option);
+                              });
+
+                              if (datos.length === 0) {
+                                  select.innerHTML =
+                                          '<option value="">No hay contrataciones pendientes</option>';
+                              } else {
+                                  select.disabled = false;
+                              }
+
+                          } catch (error) {
+                              console.error('Error al cargar contrataciones:', error);
+
+                              select.innerHTML =
+                                      '<option value="">Error al cargar contrataciones</option>';
+
+                              mostrarMensaje(error.message, 'error');
+                          }
+                      }
+
+
+                      async function generarPoliza(event) {
+                          event.preventDefault();
+
+                          const idContratacion =
+                                  document.getElementById('contratacion').value;
+
+                          const fechaInicio =
+                                  document.getElementById('fecha-inicio').value;
+
+                          const fechaFin =
+                                  document.getElementById('fecha-fin').value;
+
+                          const primaTexto =
+                                  document.getElementById('prima').value;
+
+                          const deducibleTexto =
+                                  document.getElementById('deducible').value;
+
+                          const cobertura =
+                                  document.getElementById('cobertura').value.trim();
+
+                          const condiciones =
+                                  document.getElementById('condiciones').value.trim();
+
+                          const prima = Number(primaTexto);
+
+                          const deducible =
+                                  deducibleTexto === '' ? null : Number(deducibleTexto);
+
+                          const minima = fechaMinimaInicio();
+
+                          // VALIDACIONES
+
+                          if (!idContratacion) {
+                              mostrarMensaje(
+                                      'Seleccione una contratación.',
+                                      'error'
+                                      );
+                              return;
+                          }
+
+                          if (!fechaInicio || fechaInicio < minima) {
+                              mostrarMensaje(
+                                      'La fecha de inicio debe ser posterior a la fecha actual.',
+                                      'error'
+                                      );
+                              return;
+                          }
+
+                          if (!fechaFin || fechaFin < fechaInicio) {
+                              mostrarMensaje(
+                                      'La fecha de finalización debe ser igual o posterior al inicio.',
+                                      'error'
+                                      );
+                              return;
+                          }
+
+                          if (
+                                  primaTexto === '' ||
+                                  !Number.isFinite(prima) ||
+                                  prima <= 0
+                                  ) {
+                              mostrarMensaje(
+                                      'Ingrese una prima mayor que cero.',
+                                      'error'
+                                      );
+                              return;
+                          }
+
+                          if (
+                                  deducible !== null &&
+                                  (!Number.isFinite(deducible) || deducible < 0)
+                                  ) {
+                              mostrarMensaje(
+                                      'El deducible no puede ser negativo.',
+                                      'error'
+                                      );
+                              return;
+                          }
+
+                          if (!cobertura) {
+                              mostrarMensaje(
+                                      'La cobertura es obligatoria.',
+                                      'error'
+                                      );
+                              return;
+                          }
+
+                          const boton = document.getElementById('btn-generar');
+
+                          boton.disabled = true;
+                          boton.textContent = 'GENERANDO...';
+
+                          try {
+
+                              // Obtener el token CSRF de Spring Security.
+                              const csrf = await sp_getCsrfToken();
+
+                              // Enviar los datos de la póliza con el token CSRF.
+                              const response = await fetch('/api/polizas', {
+                                  method: 'POST',
+                                  credentials: 'same-origin',
+                                  headers: {
+                                      'Content-Type': 'application/json',
+                                      [csrf.headerName]: csrf.token
+                                  },
+                                  body: JSON.stringify({
+                                      idContratacion: Number(idContratacion),
+                                      fechaInicio: fechaInicio,
+                                      fechaFin: fechaFin,
+                                      prima: prima,
+                                      cobertura: cobertura,
+                                      deducible: deducible,
+                                      condiciones: condiciones
+                                  })
+                              });
+
+                              // Leer la respuesta del servidor.
+                              const texto = await response.text();
+
+                              let resultado;
+
+                              try {
+                                  resultado = texto ? JSON.parse(texto) : {};
+                              } catch {
+                                  resultado = {mensaje: texto};
+                              }
+
+                              // Gestionar errores HTTP.
+                              if (!response.ok) {
+
+                                  console.error(
+                                          'Error HTTP al generar póliza:',
+                                          response.status,
+                                          resultado
+                                          );
+
+                                  let mensaje =
+                                          resultado.mensaje ||
+                                          resultado.detail;
+
+                                  if (!mensaje) {
+
+                                      if (response.status === 401) {
+                                          mensaje =
+                                                  'Tu sesión ha expirado. Inicia sesión nuevamente.';
+
+                                      } else if (response.status === 403) {
+                                          mensaje =
+                                                  'Acceso denegado. Comprueba que hayas iniciado ' +
+                                                  'sesión como administrador y que el token CSRF sea válido.';
+
+                                      } else if (response.status === 409) {
+                                          mensaje =
+                                                  'Esta contratación podría tener una póliza registrada.';
+
+                                      } else {
+                                          mensaje =
+                                                  'No se pudo generar la póliza. HTTP ' +
+                                                  response.status;
+                                      }
+                                  }
+
+                                  mostrarMensaje(mensaje, 'error');
+                                  return;
+                              }
+
+                              // Comprobar que el backend devuelva el número de póliza.
+                              if (!resultado.numeroPoliza) {
+                                  mostrarMensaje(
+                                          'El servidor no devolvió el número de póliza. ' +
+                                          'Compruebe el registro antes de volver a intentarlo.',
+                                          'error'
+                                          );
+                                  return;
+                              }
+
+                              // Mostrar confirmación.
+                              mostrarMensaje(
+                                      'Póliza generada correctamente: ' +
+                                      resultado.numeroPoliza,
+                                      'exito'
+                                      );
+
+                              // Limpiar el formulario y actualizar contrataciones.
+                              document.getElementById('form-poliza').reset();
+
+                              configurarFechasTrasReset();
+
+                              await cargarContrataciones();
+
+                          } catch (error) {
+
+                              console.error(
+                                      'Error al generar póliza:',
+                                      error
+                                      );
+
+                              mostrarMensaje(
+                                      error.message ||
+                                      'No se pudo conectar con el servidor.',
+                                      'error'
+                                      );
+
+                          } finally {
+
+                              boton.disabled = false;
+                              boton.textContent = 'GENERAR PÓLIZA';
+                          }
+                      }
+                      function configurarFechasTrasReset() {
+                          const inicio = document.getElementById('fecha-inicio');
+                          const fin = document.getElementById('fecha-fin');
+
+                          inicio.min = fechaMinimaInicio();
+                          fin.value = '';
+                          fin.min = inicio.min;
+                          fin.disabled = true;
+                      }
+        </script>
+    </body>
 </html>

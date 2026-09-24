@@ -1,276 +1,377 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SEGURPLAN — Registro de usuario</title>
-  <link rel="stylesheet" href="../assets/styles.css" />
-  <style>
-    .login-card { max-width: 480px; }
-    .login-header p { font-size: 13px; opacity: .75; margin-top: 6px; }
-    .step-indicator {
-      display: flex; justify-content: center; gap: 0; margin-bottom: 24px;
-    }
-    .step-dot {
-      width: 32px; height: 32px; border-radius: 50%;
-      border: 2px solid var(--border); background: var(--white);
-      color: var(--text-muted); font-size: 12px; font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-      position: relative; z-index: 1;
-    }
-    .step-dot.active { background: var(--primary); border-color: var(--primary); color: #fff; }
-    .step-dot.done   { background: var(--success-bg); border-color: #2a8a4a; color: var(--success-text); }
-    .step-line {
-      flex: 1; height: 2px; background: var(--border); align-self: center; margin: 0 4px; max-width: 60px;
-    }
-    .step-line.done { background: var(--primary); }
-    .password-hint { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
-    .strength-bar { height: 4px; border-radius: 2px; margin-top: 6px; background: var(--border); overflow: hidden; }
-    .strength-fill { height: 100%; border-radius: 2px; transition: width .3s, background .3s; width: 0; }
-    .terms-check { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text-sub); margin-bottom: 18px; }
-    .terms-check input[type=checkbox] { margin-top: 2px; flex-shrink: 0; width: 16px; height: 16px; accent-color: var(--primary); }
-    .terms-check a { color: var(--primary); }
-    .success-view { display: none; text-align: center; padding: 20px 0 10px; }
-    .success-icon { width: 64px; height: 64px; background: var(--success-bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; color: var(--success-text); }
-  </style>
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SEGURPLAN — Registro de usuario</title>
+        <link rel="stylesheet" href="../assets/styles.css" />
+        <style>
+            .login-card {
+                max-width: 480px;
+            }
+            .login-header p {
+                font-size: 13px;
+                opacity: .75;
+                margin-top: 6px;
+            }
+            .step-indicator {
+                display: flex;
+                justify-content: center;
+                gap: 0;
+                margin-bottom: 24px;
+            }
+            .step-dot {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                border: 2px solid var(--border);
+                background: var(--white);
+                color: var(--text-muted);
+                font-size: 12px;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                z-index: 1;
+            }
+            .step-dot.active {
+                background: var(--primary);
+                border-color: var(--primary);
+                color: #fff;
+            }
+            .step-dot.done   {
+                background: var(--success-bg);
+                border-color: #2a8a4a;
+                color: var(--success-text);
+            }
+            .step-line {
+                flex: 1;
+                height: 2px;
+                background: var(--border);
+                align-self: center;
+                margin: 0 4px;
+                max-width: 60px;
+            }
+            .step-line.done {
+                background: var(--primary);
+            }
+            .password-hint {
+                font-size: 11px;
+                color: var(--text-muted);
+                margin-top: 4px;
+            }
+            .strength-bar {
+                height: 4px;
+                border-radius: 2px;
+                margin-top: 6px;
+                background: var(--border);
+                overflow: hidden;
+            }
+            .strength-fill {
+                height: 100%;
+                border-radius: 2px;
+                transition: width .3s, background .3s;
+                width: 0;
+            }
+            .terms-check {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                font-size: 13px;
+                color: var(--text-sub);
+                margin-bottom: 18px;
+            }
+            .terms-check input[type=checkbox] {
+                margin-top: 2px;
+                flex-shrink: 0;
+                width: 16px;
+                height: 16px;
+                accent-color: var(--primary);
+            }
+            .terms-check a {
+                color: var(--primary);
+            }
+            .success-view {
+                display: none;
+                text-align: center;
+                padding: 20px 0 10px;
+            }
+            .success-icon {
+                width: 64px;
+                height: 64px;
+                background: var(--success-bg);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 16px;
+                color: var(--success-text);
+            }
+        </style>
+    </head>
+    <body>
 
-<div class="page-wrap center-content">
-  <div class="login-card">
+        <div class="page-wrap center-content">
+            <div class="login-card">
 
-    <!-- Cabecera -->
-    <div class="login-header">
-      <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
-      <p>Crea tu cuenta para acceder a todos los servicios</p>
-    </div>
+                <!-- Cabecera -->
+                <div class="login-header">
+                    <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+                    <p>Crea tu cuenta para acceder a todos los servicios</p>
+                </div>
 
-    <div class="login-body">
+                <div class="login-body">
 
-      <!-- Indicador de pasos -->
-      <div class="step-indicator" id="step-indicator">
-        <div class="step-dot active" id="dot1">1</div>
-        <div class="step-line" id="line1"></div>
-        <div class="step-dot" id="dot2">2</div>
-        <div class="step-line" id="line2"></div>
-        <div class="step-dot" id="dot3">3</div>
-      </div>
+                    <!-- Indicador de pasos -->
+                    <div class="step-indicator" id="step-indicator">
+                        <div class="step-dot active" id="dot1">1</div>
+                        <div class="step-line" id="line1"></div>
+                        <div class="step-dot" id="dot2">2</div>
+                        <div class="step-line" id="line2"></div>
+                        <div class="step-dot" id="dot3">3</div>
+                    </div>
 
-      <!-- PASO 1: Datos personales -->
-      <div id="paso1">
-        <p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--primary);margin-bottom:14px;">Paso 1 — Datos personales</p>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Nombres <span class="req">*</span></label>
-            <input class="form-control" type="text" id="nombres" placeholder="Juan Carlos" />
-          </div>
-          <div class="form-group">
-            <label>Apellidos <span class="req">*</span></label>
-            <input class="form-control" type="text" id="apellidos" placeholder="García López" />
-          </div>
+                    <!-- PASO 1: Datos personales -->
+                    <div id="paso1">
+                        <p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--primary);margin-bottom:14px;">Paso 1 — Datos personales</p>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Nombres <span class="req">*</span></label>
+                                <input class="form-control" type="text" id="nombres" placeholder="Juan Carlos" />
+                            </div>
+                            <div class="form-group">
+                                <label>Apellidos <span class="req">*</span></label>
+                                <input class="form-control" type="text" id="apellidos" placeholder="García López" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>DNI <span class="req">*</span></label>
+                                <input class="form-control" type="text" id="dni" placeholder="12345678" maxlength="8" />
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha de nacimiento <span class="req">*</span></label>
+                                <input class="form-control" type="date" id="fnacimiento" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Género</label>
+                            <select class="form-control" id="genero">
+                                <option value="">-- Seleccionar --</option>
+                                <option>Masculino</option>
+                                <option>Femenino</option>
+                            </select>
+                        </div>
+                        <div class="btn-row" style="justify-content:flex-end;margin-top:8px;">
+                            <button class="btn btn-primary" onclick="irPaso(2)">Siguiente →</button>
+                        </div>
+                    </div>
+
+                    <!-- PASO 2: Datos de contacto -->
+                    <div id="paso2" style="display:none;">
+                        <p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--primary);margin-bottom:14px;">Paso 2 — Datos de contacto</p>
+                        <div class="form-group">
+                            <label>Correo electrónico <span class="req">*</span></label>
+                            <input class="form-control" type="email" id="correo" placeholder="juan.garcia@correo.com" />
+                        </div>
+                        <div class="form-group">
+                            <label>Confirmar correo electrónico <span class="req">*</span></label>
+                            <input class="form-control" type="email" id="correo2" placeholder="juan.garcia@correo.com" />
+                        </div>
+                        <div class="form-group">
+                            <label>Teléfono celular <span class="req">*</span></label>
+                            <input class="form-control" type="tel" id="telefono" placeholder="+51 999 999 999" />
+                        </div>
+                        <div class="form-group">
+                            <label>Departamento de residencia</label>
+                            <select class="form-control" id="departamento">
+                                <option value="">-- Seleccionar --</option>
+                                <option>Lima</option><option>Arequipa</option><option>Cusco</option>
+                                <option>La Libertad</option><option>Piura</option><option>Lambayeque</option>
+                                <option>Junín</option><option>Ica</option><option>Áncash</option>
+                                <option>Loreto</option><option>Otro</option>
+                            </select>
+                        </div>
+                        <div class="btn-row" style="justify-content:space-between;margin-top:8px;">
+                            <button class="btn btn-outline" onclick="irPaso(1)">← Anterior</button>
+                            <button class="btn btn-primary" onclick="irPaso(3)">Siguiente →</button>
+                        </div>
+                    </div>
+
+                    <!-- PASO 3: Credenciales -->
+                    <div id="paso3" style="display:none;">
+                        <p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--primary);margin-bottom:14px;">Paso 3 — Credenciales de acceso</p>
+                        <div class="form-group">
+                            <label>Contraseña <span class="req">*</span></label>
+                            <input class="form-control" type="password" id="pass1" placeholder="Mínimo 8 caracteres" oninput="evalPass()" />
+                            <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+                            <p class="password-hint" id="strength-label">Ingrese una contraseña</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Confirmar contraseña <span class="req">*</span></label>
+                            <input class="form-control" type="password" id="pass2" placeholder="Repita la contraseña" />
+                        </div>
+                        <div class="notice info" style="font-size:12px;margin-bottom:14px;">
+                            La contraseña debe tener al menos 8 caracteres, una mayúscula, un número y un carácter especial.
+                        </div>
+                        <div class="terms-check">
+                            <input type="checkbox" id="terminos" />
+                            <label for="terminos">
+                                Acepto los <a href="#">Términos y condiciones</a> y la
+                                <a href="#">Política de privacidad</a> de SEGURPLAN.
+                            </label>
+                        </div>
+                        <div class="btn-row" style="justify-content:space-between;margin-top:4px;">
+                            <button class="btn btn-outline" onclick="irPaso(2)">← Anterior</button>
+                            <button class="btn btn-primary" onclick="registrar()">CREAR CUENTA</button>
+                        </div>
+                    </div>
+
+                    <!-- Vista de éxito -->
+                    <div class="success-view" id="success-view">
+                        <div class="success-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                        <h2 style="font-size:18px;font-weight:700;color:var(--primary);margin-bottom:8px;">¡Cuenta creada exitosamente!</h2>
+                        <p style="font-size:13px;color:var(--text-sub);margin-bottom:24px;">Tu cuenta ha sido registrada en SEGURPLAN. Puedes iniciar sesión para acceder a los servicios.</p>
+                        <button class="btn btn-primary" style="width:100%;" onclick="window.location.href = 's01-login.html'">IR AL INICIO DE SESIÓN</button>
+                    </div>
+
+                    <hr class="divider" />
+                    <p style="text-align:center;font-size:12px;color:var(--text-sub);">
+                        ¿Ya tienes cuenta? <a href="s01-login.html" style="color:var(--primary);font-weight:600;">Iniciar sesión</a>
+                    </p>
+                </div>
+            </div>
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>DNI <span class="req">*</span></label>
-            <input class="form-control" type="text" id="dni" placeholder="12345678" maxlength="8" />
-          </div>
-          <div class="form-group">
-            <label>Fecha de nacimiento <span class="req">*</span></label>
-            <input class="form-control" type="date" id="fnacimiento" />
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Género</label>
-          <select class="form-control" id="genero">
-            <option value="">-- Seleccionar --</option>
-            <option>Masculino</option>
-            <option>Femenino</option>
-          </select>
-        </div>
-        <div class="btn-row" style="justify-content:flex-end;margin-top:8px;">
-          <button class="btn btn-primary" onclick="irPaso(2)">Siguiente →</button>
-        </div>
-      </div>
 
-      <!-- PASO 2: Datos de contacto -->
-      <div id="paso2" style="display:none;">
-        <p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--primary);margin-bottom:14px;">Paso 2 — Datos de contacto</p>
-        <div class="form-group">
-          <label>Correo electrónico <span class="req">*</span></label>
-          <input class="form-control" type="email" id="correo" placeholder="juan.garcia@correo.com" />
-        </div>
-        <div class="form-group">
-          <label>Confirmar correo electrónico <span class="req">*</span></label>
-          <input class="form-control" type="email" id="correo2" placeholder="juan.garcia@correo.com" />
-        </div>
-        <div class="form-group">
-          <label>Teléfono celular <span class="req">*</span></label>
-          <input class="form-control" type="tel" id="telefono" placeholder="+51 999 999 999" />
-        </div>
-        <div class="form-group">
-          <label>Departamento de residencia</label>
-          <select class="form-control" id="departamento">
-            <option value="">-- Seleccionar --</option>
-            <option>Lima</option><option>Arequipa</option><option>Cusco</option>
-            <option>La Libertad</option><option>Piura</option><option>Lambayeque</option>
-            <option>Junín</option><option>Ica</option><option>Áncash</option>
-            <option>Loreto</option><option>Otro</option>
-          </select>
-        </div>
-        <div class="btn-row" style="justify-content:space-between;margin-top:8px;">
-          <button class="btn btn-outline" onclick="irPaso(1)">← Anterior</button>
-          <button class="btn btn-primary" onclick="irPaso(3)">Siguiente →</button>
-        </div>
-      </div>
+        <footer class="site-footer">
+            <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+            <nav class="footer-links">
+                <a href="../index.html">Inicio</a>
+                <a href="s01-login.html">Iniciar sesión</a>
+                <a href="s00-registro.html">Registrarse</a>
+            </nav>
+            <div class="footer-meta">
+                <span>© 2026 SEGURPLAN. Todos los derechos reservados.</span>
+            </div>
+        </footer>
+        <script src="../assets/app.js"></script>
 
-      <!-- PASO 3: Credenciales -->
-      <div id="paso3" style="display:none;">
-        <p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--primary);margin-bottom:14px;">Paso 3 — Credenciales de acceso</p>
-        <div class="form-group">
-          <label>Contraseña <span class="req">*</span></label>
-          <input class="form-control" type="password" id="pass1" placeholder="Mínimo 8 caracteres" oninput="evalPass()" />
-          <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
-          <p class="password-hint" id="strength-label">Ingrese una contraseña</p>
-        </div>
-        <div class="form-group">
-          <label>Confirmar contraseña <span class="req">*</span></label>
-          <input class="form-control" type="password" id="pass2" placeholder="Repita la contraseña" />
-        </div>
-        <div class="notice info" style="font-size:12px;margin-bottom:14px;">
-          La contraseña debe tener al menos 8 caracteres, una mayúscula, un número y un carácter especial.
-        </div>
-        <div class="terms-check">
-          <input type="checkbox" id="terminos" />
-          <label for="terminos">
-            Acepto los <a href="#">Términos y condiciones</a> y la
-            <a href="#">Política de privacidad</a> de SEGURPLAN.
-          </label>
-        </div>
-        <div class="btn-row" style="justify-content:space-between;margin-top:4px;">
-          <button class="btn btn-outline" onclick="irPaso(2)">← Anterior</button>
-          <button class="btn btn-primary" onclick="registrar()">CREAR CUENTA</button>
-        </div>
-      </div>
+        <script>
+                    /* ── Navegación entre pasos ─────────────────────────── */
+                    function irPaso(n) {
+                        [1, 2, 3].forEach(i => {
+                            document.getElementById('paso' + i).style.display = i === n ? 'block' : 'none';
+                            const dot = document.getElementById('dot' + i);
+                            if (i < n) {
+                                dot.className = 'step-dot done';
+                                dot.textContent = '✓';
+                            } else if (i === n) {
+                                dot.className = 'step-dot active';
+                                dot.textContent = i;
+                            } else {
+                                dot.className = 'step-dot';
+                                dot.textContent = i;
+                            }
+                        });
+                        [1, 2].forEach(i => {
+                            const line = document.getElementById('line' + i);
+                            if (line)
+                                line.className = 'step-line' + (i < n ? ' done' : '');
+                        });
+                        window.scrollTo({top: 0, behavior: 'smooth'});
+                    }
 
-      <!-- Vista de éxito -->
-      <div class="success-view" id="success-view">
-        <div class="success-icon">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-        </div>
-        <h2 style="font-size:18px;font-weight:700;color:var(--primary);margin-bottom:8px;">¡Cuenta creada exitosamente!</h2>
-        <p style="font-size:13px;color:var(--text-sub);margin-bottom:24px;">Tu cuenta ha sido registrada en SEGURPLAN. Puedes iniciar sesión para acceder a los servicios.</p>
-        <button class="btn btn-primary" style="width:100%;" onclick="window.location.href='s01-login.html'">IR AL INICIO DE SESIÓN</button>
-      </div>
+                    /* ── Indicador de fortaleza de contraseña ───────────── */
+                    function evalPass() {
+                        const val = document.getElementById('pass1').value;
+                        const fill = document.getElementById('strength-fill');
+                        const lbl = document.getElementById('strength-label');
+                        let score = 0;
+                        if (val.length >= 8)
+                            score++;
+                        if (/[A-Z]/.test(val))
+                            score++;
+                        if (/[0-9]/.test(val))
+                            score++;
+                        if (/[^A-Za-z0-9]/.test(val))
+                            score++;
+                        const configs = [
+                            {w: '0%', bg: 'transparent', txt: 'Ingrese una contraseña'},
+                            {w: '25%', bg: 'var(--error-text)', txt: 'Débil'},
+                            {w: '50%', bg: 'var(--warn-text)', txt: 'Regular'},
+                            {w: '75%', bg: '#0f6cbf', txt: 'Buena'},
+                            {w: '100%', bg: 'var(--success-text)', txt: 'Muy segura'},
+                        ];
+                        const c = configs[score];
+                        fill.style.width = c.w;
+                        fill.style.background = c.bg;
+                        lbl.textContent = c.txt;
+                        lbl.style.color = c.bg;
+                    }
 
-      <hr class="divider" />
-      <p style="text-align:center;font-size:12px;color:var(--text-sub);">
-        ¿Ya tienes cuenta? <a href="s01-login.html" style="color:var(--primary);font-weight:600;">Iniciar sesión</a>
-      </p>
-    </div>
-  </div>
-</div>
+                    /* ── Registro ───────────────────────────────────────── */
+                    async function registrar() {
+                        const pass1 = document.getElementById('pass1').value;
+                        const pass2 = document.getElementById('pass2').value;
+                        const terminos = document.getElementById('terminos').checked;
 
-<footer class="site-footer">
-  <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
-  <nav class="footer-links">
-    <a href="../index.html">Inicio</a>
-    <a href="s01-login.html">Iniciar sesión</a>
-    <a href="s00-registro.html">Registrarse</a>
-  </nav>
-  <div class="footer-meta">
-    <span>© 2026 SEGURPLAN. Todos los derechos reservados.</span>
-  </div>
-</footer>
-<script src="../assets/app.js"></script>
+                        if (!pass1 || pass1.length < 8) {
+                            alert('La contraseña debe tener al menos 8 caracteres.');
+                            return;
+                        }
+                        if (pass1 !== pass2) {
+                            alert('Las contraseñas no coinciden.');
+                            return;
+                        }
+                        if (!terminos) {
+                            alert('Debe aceptar los términos y condiciones para continuar.');
+                            return;
+                        }
 
-<script>
-  /* ── Navegación entre pasos ─────────────────────────── */
-  function irPaso(n) {
-    [1, 2, 3].forEach(i => {
-      document.getElementById('paso' + i).style.display = i === n ? 'block' : 'none';
-      const dot = document.getElementById('dot' + i);
-      if (i < n)       { dot.className = 'step-dot done'; dot.textContent = '✓'; }
-      else if (i === n){ dot.className = 'step-dot active'; dot.textContent = i; }
-      else             { dot.className = 'step-dot'; dot.textContent = i; }
-    });
-    [1, 2].forEach(i => {
-      const line = document.getElementById('line' + i);
-      if (line) line.className = 'step-line' + (i < n ? ' done' : '');
-    });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+                        const correoVal = document.getElementById('correo').value.trim();
+                        const correo2Val = document.getElementById('correo2').value.trim();
+                        if (!correoVal) {
+                            alert('Ingrese su correo electrónico.');
+                            return;
+                        }
+                        if (correoVal !== correo2Val) {
+                            alert('Los correos no coinciden.');
+                            return;
+                        }
 
-  /* ── Indicador de fortaleza de contraseña ───────────── */
-  function evalPass() {
-    const val  = document.getElementById('pass1').value;
-    const fill = document.getElementById('strength-fill');
-    const lbl  = document.getElementById('strength-label');
-    let score  = 0;
-    if (val.length >= 8)          score++;
-    if (/[A-Z]/.test(val))        score++;
-    if (/[0-9]/.test(val))        score++;
-    if (/[^A-Za-z0-9]/.test(val)) score++;
-    const configs = [
-      { w: '0%',   bg: 'transparent',              txt: 'Ingrese una contraseña' },
-      { w: '25%',  bg: 'var(--error-text)',         txt: 'Débil' },
-      { w: '50%',  bg: 'var(--warn-text)',          txt: 'Regular' },
-      { w: '75%',  bg: '#0f6cbf',                  txt: 'Buena' },
-      { w: '100%', bg: 'var(--success-text)',       txt: 'Muy segura' },
-    ];
-    const c = configs[score];
-    fill.style.width      = c.w;
-    fill.style.background = c.bg;
-    lbl.textContent       = c.txt;
-    lbl.style.color       = c.bg;
-  }
+                        const result = await sp_registerUser({
+                            nombres: document.getElementById('nombres').value,
+                            apellidos: document.getElementById('apellidos').value,
+                            dni: document.getElementById('dni').value,
+                            fnacimiento: document.getElementById('fnacimiento').value,
+                            genero: document.getElementById('genero').value,
+                            correo: correoVal,
+                            telefono: document.getElementById('telefono').value,
+                            departamento: document.getElementById('departamento').value,
+                            password: pass1,
+                        });
 
-  /* ── Registro ───────────────────────────────────────── */
-  async function registrar() {
-    const pass1    = document.getElementById('pass1').value;
-    const pass2    = document.getElementById('pass2').value;
-    const terminos = document.getElementById('terminos').checked;
+                        if (!result.ok) {
+                            alert(result.error);
+                            return;
+                        }
 
-    if (!pass1 || pass1.length < 8) {
-      alert('La contraseña debe tener al menos 8 caracteres.'); return;
-    }
-    if (pass1 !== pass2) {
-      alert('Las contraseñas no coinciden.'); return;
-    }
-    if (!terminos) {
-      alert('Debe aceptar los términos y condiciones para continuar.'); return;
-    }
+                        [1, 2, 3].forEach(i => {
+                            document.getElementById('paso' + i).style.display = 'none';
+                            const dot = document.getElementById('dot' + i);
+                            dot.className = 'step-dot done';
+                            dot.textContent = '✓';
+                        });
+                        [1, 2].forEach(i => document.getElementById('line' + i).className = 'step-line done');
+                        document.getElementById('success-view').style.display = 'block';
+                        window.scrollTo({top: 0, behavior: 'smooth'});
+                    }
+        </script>
 
-    const correoVal  = document.getElementById('correo').value.trim();
-    const correo2Val = document.getElementById('correo2').value.trim();
-    if (!correoVal) { alert('Ingrese su correo electrónico.'); return; }
-    if (correoVal !== correo2Val) { alert('Los correos no coinciden.'); return; }
-
-    const result = await sp_registerUser({
-      nombres:      document.getElementById('nombres').value,
-      apellidos:    document.getElementById('apellidos').value,
-      dni:          document.getElementById('dni').value,
-      fnacimiento:  document.getElementById('fnacimiento').value,
-      genero:       document.getElementById('genero').value,
-      correo:       correoVal,
-      telefono:     document.getElementById('telefono').value,
-      departamento: document.getElementById('departamento').value,
-      password:     pass1,
-    });
-
-    if (!result.ok) { alert(result.error); return; }
-
-    [1, 2, 3].forEach(i => {
-      document.getElementById('paso' + i).style.display = 'none';
-      const dot = document.getElementById('dot' + i);
-      dot.className = 'step-dot done'; dot.textContent = '✓';
-    });
-    [1, 2].forEach(i => document.getElementById('line' + i).className = 'step-line done');
-    document.getElementById('success-view').style.display = 'block';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-</script>
-
-</body>
+    </body>
 </html>

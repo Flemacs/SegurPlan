@@ -1,112 +1,1199 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SEGURPLAN — Reporte general</title>
-  <link rel="stylesheet" href="../assets/styles.css" />
+
+    <meta charset="UTF-8" />
+
+    <meta name="viewport"
+          content="width=device-width,
+                   initial-scale=1.0" />
+
+    <title>
+        SEGURPLAN — Reporte general
+    </title>
+
+    <link rel="stylesheet"
+          href="../assets/styles.css" />
+
 </head>
+
 <body>
+
+
+<!-- ======================================================
+     HEADER
+======================================================= -->
+
 <header class="site-header">
-  <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
-  <div class="header-right">
-    <span class="user-name">Usuario: Luis Mendoza — Administrador</span>
-    <button class="bell-btn" title="Notificaciones">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-    </button>
-    <button class="profile-btn">MI PERFIL</button>
-  </div>
+
+    <div class="logo">
+
+        SEGURPLAN
+
+        <span>
+            Plataforma de seguros y AFP
+        </span>
+
+    </div>
+
+
+    <div class="header-right">
+
+        <span
+            class="user-name"
+            id="header-user">
+
+            Usuario
+
+        </span>
+
+
+        <button
+            class="bell-btn"
+            type="button"
+            title="Notificaciones">
+
+            <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+
+                <path
+                    d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9">
+                </path>
+
+                <path
+                    d="M13.73 21a2 2 0 0 1-3.46 0">
+                </path>
+
+            </svg>
+
+        </button>
+
+
+        <button
+            class="profile-btn"
+            type="button">
+
+            MI PERFIL
+
+        </button>
+
+
+        <button
+            class="btn-logout"
+            type="button">
+
+            CERRAR SESIÓN
+
+        </button>
+
+    </div>
+
 </header>
 
+
+<!-- ======================================================
+     CONTENIDO
+======================================================= -->
+
 <div class="page-wrap">
-  <nav class="breadcrumb">SEGURPLAN &rsaquo; Reportes &rsaquo; Reporte general</nav>
-  <h1 class="page-title">Reporte general</h1>
 
-  <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
-    <label style="font-weight:600;font-size:14px;">Período:</label>
-    <select class="form-control" style="width:auto;">
-      <option>Agosto 2026</option>
-      <option>Julio 2026</option>
-      <option>Junio 2026</option>
-    </select>
-    <button class="btn btn-primary">GENERAR</button>
-  </div>
+    <nav class="breadcrumb">
 
-  <div class="stats-grid cols-3">
-    <div class="stat-box">
-      <div class="stat-value">125</div>
-      <div class="stat-label">COTIZACIONES</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-value">38</div>
-      <div class="stat-label">SINIESTROS</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-value">57</div>
-      <div class="stat-label">AFP</div>
-    </div>
-  </div>
+        SEGURPLAN
+        &rsaquo;
+        Reportes
+        &rsaquo;
+        Reporte general
 
-  <div class="card">
-    <div class="card-header">
-      <h2>Detalle por módulo</h2>
-    </div>
-    <div class="card-body">
-      <h3 class="section-title">COTIZACIONES</h3>
-      <div class="bar-group">
-        <span class="bar-label">Atendidas</span>
-        <div class="bar-track"><div class="bar-fill" style="width:80%;"></div></div>
-        <span class="bar-pct">80%</span>
-      </div>
-      <div class="bar-group">
-        <span class="bar-label">Adquiridas</span>
-        <div class="bar-track"><div class="bar-fill" style="width:45%;"></div></div>
-        <span class="bar-pct">45%</span>
-      </div>
+    </nav>
 
-      <h3 class="section-title" style="margin-top:20px;">SINIESTROS</h3>
-      <div class="bar-group">
-        <span class="bar-label">En revisión</span>
-        <div class="bar-track"><div class="bar-fill" style="width:60%;"></div></div>
-        <span class="bar-pct">60%</span>
-      </div>
-      <div class="bar-group">
-        <span class="bar-label">Derivados</span>
-        <div class="bar-track"><div class="bar-fill" style="width:40%;"></div></div>
-        <span class="bar-pct">40%</span>
-      </div>
-      <div class="bar-group">
-        <span class="bar-label">Con resultado</span>
-        <div class="bar-track"><div class="bar-fill" style="width:25%;"></div></div>
-        <span class="bar-pct">25%</span>
-      </div>
 
-      <h3 class="section-title" style="margin-top:20px;">AFP</h3>
-      <p style="font-size:14px;color:var(--text-main);line-height:1.8;">
-        Nuevos inversores: <strong>32</strong> &nbsp;|&nbsp;
-        Personas de tercera edad: <strong>25</strong> &nbsp;|&nbsp;
-        Simulaciones: <strong>48</strong> &nbsp;|&nbsp;
-        Orientaciones: <strong>21</strong>
-      </p>
+    <h1 class="page-title">
+        Reporte general
+    </h1>
+
+
+    <p class="page-subtitle">
+
+        Resumen mensual de las operaciones
+        registradas en SEGURPLAN.
+
+    </p>
+
+
+    <!-- ==================================================
+         FILTRO
+    =================================================== -->
+
+    <div style="
+        display:flex;
+        align-items:center;
+        gap:12px;
+        margin-bottom:24px;
+        flex-wrap:wrap;
+    ">
+
+        <label
+            for="periodo"
+            style="
+                font-weight:600;
+                font-size:14px;
+            ">
+
+            Período:
+
+        </label>
+
+
+        <input
+            class="form-control"
+            type="month"
+            id="periodo"
+            style="width:auto;" />
+
+
+        <button
+            class="btn btn-primary"
+            type="button"
+            id="btn-generar">
+
+            GENERAR
+
+        </button>
+
     </div>
-    <div class="card-footer">
-      <button class="btn btn-primary">EXPORTAR REPORTE</button>
-      <button class="btn btn-outline">IMPRIMIR</button>
+
+
+    <!-- ==================================================
+         MENSAJE
+    =================================================== -->
+
+    <div
+        id="mensaje-reporte"
+        style="
+            display:none;
+            margin-bottom:20px;
+        ">
     </div>
-  </div>
+
+
+    <!-- ==================================================
+         ESTADÍSTICAS
+    =================================================== -->
+
+    <div class="stats-grid cols-3">
+
+        <div class="stat-box">
+
+            <div
+                class="stat-value"
+                id="total-cotizaciones">
+
+                00
+
+            </div>
+
+            <div class="stat-label">
+                COTIZACIONES
+            </div>
+
+        </div>
+
+
+        <div class="stat-box">
+
+            <div
+                class="stat-value"
+                id="total-siniestros">
+
+                00
+
+            </div>
+
+            <div class="stat-label">
+                SINIESTROS
+            </div>
+
+        </div>
+
+
+        <div class="stat-box">
+
+            <div
+                class="stat-value"
+                id="total-afp">
+
+                00
+
+            </div>
+
+            <div class="stat-label">
+                AFP
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==================================================
+         DETALLE
+    =================================================== -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <h2>
+                Detalle por módulo
+            </h2>
+
+        </div>
+
+
+        <div class="card-body">
+
+
+            <!-- ==========================================
+                 COTIZACIONES
+            =========================================== -->
+
+            <h3 class="section-title">
+
+                COTIZACIONES
+
+            </h3>
+
+
+            <div class="bar-group">
+
+                <span class="bar-label">
+                    Atendidas
+                </span>
+
+                <div class="bar-track">
+
+                    <div
+                        class="bar-fill"
+                        id="bar-cot-atendidas"
+                        style="width:0%;">
+                    </div>
+
+                </div>
+
+                <span
+                    class="bar-pct"
+                    id="pct-cot-atendidas">
+
+                    0%
+
+                </span>
+
+            </div>
+
+
+            <div class="bar-group">
+
+                <span class="bar-label">
+                    Adquiridas
+                </span>
+
+                <div class="bar-track">
+
+                    <div
+                        class="bar-fill"
+                        id="bar-cot-adquiridas"
+                        style="width:0%;">
+                    </div>
+
+                </div>
+
+                <span
+                    class="bar-pct"
+                    id="pct-cot-adquiridas">
+
+                    0%
+
+                </span>
+
+            </div>
+
+
+            <!-- ==========================================
+                 SINIESTROS
+            =========================================== -->
+
+            <h3
+                class="section-title"
+                style="margin-top:20px;">
+
+                SINIESTROS
+
+            </h3>
+
+
+            <div class="bar-group">
+
+                <span class="bar-label">
+                    En revisión
+                </span>
+
+                <div class="bar-track">
+
+                    <div
+                        class="bar-fill"
+                        id="bar-sin-revision"
+                        style="width:0%;">
+                    </div>
+
+                </div>
+
+                <span
+                    class="bar-pct"
+                    id="pct-sin-revision">
+
+                    0%
+
+                </span>
+
+            </div>
+
+
+            <div class="bar-group">
+
+                <span class="bar-label">
+                    Derivados
+                </span>
+
+                <div class="bar-track">
+
+                    <div
+                        class="bar-fill"
+                        id="bar-sin-derivados"
+                        style="width:0%;">
+                    </div>
+
+                </div>
+
+                <span
+                    class="bar-pct"
+                    id="pct-sin-derivados">
+
+                    0%
+
+                </span>
+
+            </div>
+
+
+            <div class="bar-group">
+
+                <span class="bar-label">
+                    Con resultado
+                </span>
+
+                <div class="bar-track">
+
+                    <div
+                        class="bar-fill"
+                        id="bar-sin-resultado"
+                        style="width:0%;">
+                    </div>
+
+                </div>
+
+                <span
+                    class="bar-pct"
+                    id="pct-sin-resultado">
+
+                    0%
+
+                </span>
+
+            </div>
+
+
+            <!-- ==========================================
+                 AFP
+            =========================================== -->
+
+            <h3
+                class="section-title"
+                style="margin-top:20px;">
+
+                AFP
+
+            </h3>
+
+
+            <p style="
+                font-size:14px;
+                color:var(--text-main);
+                line-height:1.8;
+            ">
+
+                Simulaciones:
+
+                <strong id="afp-simulaciones">
+                    0
+                </strong>
+
+                &nbsp;|&nbsp;
+
+                Orientaciones solicitadas:
+
+                <strong id="afp-orientaciones">
+                    0
+                </strong>
+
+            </p>
+
+
+            <div
+                class="notice info"
+                style="margin-top:15px;">
+
+                Los indicadores mostrados corresponden
+                a los registros almacenados en el sistema
+                durante el período seleccionado.
+
+            </div>
+
+        </div>
+
+
+        <!-- ==============================================
+             BOTONES
+        =============================================== -->
+
+        <div class="card-footer">
+
+            <button
+                class="btn btn-primary"
+                type="button"
+                id="btn-exportar">
+
+                EXPORTAR REPORTE
+
+            </button>
+
+
+            <button
+                class="btn btn-outline"
+                type="button"
+                id="btn-imprimir">
+
+                IMPRIMIR
+
+            </button>
+
+        </div>
+
+    </div>
+
 </div>
 
+
+<!-- ======================================================
+     FOOTER
+======================================================= -->
+
 <footer class="site-footer">
-  <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
-  <nav class="footer-links">
-    <a href="../index.html">Inicio</a>
-    <a href="s01-login.html">Iniciar sesión</a>
-    <a href="s00-registro.html">Registrarse</a>
-  </nav>
-  <div class="footer-meta">
-    <span>© 2026 SEGURPLAN. Todos los derechos reservados.</span>
-  </div>
+
+    <div class="footer-brand">
+
+        SEGURPLAN
+
+        <span>
+            Plataforma de seguros y AFP
+        </span>
+
+    </div>
+
+
+    <nav class="footer-links">
+
+        <a href="s14-administracion.html">
+            Administración
+        </a>
+
+        <a
+            href="#"
+            class="btn-logout">
+
+            Cerrar sesión
+
+        </a>
+
+    </nav>
+
+
+    <div class="footer-meta">
+
+        <span>
+            © 2026 SEGURPLAN.
+            Todos los derechos reservados.
+        </span>
+
+    </div>
+
 </footer>
+
+
 <script src="../assets/app.js"></script>
+
+
+<script>
+
+// ==========================================================
+// DATOS ACTUALES DEL REPORTE
+// ==========================================================
+
+let reporteActual = null;
+
+
+// ==========================================================
+// INICIO
+// ==========================================================
+
+document.addEventListener(
+    'DOMContentLoaded',
+    async function () {
+
+        const session =
+            sp_getSession();
+
+
+        if (!session) {
+
+            window.location.href =
+                's01-login.html';
+
+            return;
+        }
+
+
+        // ==================================================
+        // AUTORIZACIÓN VISUAL
+        // ==================================================
+
+        if (
+            session.rol !== 'Administrador' &&
+            session.rol !== 'Gerente'
+        ) {
+
+            window.location.href =
+                's02-panel-usuario.html';
+
+            return;
+        }
+
+
+        // ==================================================
+        // USUARIO
+        // ==================================================
+
+        document.getElementById(
+            'header-user'
+        ).textContent =
+            session.nombres +
+            ' ' +
+            session.apellidos +
+            ' — ' +
+            session.rol;
+
+
+        // ==================================================
+        // MES ACTUAL
+        // ==================================================
+
+        const hoy =
+            new Date();
+
+
+        const mesActual =
+            String(
+                hoy.getMonth() + 1
+            ).padStart(
+                2,
+                '0'
+            );
+
+
+        document.getElementById(
+            'periodo'
+        ).value =
+            hoy.getFullYear() +
+            '-' +
+            mesActual;
+
+
+        // ==================================================
+        // EVENTOS
+        // ==================================================
+
+        document.getElementById(
+            'btn-generar'
+        ).addEventListener(
+            'click',
+            cargarReporte
+        );
+
+
+        document.getElementById(
+            'btn-imprimir'
+        ).addEventListener(
+            'click',
+            function () {
+
+                window.print();
+
+            }
+        );
+
+
+        document.getElementById(
+            'btn-exportar'
+        ).addEventListener(
+            'click',
+            exportarCSV
+        );
+
+
+        // ==================================================
+        // CARGAR REPORTE INICIAL
+        // ==================================================
+
+        await cargarReporte();
+
+    }
+);
+
+
+// ==========================================================
+// CARGAR REPORTE
+// ==========================================================
+
+async function cargarReporte() {
+
+    const periodo =
+        document.getElementById(
+            'periodo'
+        ).value;
+
+
+    if (!periodo) {
+
+        mostrarMensaje(
+            'Seleccione un período.',
+            'error'
+        );
+
+        return;
+    }
+
+
+    const partes =
+        periodo.split('-');
+
+
+    const anio =
+        Number(partes[0]);
+
+
+    const mes =
+        Number(partes[1]);
+
+
+    const boton =
+        document.getElementById(
+            'btn-generar'
+        );
+
+
+    boton.disabled = true;
+
+    boton.textContent =
+        'GENERANDO...';
+
+
+    try {
+
+        const response =
+            await fetch(
+                '/api/reportes/general' +
+                '?anio=' +
+                encodeURIComponent(anio) +
+                '&mes=' +
+                encodeURIComponent(mes),
+                {
+
+                    method: 'GET',
+
+                    credentials:
+                        'same-origin'
+
+                }
+            );
+
+
+        if (response.status === 401) {
+
+            window.location.href =
+                's01-login.html';
+
+            return;
+        }
+
+
+        if (response.status === 403) {
+
+            throw new Error(
+                'No tiene permisos para consultar reportes.'
+            );
+        }
+
+
+        let data = {};
+
+
+        try {
+
+            data =
+                await response.json();
+
+        } catch (e) {
+
+            data = {};
+
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.mensaje ||
+                'No se pudo generar el reporte.'
+            );
+        }
+
+
+        reporteActual =
+            data;
+
+
+        mostrarReporte(
+            data
+        );
+
+
+        mostrarMensaje(
+            'Reporte generado correctamente.',
+            'success'
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            'Error generando reporte:',
+            error
+        );
+
+
+        mostrarMensaje(
+            error.message,
+            'error'
+        );
+
+
+    } finally {
+
+        boton.disabled = false;
+
+        boton.textContent =
+            'GENERAR';
+
+    }
+
+}
+
+
+// ==========================================================
+// MOSTRAR REPORTE
+// ==========================================================
+
+function mostrarReporte(
+    data
+) {
+
+    document.getElementById(
+        'total-cotizaciones'
+    ).textContent =
+        numero(
+            data.totalCotizaciones
+        );
+
+
+    document.getElementById(
+        'total-siniestros'
+    ).textContent =
+        numero(
+            data.totalSiniestros
+        );
+
+
+    document.getElementById(
+        'total-afp'
+    ).textContent =
+        numero(
+            data.totalAFP
+        );
+
+
+    // ======================================================
+    // COTIZACIONES
+    // ======================================================
+
+    aplicarBarra(
+        'bar-cot-atendidas',
+        'pct-cot-atendidas',
+        data.porcentajeCotizacionesAtendidas
+    );
+
+
+    aplicarBarra(
+        'bar-cot-adquiridas',
+        'pct-cot-adquiridas',
+        data.porcentajeCotizacionesAdquiridas
+    );
+
+
+    // ======================================================
+    // SINIESTROS
+    // ======================================================
+
+    aplicarBarra(
+        'bar-sin-revision',
+        'pct-sin-revision',
+        data.porcentajeSiniestrosRevision
+    );
+
+
+    aplicarBarra(
+        'bar-sin-derivados',
+        'pct-sin-derivados',
+        data.porcentajeSiniestrosDerivados
+    );
+
+
+    aplicarBarra(
+        'bar-sin-resultado',
+        'pct-sin-resultado',
+        data.porcentajeSiniestrosConResultado
+    );
+
+
+    // ======================================================
+    // AFP
+    // ======================================================
+
+    document.getElementById(
+        'afp-simulaciones'
+    ).textContent =
+        numero(
+            data.afpSimulaciones
+        );
+
+
+    document.getElementById(
+        'afp-orientaciones'
+    ).textContent =
+        numero(
+            data.afpOrientaciones
+        );
+
+}
+
+
+// ==========================================================
+// BARRAS
+// ==========================================================
+
+function aplicarBarra(
+    idBarra,
+    idTexto,
+    valor
+) {
+
+    let porcentaje =
+        Number(valor);
+
+
+    if (!Number.isFinite(porcentaje)) {
+
+        porcentaje = 0;
+
+    }
+
+
+    porcentaje =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                porcentaje
+            )
+        );
+
+
+    document.getElementById(
+        idBarra
+    ).style.width =
+        porcentaje + '%';
+
+
+    document.getElementById(
+        idTexto
+    ).textContent =
+        porcentaje.toFixed(1) +
+        '%';
+
+}
+
+
+// ==========================================================
+// NÚMERO
+// ==========================================================
+
+function numero(
+    valor
+) {
+
+    const n =
+        Number(valor);
+
+
+    if (!Number.isFinite(n)) {
+
+        return '0';
+
+    }
+
+
+    return String(n);
+
+}
+
+
+// ==========================================================
+// EXPORTAR CSV
+// ==========================================================
+
+function exportarCSV() {
+
+    if (!reporteActual) {
+
+        mostrarMensaje(
+            'Primero genere un reporte.',
+            'error'
+        );
+
+        return;
+    }
+
+
+    const periodo =
+        document.getElementById(
+            'periodo'
+        ).value;
+
+
+    const filas = [
+
+        [
+            'REPORTE GENERAL SEGURPLAN'
+        ],
+
+        [
+            'Periodo',
+            periodo
+        ],
+
+        [],
+
+        [
+            'Indicador',
+            'Valor'
+        ],
+
+        [
+            'Cotizaciones',
+            reporteActual.totalCotizaciones
+        ],
+
+        [
+            'Cotizaciones atendidas',
+            reporteActual.cotizacionesAtendidas
+        ],
+
+        [
+            'Cotizaciones adquiridas',
+            reporteActual.cotizacionesAdquiridas
+        ],
+
+        [
+            'Siniestros',
+            reporteActual.totalSiniestros
+        ],
+
+        [
+            'Siniestros en revisión',
+            reporteActual.siniestrosRevision
+        ],
+
+        [
+            'Siniestros derivados',
+            reporteActual.siniestrosDerivados
+        ],
+
+        [
+            'Siniestros con resultado',
+            reporteActual.siniestrosConResultado
+        ],
+
+        [
+            'Registros AFP',
+            reporteActual.totalAFP
+        ],
+
+        [
+            'Simulaciones AFP',
+            reporteActual.afpSimulaciones
+        ],
+
+        [
+            'Orientaciones AFP',
+            reporteActual.afpOrientaciones
+        ]
+
+    ];
+
+
+    const contenido =
+        filas
+            .map(
+                fila =>
+                    fila
+                        .map(
+                            celda =>
+                                '"' +
+                                String(
+                                    celda ?? ''
+                                )
+                                    .replaceAll(
+                                        '"',
+                                        '""'
+                                    ) +
+                                '"'
+                        )
+                        .join(';')
+            )
+            .join('\n');
+
+
+    const blob =
+        new Blob(
+            [
+                '\uFEFF' +
+                contenido
+            ],
+            {
+                type:
+                    'text/csv;charset=utf-8;'
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const enlace =
+        document.createElement(
+            'a'
+        );
+
+
+    enlace.href =
+        url;
+
+
+    enlace.download =
+        'SEGURPLAN_Reporte_General_' +
+        periodo +
+        '.csv';
+
+
+    document.body.appendChild(
+        enlace
+    );
+
+
+    enlace.click();
+
+
+    enlace.remove();
+
+
+    URL.revokeObjectURL(
+        url
+    );
+
+}
+
+
+// ==========================================================
+// MENSAJES
+// ==========================================================
+
+function mostrarMensaje(
+    mensaje,
+    tipo
+) {
+
+    const contenedor =
+        document.getElementById(
+            'mensaje-reporte'
+        );
+
+
+    contenedor.style.display =
+        'block';
+
+
+    contenedor.className =
+        tipo === 'success'
+            ? 'notice success'
+            : 'notice error';
+
+
+    contenedor.textContent =
+        mensaje;
+
+}
+
+</script>
+
 </body>
 </html>

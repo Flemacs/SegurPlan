@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SEGURPLAN — REP-MV-02 Conversión de ventas</title>
+
+    <link rel="stylesheet" href="../assets/styles.css">
+
+    <style>
+
+        .report-nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 0 0 24px;
+        }
+
+        .report-nav a {
+            padding: 9px 12px;
+            border: 1px solid #d7dce5;
+            border-radius: 6px;
+            background: #fff;
+            color: #183153;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .report-nav a:hover {
+            background: #eef2f8;
+        }
+
+        .report-code {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #eef2f8;
+            color: #183153;
+            font-size: 12px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .report-toolbar {
+            display: flex;
+            gap: 12px;
+            align-items: end;
+            flex-wrap: wrap;
+            margin: 22px 0;
+        }
+
+        .report-toolbar .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .report-toolbar label {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .report-kpis {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin: 18px 0 24px;
+        }
+
+        .report-kpi {
+            background: #fff;
+            border: 1px solid #dfe3ea;
+            border-radius: 8px;
+            padding: 18px;
+        }
+
+        .report-kpi strong {
+            display: block;
+            font-size: 25px;
+            color: #183153;
+            margin-bottom: 5px;
+        }
+
+        .report-kpi span {
+            font-size: 11px;
+            color: #687386;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .conversion-box {
+            background: #fff;
+            border: 1px solid #dfe3ea;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .conversion-info span {
+            display: block;
+            color: #687386;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .conversion-info strong {
+            font-size: 32px;
+            color: #183153;
+        }
+
+        .conversion-description {
+            font-size: 12px;
+            color: #687386;
+            max-width: 520px;
+        }
+
+        .chart-panel {
+            height: 280px;
+            display: flex;
+            align-items: flex-end;
+            gap: 18px;
+            padding: 28px 24px 12px;
+            border: 1px solid #e1e5eb;
+            border-radius: 8px;
+            background: #fafbfc;
+            margin-bottom: 24px;
+        }
+
+        .chart-col {
+            flex: 1;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .chart-bar {
+            margin: auto;
+            width: min(70px, 80%);
+            background: #183153;
+            border-radius: 6px 6px 0 0;
+            min-height: 0;
+            transition: height .4s ease;
+            position: relative;
+        }
+
+        .chart-value {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            font-weight: 800;
+            color: #183153;
+        }
+
+        .chart-col small {
+            display: block;
+            margin-top: 8px;
+            font-size: 10px;
+            color: #687386;
+        }
+
+        .report-note {
+            font-size: 12px;
+            color: #687386;
+            margin-top: 12px;
+        }
+
+        .status-pill {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            background: #eef2f8;
+            font-weight: 700;
+            font-size: 11px;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 25px;
+            color: #687386;
+        }
+
+        @media(max-width:760px) {
+
+            .report-kpis {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .chart-panel {
+                gap: 8px;
+            }
+
+            .site-header {
+                height: auto;
+            }
+
+            .header-right {
+                flex-wrap: wrap;
+            }
+
+            .conversion-box {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ====================================================== -->
+<!-- HEADER -->
+<!-- ====================================================== -->
+
+<header class="site-header">
+
+    <div class="logo">
+
+        SEGURPLAN
+
+        <span>
+            Plataforma de seguros y AFP
+        </span>
+
+    </div>
+
+
+    <div class="header-right">
+
+        <span
+                class="user-name"
+                id="header-user">
+
+            Usuario
+
+        </span>
+
+
+        <button
+                class="profile-btn"
+                type="button">
+
+            MI PERFIL
+
+        </button>
+
+
+        <button
+                class="btn-logout"
+                type="button">
+
+            CERRAR SESIÓN
+
+        </button>
+
+    </div>
+
+</header>
+
+
+
+<!-- ====================================================== -->
+<!-- CONTENIDO -->
+<!-- ====================================================== -->
+
+<div class="page-wrap">
+
+
+    <!-- BREADCRUMB -->
+
+    <nav class="breadcrumb">
+
+        SEGURPLAN
+        &rsaquo;
+        Reportes
+        &rsaquo;
+        Marketing y Ventas
+        &rsaquo;
+        Conversión de ventas
+
+    </nav>
+
+
+
+    <!-- NAVEGACIÓN -->
+
+    <div class="report-nav">
+
+        <a href="rep-mv-01-cotizaciones-estado.html">
+            Marketing y Ventas
+        </a>
+
+        <a href="rep-la-01-documentos.html">
+            Logística
+        </a>
+
+        <a href="rep-po-01-afp.html">
+            Operaciones
+        </a>
+
+        <a href="rep-dg-01-general.html">
+            Gerencia
+        </a>
+
+        <a href="rep-ot-02-trazabilidad.html">
+            Trazabilidad
+        </a>
+
+        <a href="s14-administracion.html">
+            Administración
+        </a>
+
+    </div>
+
+
+
+    <!-- TÍTULO -->
+
+    <span class="report-code">
+        REP-MV-02
+    </span>
+
+
+    <h1 class="page-title">
+        Conversión de ventas
+    </h1>
+
+
+    <p class="page-subtitle">
+
+        Mide el avance desde la solicitud de cotización
+        hasta la emisión de la póliza y calcula la tasa
+        de conversión comercial de SegurPlan.
+
+    </p>
+
+
+
+    <!-- ================================================== -->
+    <!-- FILTROS -->
+    <!-- ================================================== -->
+
+    <div class="report-toolbar">
+
+
+        <div class="field">
+
+            <label for="periodo">
+                Período
+            </label>
+
+            <input
+                    class="form-control"
+                    id="periodo"
+                    type="month">
+
+        </div>
+
+
+        <button
+                class="btn btn-primary"
+                id="btn-generar"
+                type="button">
+
+            GENERAR
+
+        </button>
+
+
+        <button
+                class="btn btn-secondary"
+                id="btn-exportar"
+                type="button">
+
+            EXPORTAR CSV
+
+        </button>
+
+    </div>
+
+
+
+    <!-- ================================================== -->
+    <!-- KPI -->
+    <!-- ================================================== -->
+
+    <div class="report-kpis">
+
+
+        <div class="report-kpi">
+
+            <strong id="kpi-solicitudes">
+                0
+            </strong>
+
+            <span>
+                Solicitudes
+            </span>
+
+        </div>
+
+
+        <div class="report-kpi">
+
+            <strong id="kpi-respondidas">
+                0
+            </strong>
+
+            <span>
+                Respondidas
+            </span>
+
+        </div>
+
+
+        <div class="report-kpi">
+
+            <strong id="kpi-compras">
+                0
+            </strong>
+
+            <span>
+                Compras
+            </span>
+
+        </div>
+
+
+        <div class="report-kpi">
+
+            <strong id="kpi-polizas">
+                0
+            </strong>
+
+            <span>
+                Pólizas emitidas
+            </span>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================================================== -->
+    <!-- TASA DE CONVERSIÓN -->
+    <!-- ================================================== -->
+
+    <div class="conversion-box">
+
+
+        <div class="conversion-info">
+
+            <span>
+                Tasa de conversión final
+            </span>
+
+            <strong id="kpi-conversion">
+                0.00%
+            </strong>
+
+        </div>
+
+
+        <div class="conversion-description">
+
+            Representa el porcentaje de solicitudes de
+            cotización que finalizaron con una póliza
+            emitida durante el proceso comercial.
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================================================== -->
+    <!-- GRÁFICO -->
+    <!-- ================================================== -->
+
+    <div class="card">
+
+
+        <div class="card-header">
+
+            <h2>
+                Embudo de conversión
+            </h2>
+
+        </div>
+
+
+        <div class="card-body">
+
+
+            <div class="chart-panel">
+
+
+                <!-- SOLICITUDES -->
+
+                <div class="chart-col">
+
+                    <span
+                            class="chart-value"
+                            id="valor-solicitudes">
+
+                        0
+
+                    </span>
+
+                    <div
+                            id="barra-solicitudes"
+                            class="chart-bar"
+                            style="height:0">
+                    </div>
+
+                    <small>
+                        Solicitudes
+                    </small>
+
+                </div>
+
+
+
+                <!-- RESPONDIDAS -->
+
+                <div class="chart-col">
+
+                    <span
+                            class="chart-value"
+                            id="valor-respondidas">
+
+                        0
+
+                    </span>
+
+                    <div
+                            id="barra-respondidas"
+                            class="chart-bar"
+                            style="height:0">
+                    </div>
+
+                    <small>
+                        Respondidas
+                    </small>
+
+                </div>
+
+
+
+                <!-- COMPRAS -->
+
+                <div class="chart-col">
+
+                    <span
+                            class="chart-value"
+                            id="valor-compras">
+
+                        0
+
+                    </span>
+
+                    <div
+                            id="barra-compras"
+                            class="chart-bar"
+                            style="height:0">
+                    </div>
+
+                    <small>
+                        Compras
+                    </small>
+
+                </div>
+
+
+
+                <!-- POLIZAS -->
+
+                <div class="chart-col">
+
+                    <span
+                            class="chart-value"
+                            id="valor-polizas">
+
+                        0
+
+                    </span>
+
+                    <div
+                            id="barra-polizas"
+                            class="chart-bar"
+                            style="height:0">
+                    </div>
+
+                    <small>
+                        Pólizas emitidas
+                    </small>
+
+                </div>
+
+
+            </div>
+
+
+            <p
+                    class="report-note"
+                    id="nota-periodo">
+
+                Seleccione un período para consultar
+                la conversión de ventas.
+
+            </p>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================================================== -->
+    <!-- TABLA -->
+    <!-- ================================================== -->
+
+    <div
+            class="card"
+            style="margin-top:20px">
+
+
+        <div class="card-header">
+
+            <h2>
+                Detalle del reporte
+            </h2>
+
+        </div>
+
+
+        <div class="card-body">
+
+
+            <div class="table-wrap">
+
+
+                <table id="tabla-reporte">
+
+
+                    <thead>
+
+                    <tr>
+
+                        <th>
+                            Etapa
+                        </th>
+
+                        <th>
+                            Cantidad
+                        </th>
+
+                        <th>
+                            Conversión
+                        </th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody id="tabla-body">
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<!-- ====================================================== -->
+<!-- JAVASCRIPT GENERAL -->
+<!-- ====================================================== -->
+
+<script src="../assets/app.js"></script>
+
+
+
+<script>
+
+    // =====================================================
+    // AUTENTICACIÓN
+    // =====================================================
+
+    const sesion =
+        sp_requireAuth('s01-login.html');
+
+
+    if (sesion) {
+
+        document.getElementById(
+            'header-user'
+        ).textContent =
+            (sesion.nombres || 'Usuario')
+            + ' '
+            + (sesion.apellidos || '');
+
+    }
+
+
+    document.querySelector(
+        '.btn-logout'
+    ).addEventListener(
+        'click',
+        sp_logout
+    );
+
+
+
+    // =====================================================
+    // PERÍODO ACTUAL
+    // =====================================================
+
+    const periodo =
+        document.getElementById(
+            'periodo'
+        );
+
+
+    const fechaActual =
+        new Date();
+
+
+    periodo.value =
+        fechaActual.getFullYear()
+        + '-'
+        + String(
+            fechaActual.getMonth() + 1
+        ).padStart(
+            2,
+            '0'
+        );
+
+
+
+    // =====================================================
+    // CARGAR REPORTE
+    // =====================================================
+
+    async function cargarReporte() {
+
+
+        if (!periodo.value) {
+
+            alert(
+                'Seleccione un período.'
+            );
+
+            return;
+        }
+
+
+        const [
+            anio,
+            mes
+        ] =
+            periodo.value.split('-');
+
+
+        try {
+
+
+            const respuesta =
+                await fetch(
+
+                    '/api/reportes/marketing/conversion-ventas'
+                    + '?anio='
+                    + anio
+                    + '&mes='
+                    + mes
+
+                );
+
+
+            const data =
+                await respuesta.json();
+
+
+            if (!respuesta.ok) {
+
+                throw new Error(
+
+                    data.mensaje
+                    ||
+                    'No se pudo generar el reporte.'
+
+                );
+
+            }
+
+
+            actualizarReporte(
+                data
+            );
+
+
+        } catch (error) {
+
+
+            console.error(
+                'Error REP-MV-02:',
+                error
+            );
+
+
+            alert(
+
+                'No se pudo cargar el reporte.\n'
+                + error.message
+
+            );
+
+        }
+
+    }
+
+
+
+    // =====================================================
+    // ACTUALIZAR REPORTE
+    // =====================================================
+
+    function actualizarReporte(
+        data
+    ) {
+
+
+        const solicitudes =
+            Number(
+                data.solicitudes || 0
+            );
+
+
+        const respondidas =
+            Number(
+                data.respondidas || 0
+            );
+
+
+        const compras =
+            Number(
+                data.compras || 0
+            );
+
+
+        const polizas =
+            Number(
+                data.polizasEmitidas || 0
+            );
+
+
+        const tasa =
+            Number(
+                data.tasaConversion || 0
+            );
+
+
+
+        // =================================================
+        // KPI
+        // =================================================
+
+        document.getElementById(
+            'kpi-solicitudes'
+        ).textContent =
+            solicitudes;
+
+
+        document.getElementById(
+            'kpi-respondidas'
+        ).textContent =
+            respondidas;
+
+
+        document.getElementById(
+            'kpi-compras'
+        ).textContent =
+            compras;
+
+
+        document.getElementById(
+            'kpi-polizas'
+        ).textContent =
+            polizas;
+
+
+        document.getElementById(
+            'kpi-conversion'
+        ).textContent =
+            tasa.toFixed(2)
+            + '%';
+
+
+
+        // =================================================
+        // VALORES SOBRE LAS BARRAS
+        // =================================================
+
+        document.getElementById(
+            'valor-solicitudes'
+        ).textContent =
+            solicitudes;
+
+
+        document.getElementById(
+            'valor-respondidas'
+        ).textContent =
+            respondidas;
+
+
+        document.getElementById(
+            'valor-compras'
+        ).textContent =
+            compras;
+
+
+        document.getElementById(
+            'valor-polizas'
+        ).textContent =
+            polizas;
+
+
+
+        // =================================================
+        // GRÁFICO
+        // =================================================
+
+        const valores = [
+
+            solicitudes,
+            respondidas,
+            compras,
+            polizas
+
+        ];
+
+
+        const maximo =
+            Math.max(
+                ...valores,
+                1
+            );
+
+
+        actualizarBarra(
+
+            'barra-solicitudes',
+            solicitudes,
+            maximo
+
+        );
+
+
+        actualizarBarra(
+
+            'barra-respondidas',
+            respondidas,
+            maximo
+
+        );
+
+
+        actualizarBarra(
+
+            'barra-compras',
+            compras,
+            maximo
+
+        );
+
+
+        actualizarBarra(
+
+            'barra-polizas',
+            polizas,
+            maximo
+
+        );
+
+
+
+        // =================================================
+        // TABLA
+        // =================================================
+
+        const tbody =
+            document.getElementById(
+                'tabla-body'
+            );
+
+
+        tbody.innerHTML =
+            '';
+
+
+        const etapas = [
+
+            [
+                'Solicitudes',
+                solicitudes
+            ],
+
+            [
+                'Respondidas',
+                respondidas
+            ],
+
+            [
+                'Compras',
+                compras
+            ],
+
+            [
+                'Pólizas emitidas',
+                polizas
+            ]
+
+        ];
+
+
+
+        etapas.forEach(
+            ([nombre, cantidad]) => {
+
+
+                let conversion =
+                    0;
+
+
+                if (
+                    solicitudes > 0
+                ) {
+
+                    conversion =
+                        (
+                            cantidad
+                            /
+                            solicitudes
+                        )
+                        *
+                        100;
+
+                }
+
+
+                const fila =
+                    document.createElement(
+                        'tr'
+                    );
+
+
+                fila.innerHTML = `
+
+                    <td>
+
+                        <span class="status-pill">
+
+                            ${nombre}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        ${cantidad}
+
+                    </td>
+
+                    <td>
+
+                        ${conversion.toFixed(2)}%
+
+                    </td>
+
+                `;
+
+
+                tbody.appendChild(
+                    fila
+                );
+
+            }
+        );
+
+
+
+        // =================================================
+        // INFORMACIÓN DEL PERÍODO
+        // =================================================
+
+        document.getElementById(
+            'nota-periodo'
+        ).innerHTML =
+
+            'Datos obtenidos de PostgreSQL para '
+
+            + String(
+                data.mes
+            ).padStart(
+                2,
+                '0'
+            )
+
+            + '/'
+
+            + data.anio
+
+            + '. Tasa de conversión final: '
+
+            + '<strong>'
+
+            + tasa.toFixed(2)
+
+            + '%'
+
+            + '</strong>.';
+
+    }
+
+
+
+    // =====================================================
+    // ACTUALIZAR BARRAS
+    // =====================================================
+
+    function actualizarBarra(
+        id,
+        valor,
+        maximo
+    ) {
+
+
+        const barra =
+            document.getElementById(
+                id
+            );
+
+
+        let altura =
+            0;
+
+
+        if (
+            valor > 0
+        ) {
+
+
+            altura =
+                Math.max(
+
+                    15,
+
+                    (
+                        valor
+                        /
+                        maximo
+                    )
+                    *
+                    180
+
+                );
+
+        }
+
+
+        barra.style.height =
+            altura
+            + 'px';
+
+
+        barra.title =
+            valor
+            + ' registro(s)';
+
+    }
+
+
+
+    // =====================================================
+    // BOTÓN GENERAR
+    // =====================================================
+
+    document.getElementById(
+        'btn-generar'
+    ).addEventListener(
+
+        'click',
+
+        cargarReporte
+
+    );
+
+
+
+    // =====================================================
+    // EXPORTAR CSV
+    // =====================================================
+
+    document.getElementById(
+        'btn-exportar'
+    ).addEventListener(
+
+        'click',
+
+        function () {
+
+
+            const filas =
+                [
+                    ...document.querySelectorAll(
+                        '#tabla-reporte tr'
+                    )
+                ];
+
+
+            const csv =
+                filas.map(
+
+                    fila =>
+
+                        [
+                            ...fila.children
+                        ]
+
+                            .map(
+
+                                celda =>
+
+                                    '"'
+
+                                    + celda
+                                        .innerText
+                                        .replaceAll(
+                                            '"',
+                                            '""'
+                                        )
+
+                                    + '"'
+
+                            )
+
+                            .join(';')
+
+                )
+
+                    .join('\n');
+
+
+
+            const blob =
+                new Blob(
+
+                    [
+                        '\uFEFF'
+                        + csv
+                    ],
+
+                    {
+
+                        type:
+                            'text/csv;charset=utf-8'
+
+                    }
+
+                );
+
+
+
+            const url =
+                URL.createObjectURL(
+                    blob
+                );
+
+
+
+            const enlace =
+                document.createElement(
+                    'a'
+                );
+
+
+            enlace.href =
+                url;
+
+
+            enlace.download =
+                'REP-MV-02_'
+                + periodo.value
+                + '.csv';
+
+
+            enlace.click();
+
+
+            URL.revokeObjectURL(
+                url
+            );
+
+        }
+
+    );
+
+
+
+    // =====================================================
+    // CARGA AUTOMÁTICA
+    // =====================================================
+
+    cargarReporte();
+
+</script>
+
+
+</body>
+
+</html>

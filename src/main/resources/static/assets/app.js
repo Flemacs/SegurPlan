@@ -143,9 +143,51 @@ async function sp_login(correo, password) {
     };
   }
 }
-function sp_logout() {
-  localStorage.removeItem(KEY_SESSION);
-  window.location.href = 's01-login.html';
+async function sp_logout() {
+
+    try {
+
+        // Obtener token CSRF
+        const csrf = await sp_getCsrfToken();
+
+        // Cerrar la sesión real de Spring Security
+        const response = await fetch('/api/usuarios/logout', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                [csrf.headerName]: csrf.token
+            }
+        });
+
+        if (!response.ok) {
+            console.error(
+                'No se pudo cerrar la sesión del servidor. HTTP',
+                response.status
+            );
+        }
+
+    } catch (error) {
+
+        console.error(
+            'Error al cerrar la sesión:',
+            error
+        );
+
+    } finally {
+
+        // Eliminar datos locales aunque haya ocurrido
+        // algún problema de comunicación.
+        localStorage.removeItem('sp_session');
+
+        // Limpiar información temporal relacionada
+        // con operaciones del usuario.
+        sessionStorage.removeItem('sp_last_quote');
+        sessionStorage.removeItem('sp_last_contratacion');
+        sessionStorage.removeItem('sp_admin_quote');
+
+        // Volver al login.
+        window.location.replace('/pages/s01-login.html');
+    }
 }
 
 function sp_getSession() { return sp_get(KEY_SESSION); }
@@ -212,28 +254,62 @@ async function sp_saveCotizacion(data) {
             };
         }
 
+        // Obtener el token CSRF de la sesión actual.
+        const csrf = await sp_getCsrfToken();
+
+        // Registrar la cotización en Spring Boot.
         const response = await fetch('/api/cotizaciones', {
             method: 'POST',
-
+            credentials: 'same-origin',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                [csrf.headerName]: csrf.token
             },
-
             body: JSON.stringify({
-                idUsuario: session.id_usuario,
+                idUsuario: Number(session.id_usuario),
                 idTipoSeguro: Number(data.idTipoSeguro),
                 idAseguradora: Number(data.idAseguradora),
                 descripcionSolicitud: data.descripcionSolicitud
             })
         });
 
-        const resultado = await response.json();
+        const texto = await response.text();
+
+        let resultado;
+
+        try {
+            resultado = texto ? JSON.parse(texto) : {};
+        } catch {
+            resultado = {
+                mensaje: texto
+            };
+        }
 
         if (!response.ok) {
+            console.error(
+                'Error HTTP al registrar cotización:',
+                response.status,
+                resultado
+            );
+
+            let mensaje = resultado.mensaje ||
+                          resultado.detail ||
+                          resultado.error;
+
+            if (!mensaje) {
+                if (response.status === 401) {
+                    mensaje = 'Tu sesión no está activa. Inicia sesión nuevamente.';
+                } else if (response.status === 403) {
+                    mensaje = 'Acceso denegado. Comprueba tu sesión, el token CSRF y tus permisos.';
+                } else {
+                    mensaje = 'No se pudo registrar la cotización. HTTP ' +
+                              response.status;
+                }
+            }
+
             return {
                 ok: false,
-                error: resultado.mensaje ||
-                       'No se pudo registrar la cotización.'
+                error: mensaje
             };
         }
 
@@ -243,7 +319,6 @@ async function sp_saveCotizacion(data) {
         };
 
     } catch (error) {
-
         console.error(
             'Error al registrar cotización:',
             error
@@ -251,7 +326,8 @@ async function sp_saveCotizacion(data) {
 
         return {
             ok: false,
-            error: 'No se pudo conectar con el servidor.'
+            error: error.message ||
+                   'No se pudo conectar con el servidor.'
         };
     }
 }
@@ -359,8 +435,8 @@ function sp_saveSiniestro(data) {
       conductorDni:       data.conductorDni       || null,
       conductorLicencia:  data.conductorLicencia  || null,
       conductorTelefono:  data.conductorTelefono  || null,
-      esTitular:          data.esTitular          || 'Si',
-    },
+      esTitular:          data.esTitular          || 'Si'
+    }
   };
   lista.push(s);
   sp_set(KEY_SINIESTROS, lista);
@@ -399,8 +475,8 @@ function sp_savePrevision(data) {
     estado:                 'Simulada',
     _extra: {
       perfil:           data.perfil           || null,
-      afp_seleccionada: data.afp_seleccionada || null,
-    },
+      afp_seleccionada: data.afp_seleccionada || null
+    }
   };
   lista.push(p);
   sp_set(KEY_PREVISION, lista);
@@ -435,42 +511,133 @@ function sp_saveDocumento(data) {
   return doc;
 }
 
+
 /* ══════════════════════════════════════════════════════════
    INICIALIZACIÓN DE PÁGINA
 ══════════════════════════════════════════════════════════ */
+
 document.addEventListener('DOMContentLoaded', () => {
-  /* Inyectar logo en cabecera */
-  const logoEl = document.querySelector('.site-header .logo');
-  if (logoEl) {
-    logoEl.style.display    = 'flex';
-    logoEl.style.alignItems = 'center';
-    logoEl.style.gap        = '10px';
-    logoEl.innerHTML = LOGO_SVG + '<div>' + logoEl.innerHTML + '</div>';
-  }
 
-  /* Mostrar nombre del usuario en cabecera */
-  const userNameEl = document.querySelector('.header-right .user-name');
-  if (userNameEl) {
-    const session = sp_getSession();
-    if (session) userNameEl.textContent = session.nombres + ' ' + session.apellidos;
-  }
+    // Inyectar logo en cabecera.
+    const logoEl = document.querySelector('.site-header .logo');
 
-  /* Seed: usuario demo si no existe ninguno */
-  if (sp_getUsuarios().length === 0) {
-    sp_set(KEY_USUARIOS, [{
-      id_usuario:     1,
-      id_rol:         1,
-      nombres:        'Juan Carlos',
-      apellidos:      'García López',
-      correo:         'juan@correo.com',
-      password:       'Demo1234!',
-      telefono:       '+51 999 999 999',
-      estado:         'Activo',
-      fecha_registro: '01/01/2026 08:00',
-      dni:            '12345678',
-      fnacimiento:    '1990-05-15',
-      genero:         'Masculino',
-      departamento:   'Lima',
-    }]);
-  }
-});
+    if (logoEl) {
+        logoEl.style.display = 'flex';
+        logoEl.style.alignItems = 'center';
+        logoEl.style.gap = '10px';
+        logoEl.innerHTML =
+            LOGO_SVG + '<div>' + logoEl.innerHTML + '</div>';
+    }
+
+    // Mostrar nombre del usuario en cabecera.
+    const userNameEl =
+        document.querySelector('.header-right .user-name');
+
+    if (userNameEl) {
+        const session = sp_getSession();
+
+        if (session) {
+            userNameEl.textContent =
+                session.nombres + ' ' + session.apellidos;
+        }
+    }
+
+    // Crear el usuario de demostración si no existe ninguno.
+    if (sp_getUsuarios().length === 0) {
+        sp_set(KEY_USUARIOS, [{
+            id_usuario: 1,
+            id_rol: 1,
+            nombres: 'Juan Carlos',
+            apellidos: 'García López',
+            correo: 'juan@correo.com',
+            password: 'Demo1234!',
+            telefono: '+51 999 999 999',
+            estado: 'Activo',
+            fecha_registro: '01/01/2026 08:00',
+            dni: '12345678',
+            fnacimiento: '1990-05-15',
+            genero: 'Masculino',
+            departamento: 'Lima'
+        }]);
+    }
+
+}); // Aquí termina DOMContentLoaded.//
+
+    // ==========================================
+    // BOTÓN CERRAR SESIÓN
+    // ==========================================
+
+    const botonesLogout = document.querySelectorAll(
+        '.btn-logout, .logout-btn, [data-logout]'
+    );
+
+    botonesLogout.forEach(boton => {
+
+        boton.addEventListener('click', async function(event) {
+
+            event.preventDefault();
+
+            // Evitar varios clics mientras se cierra la sesión
+            if (boton.dataset.cerrando === 'true') {
+                return;
+            }
+
+            boton.dataset.cerrando = 'true';
+
+            const textoOriginal = boton.textContent;
+
+            boton.textContent = 'Cerrando sesión...';
+
+            if ('disabled' in boton) {
+                boton.disabled = true;
+            }
+
+            try {
+                await sp_logout();
+
+            } catch (error) {
+
+                console.error(
+                    'Error al ejecutar cierre de sesión:',
+                    error
+                );
+
+                boton.textContent = textoOriginal;
+
+                if ('disabled' in boton) {
+                    boton.disabled = false;
+                }
+
+                boton.dataset.cerrando = 'false';
+            }
+        });
+    });
+
+/* ══════════════════════════════════════════════════════════
+   TOKEN CSRF - SPRING SECURITY
+══════════════════════════════════════════════════════════ */
+
+async function sp_getCsrfToken() {
+
+    const response = await fetch('/api/csrf', {
+        method: 'GET',
+        credentials: 'same-origin'
+    });
+
+    if (!response.ok) {
+        throw new Error(
+            'No se pudo obtener el token de seguridad. HTTP ' +
+            response.status
+        );
+    }
+
+    const csrf = await response.json();
+
+    if (!csrf.token || !csrf.headerName) {
+        throw new Error(
+            'El servidor devolvió un token CSRF inválido.'
+        );
+    }
+
+    return csrf;
+}

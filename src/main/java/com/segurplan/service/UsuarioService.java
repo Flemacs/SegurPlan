@@ -1,16 +1,16 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.segurplan.service;
 
 import com.segurplan.dto.LoginRequest;
 import com.segurplan.dto.LoginResponse;
 import com.segurplan.dto.RegistroRequest;
+
 import com.segurplan.model.Rol;
 import com.segurplan.model.Usuario;
+
 import com.segurplan.repository.RolRepository;
 import com.segurplan.repository.UsuarioRepository;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,18 +31,21 @@ public class UsuarioService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // =========================
-    // REGISTRAR USUARIO
-    // =========================
+    // REGISTRO
     public Usuario registrar(RegistroRequest request) {
 
         if (usuarioRepository.existsByCorreo(request.getCorreo())) {
-            throw new RuntimeException("El correo ya está registrado");
+            throw new IllegalArgumentException(
+                    "El correo ya está registrado"
+            );
         }
 
         Rol rolCliente = rolRepository.findByNombre("Cliente")
                 .orElseThrow(() ->
-                    new RuntimeException("No existe el rol Cliente"));
+                        new IllegalArgumentException(
+                                "No existe el rol Cliente"
+                        )
+                );
 
         Usuario usuario = new Usuario();
 
@@ -51,7 +54,6 @@ public class UsuarioService {
         usuario.setCorreo(request.getCorreo());
         usuario.setTelefono(request.getTelefono());
 
-        // BCrypt
         usuario.setPassword(
                 passwordEncoder.encode(request.getPassword())
         );
@@ -61,18 +63,21 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
-    // =========================
-    // LOGIN
-    // =========================
+    // VALIDACIÓN DE CREDENCIALES
     public LoginResponse login(LoginRequest request) {
 
         Usuario usuario = usuarioRepository
                 .findByCorreo(request.getCorreo())
                 .orElseThrow(() ->
-                    new RuntimeException("Correo o contraseña incorrectos"));
+                        new IllegalArgumentException(
+                                "Correo o contraseña incorrectos"
+                        )
+                );
 
         if (!"Activo".equalsIgnoreCase(usuario.getEstado())) {
-            throw new RuntimeException("El usuario no se encuentra activo");
+            throw new IllegalArgumentException(
+                    "El usuario no se encuentra activo"
+            );
         }
 
         boolean passwordCorrecto = passwordEncoder.matches(
@@ -81,7 +86,9 @@ public class UsuarioService {
         );
 
         if (!passwordCorrecto) {
-            throw new RuntimeException("Correo o contraseña incorrectos");
+            throw new IllegalArgumentException(
+                    "Correo o contraseña incorrectos"
+            );
         }
 
         return new LoginResponse(

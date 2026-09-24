@@ -1,0 +1,319 @@
+
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0">
+
+        <title>SEGURPLAN — Mis pólizas</title>
+
+        <link rel="stylesheet"
+              href="../assets/styles.css">
+    </head>
+
+    <body>
+
+        <header class="site-header">
+            <div class="logo">
+                SEGURPLAN
+                <span>Plataforma de seguros y AFP</span>
+            </div>
+
+            <div class="header-right">
+                <span class="user-name">Usuario</span>
+
+                <button
+                    class="profile-btn"
+                    onclick="window.location.href = 's02-panel-usuario.html'">
+                    MI PANEL
+                </button>
+            </div>
+        </header>
+
+        <div class="page-wrap narrow">
+
+            <nav class="breadcrumb">
+                SEGURPLAN &rsaquo; Mi panel &rsaquo; Mis pólizas
+            </nav>
+
+            <h1 class="page-title">Mis pólizas</h1>
+
+            <p class="page-subtitle">
+                Consulte la información de sus pólizas registradas.
+            </p>
+
+            <div id="mensaje" role="status"></div>
+
+            <div id="lista-polizas">
+                <p>Cargando pólizas...</p>
+            </div>
+
+            <div style="margin-top:24px;">
+                <button
+                    class="btn btn-secondary"
+                    onclick="window.location.href = 's02-panel-usuario.html'">
+                    ← VOLVER A MI PANEL
+                </button>
+            </div>
+
+        </div>
+
+        <footer class="site-footer">
+            <div class="footer-brand">
+                SEGURPLAN
+                <span>Plataforma de seguros y AFP</span>
+            </div>
+
+            <div class="footer-meta">
+                © 2026 SEGURPLAN.
+                Todos los derechos reservados.
+            </div>
+        </footer>
+
+        <script src="../assets/app.js"></script>
+
+        <script>
+
+                        document.addEventListener(
+                                'DOMContentLoaded',
+                                async function () {
+
+                                    const session = sp_getSession();
+
+                                    if (!session) {
+                                        window.location.replace(
+                                                's01-login.html'
+                                                );
+                                        return;
+                                    }
+
+                                    document.querySelector(
+                                            '.user-name'
+                                            ).textContent =
+                                            'Usuario: ' +
+                                            session.nombres + ' ' +
+                                            session.apellidos;
+
+                                    await cargarPolizas(session.id_usuario);
+                                }
+                        );
+
+                        async function cargarPolizas(idUsuario) {
+
+                            const contenedor =
+                                    document.getElementById('lista-polizas');
+
+                            const mensaje =
+                                    document.getElementById('mensaje');
+
+                            try {
+
+                                const response = await fetch(
+                                        '/api/polizas/mis-polizas',
+                                        {
+                                            credentials: 'same-origin',
+                                            cache: 'no-store'
+                                        }
+                                );
+
+                                if (!response.ok) {
+                                    throw new Error(
+                                            'No se pudieron cargar las pólizas.'
+                                            );
+                                }
+
+                                const polizas = await response.json();
+
+                                contenedor.replaceChildren();
+
+                                if (!Array.isArray(polizas)) {
+                                    throw new Error(
+                                            'El servidor devolvió datos inesperados.'
+                                            );
+                                }
+
+                                if (polizas.length === 0) {
+
+                                    const aviso =
+                                            document.createElement('p');
+
+                                    aviso.textContent =
+                                            'Todavía no tiene pólizas registradas.';
+
+                                    contenedor.appendChild(aviso);
+
+                                    return;
+                                }
+
+                                polizas.forEach(poliza => {
+
+                                    const tarjeta =
+                                            document.createElement('div');
+
+                                    tarjeta.className = 'card';
+
+                                    tarjeta.style.marginBottom = '20px';
+
+                                    const encabezado =
+                                            document.createElement('div');
+
+                                    encabezado.className = 'card-header';
+
+                                    const titulo =
+                                            document.createElement('h2');
+
+                                    titulo.textContent =
+                                            poliza.numeroPoliza;
+
+                                    const subtitulo =
+                                            document.createElement('p');
+
+                                    subtitulo.textContent =
+                                            'Contratación N.º ' +
+                                            poliza.idContratacion;
+
+                                    encabezado.append(
+                                            titulo,
+                                            subtitulo
+                                            );
+
+                                    const cuerpo =
+                                            document.createElement('div');
+
+                                    cuerpo.className = 'card-body';
+
+                                    const datos =
+                                            document.createElement('dl');
+
+                                    datos.className = 'data-grid';
+
+                                    agregarDato(
+                                            datos,
+                                            'Estado',
+                                            poliza.estado
+                                            );
+
+                                    agregarDato(
+                                            datos,
+                                            'Fecha de inicio',
+                                            formatearFecha(poliza.fechaInicio)
+                                            );
+
+                                    agregarDato(
+                                            datos,
+                                            'Fecha de finalización',
+                                            formatearFecha(poliza.fechaFin)
+                                            );
+
+                                    agregarDato(
+                                            datos,
+                                            'Prima',
+                                            formatearMoneda(poliza.prima)
+                                            );
+
+                                    agregarDato(
+                                            datos,
+                                            'Deducible',
+                                            poliza.deducible === null
+                                            ? 'No especificado'
+                                            : formatearMoneda(poliza.deducible)
+                                            );
+
+                                    agregarDato(
+                                            datos,
+                                            'Cobertura',
+                                            poliza.cobertura || '—'
+                                            );
+
+                                    agregarDato(
+                                            datos,
+                                            'Condiciones',
+                                            poliza.condiciones || '—'
+                                            );
+
+                                    cuerpo.appendChild(datos);
+
+                                    tarjeta.append(
+                                            encabezado,
+                                            cuerpo
+                                            );
+
+                                    contenedor.appendChild(tarjeta);
+
+                                });
+
+                            } catch (error) {
+
+                                console.error(error);
+
+                                contenedor.replaceChildren();
+
+                                mensaje.textContent =
+                                        error.message;
+
+                                mensaje.style.color = '#991b1b';
+                            }
+                        }
+
+                        function agregarDato(
+                                contenedor,
+                                etiqueta,
+                                valor
+                                ) {
+
+                            const dt =
+                                    document.createElement('dt');
+
+                            dt.textContent = etiqueta;
+
+                            const dd =
+                                    document.createElement('dd');
+
+                            dd.textContent = valor ?? '—';
+
+                            contenedor.append(
+                                    dt,
+                                    dd
+                                    );
+                        }
+
+                        function formatearFecha(fecha) {
+
+                            if (!fecha) {
+                                return '—';
+                            }
+
+                            const partes =
+                                    fecha.split('-');
+
+                            if (partes.length !== 3) {
+                                return fecha;
+                            }
+
+                            return (
+                                    partes[2] + '/' +
+                                    partes[1] + '/' +
+                                    partes[0]
+                                    );
+                        }
+
+                        function formatearMoneda(valor) {
+
+                            if (valor === null) {
+                                return '—';
+                            }
+
+                            return new Intl.NumberFormat(
+                                    'es-PE',
+                                    {
+                                        style: 'currency',
+                                        currency: 'PEN'
+                                    }
+                            ).format(valor);
+                        }
+
+        </script>
+
+    </body>
+</html>

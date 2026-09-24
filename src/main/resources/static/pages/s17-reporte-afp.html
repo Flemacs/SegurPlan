@@ -1,122 +1,1335 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SEGURPLAN — Reporte AFP</title>
-  <link rel="stylesheet" href="../assets/styles.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>SEGURPLAN — Reporte AFP</title>
+
+    <link rel="stylesheet"
+          href="../assets/styles.css" />
 </head>
+
 <body>
+
 <header class="site-header">
-  <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
-  <div class="header-right">
-    <span class="user-name">Usuario: Luis Mendoza — Administrador</span>
-    <button class="bell-btn" title="Notificaciones">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-    </button>
-    <button class="profile-btn">MI PERFIL</button>
-  </div>
+
+    <div class="logo">
+        SEGURPLAN
+        <span>
+            Plataforma de seguros y AFP
+        </span>
+    </div>
+
+    <div class="header-right">
+
+        <span
+            class="user-name"
+            id="header-user">
+            Usuario
+        </span>
+
+        <button
+            class="bell-btn"
+            type="button"
+            title="Notificaciones">
+
+            <svg width="20"
+                 height="20"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="2"
+                 stroke-linecap="round"
+                 stroke-linejoin="round">
+
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9">
+                </path>
+
+                <path d="M13.73 21a2 2 0 0 1-3.46 0">
+                </path>
+
+            </svg>
+
+        </button>
+
+        <button
+            class="profile-btn"
+            type="button">
+            MI PERFIL
+        </button>
+
+        <button
+            class="btn-logout"
+            type="button">
+            CERRAR SESIÓN
+        </button>
+
+    </div>
+
 </header>
 
+
 <div class="page-wrap">
-  <nav class="breadcrumb">SEGURPLAN &rsaquo; Reportes &rsaquo; Reporte AFP</nav>
-  <h1 class="page-title">Reporte AFP</h1>
 
-  <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
-    <label style="font-weight:600;font-size:14px;">Período:</label>
-    <select class="form-control" style="width:auto;">
-      <option>Agosto 2026</option>
-      <option>Julio 2026</option>
-      <option>Junio 2026</option>
-    </select>
-    <button class="btn btn-primary">GENERAR</button>
-  </div>
+    <nav class="breadcrumb">
+        SEGURPLAN
+        &rsaquo;
+        Reportes
+        &rsaquo;
+        Reporte AFP
+    </nav>
 
-  <div class="stats-grid cols-4">
-    <div class="stat-box">
-      <div class="stat-value">32</div>
-      <div class="stat-label">Nuevos inversores</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-value">25</div>
-      <div class="stat-label">Tercera edad</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-value">48</div>
-      <div class="stat-label">Simulaciones</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-value">21</div>
-      <div class="stat-label">Orientaciones</div>
-    </div>
-  </div>
+    <h1 class="page-title">
+        Reporte AFP
+    </h1>
 
-  <div class="card">
-    <div class="card-header">
-      <h2>Perfil de usuarios AFP</h2>
-    </div>
-    <div class="card-body">
-      <div class="bar-group">
-        <span class="bar-label">Nuevo inversor</span>
-        <div class="bar-track"><div class="bar-fill" style="width:57%;"></div></div>
-        <span class="bar-pct">57%</span>
-      </div>
-      <div class="bar-group">
-        <span class="bar-label">Tercera edad</span>
-        <div class="bar-track"><div class="bar-fill" style="width:43%;background:var(--accent);"></div></div>
-        <span class="bar-pct">43%</span>
-      </div>
+    <p class="page-subtitle">
+        Resumen mensual de simulaciones y orientaciones
+        previsionales registradas en SEGURPLAN.
+    </p>
 
-      <hr class="divider" />
 
-      <h3 class="section-title">Detalle de orientaciones</h3>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Tipo</th>
-              <th>Cantidad</th>
-              <th>%</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Orientación brindada</td>
-              <td>14</td>
-              <td>67%</td>
-            </tr>
-            <tr>
-              <td>Simulación realizada</td>
-              <td>5</td>
-              <td>24%</td>
-            </tr>
-            <tr>
-              <td>Pendiente atención</td>
-              <td>2</td>
-              <td>9%</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <!-- ==============================================
+         PERÍODO
+    =============================================== -->
+
+    <div style="
+        display:flex;
+        align-items:center;
+        gap:12px;
+        margin-bottom:24px;
+        flex-wrap:wrap;
+    ">
+
+        <label
+            for="periodo"
+            style="
+                font-weight:600;
+                font-size:14px;
+            ">
+            Período:
+        </label>
+
+        <input
+            class="form-control"
+            type="month"
+            id="periodo"
+            style="width:auto;" />
+
+        <button
+            class="btn btn-primary"
+            type="button"
+            id="btn-generar">
+            GENERAR
+        </button>
+
     </div>
-    <div class="card-footer">
-      <button class="btn btn-primary">EXPORTAR</button>
-      <button class="btn btn-outline">IMPRIMIR</button>
+
+
+    <!-- ==============================================
+         MENSAJE
+    =============================================== -->
+
+    <div
+        id="mensaje-reporte"
+        style="
+            display:none;
+            margin-bottom:20px;
+        ">
     </div>
-  </div>
+
+
+    <!-- ==============================================
+         INDICADORES
+    =============================================== -->
+
+    <div class="stats-grid cols-4">
+
+        <div class="stat-box">
+
+            <div
+                class="stat-value"
+                id="total-simulaciones">
+                0
+            </div>
+
+            <div class="stat-label">
+                SIMULACIONES
+            </div>
+
+        </div>
+
+
+        <div class="stat-box">
+
+            <div
+                class="stat-value"
+                id="total-usuarios">
+                0
+            </div>
+
+            <div class="stat-label">
+                USUARIOS
+            </div>
+
+        </div>
+
+
+        <div class="stat-box">
+
+            <div
+                class="stat-value"
+                id="total-orientaciones">
+                0
+            </div>
+
+            <div class="stat-label">
+                ORIENTACIONES
+            </div>
+
+        </div>
+
+
+        <div class="stat-box">
+
+            <div
+                class="stat-value"
+                id="pension-promedio">
+                S/ 0.00
+            </div>
+
+            <div class="stat-label">
+                PENSIÓN PROMEDIO
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==============================================
+         ORIENTACIONES
+    =============================================== -->
+
+    <div class="card">
+
+        <div class="card-header">
+            <h2>
+                Indicadores AFP
+            </h2>
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="bar-group">
+
+                <span class="bar-label">
+                    Orientaciones respondidas
+                </span>
+
+                <div class="bar-track">
+
+                    <div
+                        class="bar-fill"
+                        id="bar-respondidas"
+                        style="width:0%;">
+                    </div>
+
+                </div>
+
+                <span
+                    class="bar-pct"
+                    id="pct-respondidas">
+                    0%
+                </span>
+
+            </div>
+
+
+            <div class="bar-group">
+
+                <span class="bar-label">
+                    Orientaciones pendientes
+                </span>
+
+                <div class="bar-track">
+
+                    <div
+                        class="bar-fill"
+                        id="bar-pendientes"
+                        style="width:0%;">
+                    </div>
+
+                </div>
+
+                <span
+                    class="bar-pct"
+                    id="pct-pendientes">
+                    0%
+                </span>
+
+            </div>
+
+
+            <hr class="divider" />
+
+
+            <dl class="data-grid">
+
+                <dt>
+                    Ingreso mensual promedio
+                </dt>
+
+                <dd id="ingreso-promedio">
+                    S/ 0.00
+                </dd>
+
+                <dt>
+                    Orientaciones respondidas
+                </dt>
+
+                <dd id="orientaciones-respondidas">
+                    0
+                </dd>
+
+                <dt>
+                    Orientaciones pendientes
+                </dt>
+
+                <dd id="orientaciones-pendientes">
+                    0
+                </dd>
+
+            </dl>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==============================================
+         DETALLE
+    =============================================== -->
+
+    <div
+        class="card"
+        style="margin-top:24px;">
+
+        <div class="card-header">
+
+            <h2>
+                Detalle de simulaciones AFP
+            </h2>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Edad</th>
+                        <th>Ingreso</th>
+                        <th>Años aporte</th>
+                        <th>Pensión estimada</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody id="tabla-afp">
+
+                    <tr>
+                        <td colspan="7">
+                            Cargando información...
+                        </td>
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-footer">
+
+            <button
+                class="btn btn-primary"
+                type="button"
+                id="btn-exportar">
+                EXPORTAR
+            </button>
+
+            <button
+                class="btn btn-outline"
+                type="button"
+                id="btn-imprimir">
+                IMPRIMIR
+            </button>
+
+        </div>
+
+    </div>
+
 </div>
 
+
 <footer class="site-footer">
-  <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
-  <nav class="footer-links">
-    <a href="../index.html">Inicio</a>
-    <a href="s01-login.html">Iniciar sesión</a>
-    <a href="s00-registro.html">Registrarse</a>
-  </nav>
-  <div class="footer-meta">
-    <span>© 2026 SEGURPLAN. Todos los derechos reservados.</span>
-  </div>
+
+    <div class="footer-brand">
+
+        SEGURPLAN
+
+        <span>
+            Plataforma de seguros y AFP
+        </span>
+
+    </div>
+
+    <nav class="footer-links">
+
+        <a href="s15-reporte-general.html">
+            Reporte general
+        </a>
+
+        <a href="s16-reporte-siniestros.html">
+            Reporte de siniestros
+        </a>
+
+        <a
+            href="#"
+            class="btn-logout">
+            Cerrar sesión
+        </a>
+
+    </nav>
+
+    <div class="footer-meta">
+
+        <span>
+            © 2026 SEGURPLAN.
+            Todos los derechos reservados.
+        </span>
+
+    </div>
+
 </footer>
+
+
 <script src="../assets/app.js"></script>
+
+
+<script>
+
+let reporteActual = null;
+
+
+// ==========================================================
+// INICIO
+// ==========================================================
+
+document.addEventListener(
+    'DOMContentLoaded',
+    async function () {
+
+        const session =
+            sp_getSession();
+
+
+        if (!session) {
+
+            window.location.href =
+                's01-login.html';
+
+            return;
+        }
+
+
+        if (
+            session.rol !== 'Administrador' &&
+            session.rol !== 'Gerente'
+        ) {
+
+            window.location.href =
+                's02-panel-usuario.html';
+
+            return;
+        }
+
+
+        document.getElementById(
+            'header-user'
+        ).textContent =
+            session.nombres +
+            ' ' +
+            session.apellidos +
+            ' — ' +
+            session.rol;
+
+
+        const hoy =
+            new Date();
+
+
+        const mes =
+            String(
+                hoy.getMonth() + 1
+            ).padStart(
+                2,
+                '0'
+            );
+
+
+        document.getElementById(
+            'periodo'
+        ).value =
+            hoy.getFullYear() +
+            '-' +
+            mes;
+
+
+        document.getElementById(
+            'btn-generar'
+        ).addEventListener(
+            'click',
+            cargarReporte
+        );
+
+
+        document.getElementById(
+            'btn-imprimir'
+        ).addEventListener(
+            'click',
+            function () {
+                window.print();
+            }
+        );
+
+
+        document.getElementById(
+            'btn-exportar'
+        ).addEventListener(
+            'click',
+            exportarCSV
+        );
+
+
+        await cargarReporte();
+
+    }
+);
+
+
+// ==========================================================
+// CARGAR REPORTE
+// ==========================================================
+
+async function cargarReporte() {
+
+    const periodo =
+        document.getElementById(
+            'periodo'
+        ).value;
+
+
+    if (!periodo) {
+
+        mostrarMensaje(
+            'Seleccione un período.',
+            'error'
+        );
+
+        return;
+    }
+
+
+    const [anio, mes] =
+        periodo
+            .split('-')
+            .map(Number);
+
+
+    const boton =
+        document.getElementById(
+            'btn-generar'
+        );
+
+
+    boton.disabled =
+        true;
+
+
+    boton.textContent =
+        'GENERANDO...';
+
+
+    try {
+
+        const response =
+            await fetch(
+                '/api/reportes/afp' +
+                '?anio=' +
+                encodeURIComponent(anio) +
+                '&mes=' +
+                encodeURIComponent(mes),
+                {
+                    method: 'GET',
+                    credentials: 'same-origin'
+                }
+            );
+
+
+        if (response.status === 401) {
+
+            window.location.href =
+                's01-login.html';
+
+            return;
+        }
+
+
+        if (response.status === 403) {
+
+            throw new Error(
+                'No tiene permisos para consultar este reporte.'
+            );
+        }
+
+
+        let data = {};
+
+
+        try {
+
+            data =
+                await response.json();
+
+        } catch (e) {
+
+            data = {};
+
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.mensaje ||
+                'No se pudo generar el reporte AFP.'
+            );
+        }
+
+
+        reporteActual =
+            data;
+
+
+        mostrarReporte(
+            data
+        );
+
+
+        mostrarMensaje(
+            'Reporte AFP generado correctamente.',
+            'success'
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            'Error reporte AFP:',
+            error
+        );
+
+
+        mostrarMensaje(
+            error.message,
+            'error'
+        );
+
+
+    } finally {
+
+        boton.disabled =
+            false;
+
+
+        boton.textContent =
+            'GENERAR';
+
+    }
+
+}
+
+
+// ==========================================================
+// MOSTRAR
+// ==========================================================
+
+function mostrarReporte(
+    data
+) {
+
+    document.getElementById(
+        'total-simulaciones'
+    ).textContent =
+        numero(
+            data.totalSimulaciones
+        );
+
+
+    document.getElementById(
+        'total-usuarios'
+    ).textContent =
+        numero(
+            data.usuarios
+        );
+
+
+    document.getElementById(
+        'total-orientaciones'
+    ).textContent =
+        numero(
+            data.orientacionesSolicitadas
+        );
+
+
+    document.getElementById(
+        'pension-promedio'
+    ).textContent =
+        moneda(
+            data.pensionPromedio
+        );
+
+
+    document.getElementById(
+        'ingreso-promedio'
+    ).textContent =
+        moneda(
+            data.ingresoPromedio
+        );
+
+
+    document.getElementById(
+        'orientaciones-respondidas'
+    ).textContent =
+        numero(
+            data.orientacionesRespondidas
+        );
+
+
+    document.getElementById(
+        'orientaciones-pendientes'
+    ).textContent =
+        numero(
+            data.orientacionesPendientes
+        );
+
+
+    // ======================================================
+    // PORCENTAJES DE ORIENTACIONES
+    // ======================================================
+
+    const totalOrientaciones =
+        Number(
+            data.orientacionesSolicitadas
+        ) || 0;
+
+
+    const respondidas =
+        Number(
+            data.orientacionesRespondidas
+        ) || 0;
+
+
+    const pendientes =
+        Number(
+            data.orientacionesPendientes
+        ) || 0;
+
+
+    const pctRespondidas =
+        totalOrientaciones > 0
+            ? (
+                respondidas /
+                totalOrientaciones
+              ) * 100
+            : 0;
+
+
+    const pctPendientes =
+        totalOrientaciones > 0
+            ? (
+                pendientes /
+                totalOrientaciones
+              ) * 100
+            : 0;
+
+
+    aplicarBarra(
+        'bar-respondidas',
+        'pct-respondidas',
+        pctRespondidas
+    );
+
+
+    aplicarBarra(
+        'bar-pendientes',
+        'pct-pendientes',
+        pctPendientes
+    );
+
+
+    renderTabla(
+        data.simulaciones
+    );
+
+}
+
+
+// ==========================================================
+// TABLA
+// ==========================================================
+
+function renderTabla(
+    simulaciones
+) {
+
+    const tbody =
+        document.getElementById(
+            'tabla-afp'
+        );
+
+
+    tbody.innerHTML = '';
+
+
+    if (
+        !Array.isArray(simulaciones) ||
+        simulaciones.length === 0
+    ) {
+
+        tbody.innerHTML =
+            '<tr>' +
+            '<td colspan="7">' +
+            'No existen simulaciones AFP en el período seleccionado.' +
+            '</td>' +
+            '</tr>';
+
+        return;
+    }
+
+
+    simulaciones.forEach(
+        function (p) {
+
+            const fila =
+                document.createElement(
+                    'tr'
+                );
+
+
+            fila.innerHTML = `
+
+                <td>
+                    ${escapeHtml(
+                        p.usuario ||
+                        '—'
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        p.edad ?? '—'
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        moneda(
+                            p.ingresoMensual
+                        )
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        p.aniosAporte ?? '—'
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        moneda(
+                            p.montoPensionEstimado
+                        )
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        p.estado ||
+                        '—'
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        fechaHora(
+                            p.fechaRegistro
+                        )
+                    )}
+                </td>
+
+            `;
+
+
+            tbody.appendChild(
+                fila
+            );
+
+        }
+    );
+
+}
+
+
+// ==========================================================
+// BARRAS
+// ==========================================================
+
+function aplicarBarra(
+    idBarra,
+    idTexto,
+    valor
+) {
+
+    let porcentaje =
+        Number(valor);
+
+
+    if (!Number.isFinite(porcentaje)) {
+        porcentaje = 0;
+    }
+
+
+    porcentaje =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                porcentaje
+            )
+        );
+
+
+    document.getElementById(
+        idBarra
+    ).style.width =
+        porcentaje +
+        '%';
+
+
+    document.getElementById(
+        idTexto
+    ).textContent =
+        porcentaje.toFixed(1) +
+        '%';
+
+}
+
+
+// ==========================================================
+// EXPORTAR
+// ==========================================================
+
+function exportarCSV() {
+
+    if (!reporteActual) {
+
+        mostrarMensaje(
+            'Primero genere el reporte.',
+            'error'
+        );
+
+        return;
+    }
+
+
+    const periodo =
+        document.getElementById(
+            'periodo'
+        ).value;
+
+
+    const filas = [
+
+        [
+            'REPORTE AFP SEGURPLAN'
+        ],
+
+        [
+            'Periodo',
+            periodo
+        ],
+
+        [],
+
+        [
+            'Simulaciones',
+            reporteActual.totalSimulaciones
+        ],
+
+        [
+            'Usuarios',
+            reporteActual.usuarios
+        ],
+
+        [
+            'Orientaciones solicitadas',
+            reporteActual.orientacionesSolicitadas
+        ],
+
+        [
+            'Orientaciones respondidas',
+            reporteActual.orientacionesRespondidas
+        ],
+
+        [
+            'Orientaciones pendientes',
+            reporteActual.orientacionesPendientes
+        ],
+
+        [
+            'Pensión promedio',
+            reporteActual.pensionPromedio
+        ],
+
+        [
+            'Ingreso promedio',
+            reporteActual.ingresoPromedio
+        ],
+
+        [],
+
+        [
+            'Usuario',
+            'Edad',
+            'Ingreso mensual',
+            'Años aporte',
+            'Pensión estimada',
+            'Estado',
+            'Fecha'
+        ]
+
+    ];
+
+
+    if (
+        Array.isArray(
+            reporteActual.simulaciones
+        )
+    ) {
+
+        reporteActual
+            .simulaciones
+            .forEach(
+                function (p) {
+
+                    filas.push([
+
+                        p.usuario || '',
+
+                        p.edad ?? '',
+
+                        p.ingresoMensual ?? '',
+
+                        p.aniosAporte ?? '',
+
+                        p.montoPensionEstimado ?? '',
+
+                        p.estado || '',
+
+                        p.fechaRegistro || ''
+
+                    ]);
+
+                }
+            );
+
+    }
+
+
+    descargarCSV(
+        filas,
+        'SEGURPLAN_Reporte_AFP_' +
+        periodo +
+        '.csv'
+    );
+
+}
+
+
+// ==========================================================
+// DESCARGA CSV
+// ==========================================================
+
+function descargarCSV(
+    filas,
+    nombre
+) {
+
+    const contenido =
+        filas
+            .map(
+                fila =>
+                    fila
+                        .map(
+                            celda =>
+                                '"' +
+                                String(
+                                    celda ?? ''
+                                )
+                                    .replaceAll(
+                                        '"',
+                                        '""'
+                                    ) +
+                                '"'
+                        )
+                        .join(';')
+            )
+            .join('\n');
+
+
+    const blob =
+        new Blob(
+            [
+                '\uFEFF' +
+                contenido
+            ],
+            {
+                type:
+                    'text/csv;charset=utf-8;'
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const enlace =
+        document.createElement(
+            'a'
+        );
+
+
+    enlace.href =
+        url;
+
+
+    enlace.download =
+        nombre;
+
+
+    document.body.appendChild(
+        enlace
+    );
+
+
+    enlace.click();
+
+
+    enlace.remove();
+
+
+    URL.revokeObjectURL(
+        url
+    );
+
+}
+
+
+// ==========================================================
+// MONEDA
+// ==========================================================
+
+function moneda(
+    valor
+) {
+
+    const numero =
+        Number(valor);
+
+
+    if (!Number.isFinite(numero)) {
+
+        return 'S/ 0.00';
+
+    }
+
+
+    return new Intl.NumberFormat(
+        'es-PE',
+        {
+            style: 'currency',
+            currency: 'PEN'
+        }
+    ).format(
+        numero
+    );
+
+}
+
+
+// ==========================================================
+// FECHA
+// ==========================================================
+
+function fechaHora(
+    valor
+) {
+
+    if (!valor) {
+
+        return '—';
+
+    }
+
+
+    const fecha =
+        new Date(
+            valor
+        );
+
+
+    if (
+        Number.isNaN(
+            fecha.getTime()
+        )
+    ) {
+
+        return String(
+            valor
+        );
+
+    }
+
+
+    return fecha.toLocaleString(
+        'es-PE',
+        {
+            dateStyle: 'short',
+            timeStyle: 'short'
+        }
+    );
+
+}
+
+
+// ==========================================================
+// NÚMERO
+// ==========================================================
+
+function numero(
+    valor
+) {
+
+    const n =
+        Number(valor);
+
+
+    return Number.isFinite(n)
+        ? String(n)
+        : '0';
+
+}
+
+
+// ==========================================================
+// MENSAJE
+// ==========================================================
+
+function mostrarMensaje(
+    mensaje,
+    tipo
+) {
+
+    const contenedor =
+        document.getElementById(
+            'mensaje-reporte'
+        );
+
+
+    contenedor.style.display =
+        'block';
+
+
+    contenedor.className =
+        tipo === 'success'
+            ? 'notice success'
+            : 'notice error';
+
+
+    contenedor.textContent =
+        mensaje;
+
+}
+
+
+// ==========================================================
+// ESCAPE HTML
+// ==========================================================
+
+function escapeHtml(
+    valor
+) {
+
+    return String(
+        valor ?? ''
+    )
+        .replaceAll(
+            '&',
+            '&amp;'
+        )
+        .replaceAll(
+            '<',
+            '&lt;'
+        )
+        .replaceAll(
+            '>',
+            '&gt;'
+        )
+        .replaceAll(
+            '"',
+            '&quot;'
+        )
+        .replaceAll(
+            "'",
+            '&#039;'
+        );
+
+}
+
+</script>
+
 </body>
 </html>

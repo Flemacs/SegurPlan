@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SEGURPLAN — REP-MV-05 Cartera de pólizas</title>
+
+    <link rel="stylesheet" href="../assets/styles.css">
+
+    <style>
+
+        .report-nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 0 0 24px;
+        }
+
+        .report-nav a {
+            padding: 9px 12px;
+            border: 1px solid #d7dce5;
+            border-radius: 6px;
+            background: #fff;
+            color: #183153;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .report-nav a:hover {
+            background: #eef2f8;
+        }
+
+        .report-code {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #eef2f8;
+            color: #183153;
+            font-size: 12px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .report-toolbar {
+            display: flex;
+            gap: 12px;
+            align-items: end;
+            flex-wrap: wrap;
+            margin: 22px 0;
+        }
+
+        .report-toolbar .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .report-toolbar label {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .report-kpis {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin: 18px 0 24px;
+        }
+
+        .report-kpi {
+            background: #fff;
+            border: 1px solid #dfe3ea;
+            border-radius: 8px;
+            padding: 18px;
+        }
+
+        .report-kpi strong {
+            display: block;
+            font-size: 25px;
+            color: #183153;
+            margin-bottom: 5px;
+        }
+
+        .report-kpi span {
+            font-size: 11px;
+            color: #687386;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .chart-panel {
+            height: 270px;
+            display: flex;
+            align-items: flex-end;
+            gap: 30px;
+            padding: 28px 40px 12px;
+            border: 1px solid #e1e5eb;
+            border-radius: 8px;
+            background: #fafbfc;
+            margin-bottom: 24px;
+        }
+
+        .chart-col {
+            flex: 1;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .chart-value {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 12px;
+            font-weight: 800;
+            color: #183153;
+        }
+
+        .chart-bar {
+            margin: auto;
+            width: min(70px, 80%);
+            background: #183153;
+            border-radius: 6px 6px 0 0;
+            min-height: 0;
+            transition: height .4s ease;
+        }
+
+        .chart-col small {
+            display: block;
+            margin-top: 8px;
+            font-size: 10px;
+            color: #687386;
+        }
+
+        .report-note {
+            font-size: 12px;
+            color: #687386;
+            margin-top: 12px;
+        }
+
+        .status-pill {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #eef2f8;
+            color: #183153;
+            font-weight: 700;
+            font-size: 11px;
+        }
+
+        .money {
+            font-weight: 700;
+            color: #183153;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        #tabla-reporte {
+            width: 100%;
+        }
+
+        .empty-row {
+            text-align: center;
+            color: #687386;
+            padding: 25px !important;
+        }
+
+        @media(max-width:760px) {
+
+            .report-kpis {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .chart-panel {
+                gap: 8px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .site-header {
+                height: auto;
+            }
+
+            .header-right {
+                flex-wrap: wrap;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ====================================================== -->
+<!-- HEADER -->
+<!-- ====================================================== -->
+
+<header class="site-header">
+
+    <div class="logo">
+
+        SEGURPLAN
+
+        <span>
+            Plataforma de seguros y AFP
+        </span>
+
+    </div>
+
+
+    <div class="header-right">
+
+        <span
+            class="user-name"
+            id="header-user">
+
+            Usuario
+
+        </span>
+
+
+        <button
+            class="profile-btn"
+            type="button">
+
+            MI PERFIL
+
+        </button>
+
+
+        <button
+            class="btn-logout"
+            type="button">
+
+            CERRAR SESIÓN
+
+        </button>
+
+    </div>
+
+</header>
+
+
+
+<!-- ====================================================== -->
+<!-- CONTENIDO -->
+<!-- ====================================================== -->
+
+<div class="page-wrap">
+
+
+    <!-- BREADCRUMB -->
+
+    <nav class="breadcrumb">
+
+        SEGURPLAN
+        &rsaquo;
+        Reportes
+        &rsaquo;
+        Marketing y Ventas
+        &rsaquo;
+        Cartera de pólizas
+
+    </nav>
+
+
+
+    <!-- NAVEGACIÓN -->
+
+    <div class="report-nav">
+
+        <a href="rep-mv-01-cotizaciones-estado.html">
+            Marketing y Ventas
+        </a>
+
+        <a href="rep-la-01-documentos.html">
+            Logística
+        </a>
+
+        <a href="rep-po-01-afp.html">
+            Operaciones
+        </a>
+
+        <a href="rep-dg-01-general.html">
+            Gerencia
+        </a>
+
+        <a href="rep-ot-02-trazabilidad.html">
+            Trazabilidad
+        </a>
+
+        <a href="s14-administracion.html">
+            Administración
+        </a>
+
+    </div>
+
+
+
+    <!-- ================================================== -->
+    <!-- TÍTULO -->
+    <!-- ================================================== -->
+
+    <span class="report-code">
+        REP-MV-05
+    </span>
+
+
+    <h1 class="page-title">
+        Cartera de pólizas
+    </h1>
+
+
+    <p class="page-subtitle">
+
+        Detalle de pólizas emitidas,
+        vigencia, prima, cobertura,
+        deducible y estado para
+        seguimiento comercial.
+
+    </p>
+
+
+
+    <!-- ================================================== -->
+    <!-- FILTROS -->
+    <!-- ================================================== -->
+
+    <div class="report-toolbar">
+
+
+        <div class="field">
+
+            <label for="periodo">
+                Período
+            </label>
+
+            <input
+                class="form-control"
+                id="periodo"
+                type="month">
+
+        </div>
+
+
+        <button
+            class="btn btn-primary"
+            id="btn-generar"
+            type="button">
+
+            GENERAR
+
+        </button>
+
+
+        <button
+            class="btn btn-secondary"
+            id="btn-exportar"
+            type="button">
+
+            EXPORTAR CSV
+
+        </button>
+
+
+    </div>
+
+
+
+    <!-- ================================================== -->
+    <!-- KPI -->
+    <!-- ================================================== -->
+
+    <div class="report-kpis">
+
+
+        <div class="report-kpi">
+
+            <strong id="kpi-total">
+                0
+            </strong>
+
+            <span>
+                Total pólizas
+            </span>
+
+        </div>
+
+
+        <div class="report-kpi">
+
+            <strong id="kpi-vigentes">
+                0
+            </strong>
+
+            <span>
+                Vigentes
+            </span>
+
+        </div>
+
+
+        <div class="report-kpi">
+
+            <strong id="kpi-vencidas">
+                0
+            </strong>
+
+            <span>
+                Vencidas
+            </span>
+
+        </div>
+
+
+        <div class="report-kpi">
+
+            <strong id="kpi-prima">
+                S/ 0.00
+            </strong>
+
+            <span>
+                Prima total
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- ================================================== -->
+    <!-- GRÁFICO -->
+    <!-- ================================================== -->
+
+    <div class="card">
+
+
+        <div class="card-header">
+
+            <h2>
+                Resumen visual
+            </h2>
+
+        </div>
+
+
+        <div class="card-body">
+
+
+            <div class="chart-panel">
+
+
+                <!-- TOTAL -->
+
+                <div class="chart-col">
+
+                    <span
+                        class="chart-value"
+                        id="valor-total">
+
+                        0
+
+                    </span>
+
+                    <div
+                        class="chart-bar"
+                        id="barra-total"
+                        style="height:0">
+                    </div>
+
+                    <small>
+                        Total
+                    </small>
+
+                </div>
+
+
+
+                <!-- VIGENTES -->
+
+                <div class="chart-col">
+
+                    <span
+                        class="chart-value"
+                        id="valor-vigentes">
+
+                        0
+
+                    </span>
+
+                    <div
+                        class="chart-bar"
+                        id="barra-vigentes"
+                        style="height:0">
+                    </div>
+
+                    <small>
+                        Vigentes
+                    </small>
+
+                </div>
+
+
+
+                <!-- VENCIDAS -->
+
+                <div class="chart-col">
+
+                    <span
+                        class="chart-value"
+                        id="valor-vencidas">
+
+                        0
+
+                    </span>
+
+                    <div
+                        class="chart-bar"
+                        id="barra-vencidas"
+                        style="height:0">
+                    </div>
+
+                    <small>
+                        Vencidas
+                    </small>
+
+                </div>
+
+
+            </div>
+
+
+            <p
+                class="report-note"
+                id="nota-periodo">
+
+                Seleccione un período para
+                consultar la cartera de pólizas.
+
+            </p>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================================================== -->
+    <!-- DETALLE -->
+    <!-- ================================================== -->
+
+    <div
+        class="card"
+        style="margin-top:20px">
+
+
+        <div class="card-header">
+
+            <h2>
+                Detalle de pólizas
+            </h2>
+
+        </div>
+
+
+        <div class="card-body">
+
+
+            <div class="table-wrap">
+
+
+                <table id="tabla-reporte">
+
+
+                    <thead>
+
+                    <tr>
+
+                        <th>
+                            N.º póliza
+                        </th>
+
+                        <th>
+                            Inicio
+                        </th>
+
+                        <th>
+                            Fin
+                        </th>
+
+                        <th>
+                            Cobertura
+                        </th>
+
+                        <th>
+                            Deducible
+                        </th>
+
+                        <th>
+                            Prima
+                        </th>
+
+                        <th>
+                            Estado
+                        </th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody id="tabla-body">
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<!-- ====================================================== -->
+<!-- JAVASCRIPT GENERAL -->
+<!-- ====================================================== -->
+
+<script src="../assets/app.js"></script>
+
+
+<script>
+
+
+// =========================================================
+// AUTENTICACIÓN
+// =========================================================
+
+const sesion =
+    sp_requireAuth(
+        's01-login.html'
+    );
+
+
+if (sesion) {
+
+    document.getElementById(
+        'header-user'
+    ).textContent =
+
+        (sesion.nombres || 'Usuario')
+        + ' '
+        + (sesion.apellidos || '');
+
+}
+
+
+document.querySelector(
+    '.btn-logout'
+).addEventListener(
+    'click',
+    sp_logout
+);
+
+
+
+// =========================================================
+// PERÍODO ACTUAL
+// =========================================================
+
+const periodo =
+    document.getElementById(
+        'periodo'
+    );
+
+
+const fechaActual =
+    new Date();
+
+
+periodo.value =
+
+    fechaActual.getFullYear()
+    + '-'
+    + String(
+        fechaActual.getMonth() + 1
+    ).padStart(
+        2,
+        '0'
+    );
+
+
+
+// =========================================================
+// FORMATEAR MONEDA
+// =========================================================
+
+function formatearMoneda(
+    valor
+) {
+
+    const numero =
+        Number(
+            valor || 0
+        );
+
+
+    return new Intl.NumberFormat(
+        'es-PE',
+        {
+            style: 'currency',
+            currency: 'PEN',
+            minimumFractionDigits: 2
+        }
+    ).format(
+        numero
+    );
+
+}
+
+
+
+// =========================================================
+// FORMATEAR FECHA
+// =========================================================
+
+function formatearFecha(
+    fecha
+) {
+
+    if (!fecha) {
+        return '-';
+    }
+
+
+    const partes =
+        String(
+            fecha
+        ).split('-');
+
+
+    if (
+        partes.length === 3
+    ) {
+
+        return (
+            partes[2]
+            + '/'
+            + partes[1]
+            + '/'
+            + partes[0]
+        );
+
+    }
+
+
+    return fecha;
+
+}
+
+
+
+// =========================================================
+// CARGAR REPORTE
+// =========================================================
+
+async function cargarReporte() {
+
+
+    if (!periodo.value) {
+
+        alert(
+            'Seleccione un período.'
+        );
+
+        return;
+
+    }
+
+
+    const [
+        anio,
+        mes
+    ] =
+        periodo.value.split('-');
+
+
+    try {
+
+
+        const respuesta =
+            await fetch(
+
+                '/api/reportes/marketing/cartera-polizas'
+                + '?anio='
+                + anio
+                + '&mes='
+                + mes
+
+            );
+
+
+        const data =
+            await respuesta.json();
+
+
+        if (!respuesta.ok) {
+
+            throw new Error(
+
+                data.mensaje
+                ||
+                'No se pudo generar el reporte.'
+
+            );
+
+        }
+
+
+        actualizarReporte(
+            data
+        );
+
+
+    } catch (error) {
+
+
+        console.error(
+            'Error REP-MV-05:',
+            error
+        );
+
+
+        alert(
+
+            'No se pudo cargar el reporte.\n'
+            + error.message
+
+        );
+
+    }
+
+}
+
+
+
+// =========================================================
+// ACTUALIZAR REPORTE
+// =========================================================
+
+function actualizarReporte(
+    data
+) {
+
+
+    const total =
+        Number(
+            data.total || 0
+        );
+
+
+    const vigentes =
+        Number(
+            data.vigentes || 0
+        );
+
+
+    const vencidas =
+        Number(
+            data.vencidas || 0
+        );
+
+
+    const primaTotal =
+        Number(
+            data.primaTotal || 0
+        );
+
+
+    const polizas =
+        Array.isArray(
+            data.polizas
+        )
+            ? data.polizas
+            : [];
+
+
+
+    // =====================================================
+    // KPI
+    // =====================================================
+
+    document.getElementById(
+        'kpi-total'
+    ).textContent =
+        total;
+
+
+    document.getElementById(
+        'kpi-vigentes'
+    ).textContent =
+        vigentes;
+
+
+    document.getElementById(
+        'kpi-vencidas'
+    ).textContent =
+        vencidas;
+
+
+    document.getElementById(
+        'kpi-prima'
+    ).textContent =
+        formatearMoneda(
+            primaTotal
+        );
+
+
+
+    // =====================================================
+    // VALORES DEL GRÁFICO
+    // =====================================================
+
+    document.getElementById(
+        'valor-total'
+    ).textContent =
+        total;
+
+
+    document.getElementById(
+        'valor-vigentes'
+    ).textContent =
+        vigentes;
+
+
+    document.getElementById(
+        'valor-vencidas'
+    ).textContent =
+        vencidas;
+
+
+
+    // =====================================================
+    // GRÁFICO
+    // =====================================================
+
+    const maximo =
+        Math.max(
+            total,
+            vigentes,
+            vencidas,
+            1
+        );
+
+
+    actualizarBarra(
+        'barra-total',
+        total,
+        maximo
+    );
+
+
+    actualizarBarra(
+        'barra-vigentes',
+        vigentes,
+        maximo
+    );
+
+
+    actualizarBarra(
+        'barra-vencidas',
+        vencidas,
+        maximo
+    );
+
+
+
+    // =====================================================
+    // TABLA
+    // =====================================================
+
+    const tbody =
+        document.getElementById(
+            'tabla-body'
+        );
+
+
+    tbody.innerHTML =
+        '';
+
+
+    if (
+        polizas.length === 0
+    ) {
+
+
+        const fila =
+            document.createElement(
+                'tr'
+            );
+
+
+        fila.innerHTML = `
+
+            <td
+                colspan="7"
+                class="empty-row">
+
+                No existen pólizas
+                registradas para el
+                período seleccionado.
+
+            </td>
+
+        `;
+
+
+        tbody.appendChild(
+            fila
+        );
+
+
+    } else {
+
+
+        polizas.forEach(
+            poliza => {
+
+
+                const fila =
+                    document.createElement(
+                        'tr'
+                    );
+
+
+                const deducible =
+                    poliza.deducible == null
+
+                        ? '-'
+
+                        : formatearMoneda(
+                            poliza.deducible
+                        );
+
+
+                const cobertura =
+                    poliza.cobertura
+                    || '-';
+
+
+                const estado =
+                    poliza.estado
+                    || '-';
+
+
+                fila.innerHTML = `
+
+                    <td>
+                        <strong>
+                            ${poliza.numeroPoliza || '-'}
+                        </strong>
+                    </td>
+
+                    <td>
+                        ${formatearFecha(
+                            poliza.fechaInicio
+                        )}
+                    </td>
+
+                    <td>
+                        ${formatearFecha(
+                            poliza.fechaFin
+                        )}
+                    </td>
+
+                    <td>
+                        ${cobertura}
+                    </td>
+
+                    <td>
+                        ${deducible}
+                    </td>
+
+                    <td class="money">
+                        ${formatearMoneda(
+                            poliza.prima
+                        )}
+                    </td>
+
+                    <td>
+
+                        <span class="status-pill">
+
+                            ${estado}
+
+                        </span>
+
+                    </td>
+
+                `;
+
+
+                tbody.appendChild(
+                    fila
+                );
+
+            }
+        );
+
+    }
+
+
+
+    // =====================================================
+    // NOTA DEL PERÍODO
+    // =====================================================
+
+    document.getElementById(
+        'nota-periodo'
+    ).innerHTML =
+
+        'Datos obtenidos de PostgreSQL para '
+
+        + String(
+            data.mes
+        ).padStart(
+            2,
+            '0'
+        )
+
+        + '/'
+
+        + data.anio
+
+        + '. Total de pólizas: '
+
+        + '<strong>'
+        + total
+        + '</strong>'
+
+        + '. Prima total: '
+
+        + '<strong>'
+        + formatearMoneda(
+            primaTotal
+        )
+        + '</strong>.';
+
+}
+
+
+
+// =========================================================
+// ACTUALIZAR BARRA
+// =========================================================
+
+function actualizarBarra(
+    id,
+    valor,
+    maximo
+) {
+
+
+    const barra =
+        document.getElementById(
+            id
+        );
+
+
+    let altura =
+        0;
+
+
+    if (
+        valor > 0
+    ) {
+
+
+        altura =
+            Math.max(
+
+                15,
+
+                (
+                    valor
+                    /
+                    maximo
+                )
+                *
+                180
+
+            );
+
+    }
+
+
+    barra.style.height =
+        altura
+        + 'px';
+
+
+    barra.title =
+        valor
+        + ' póliza(s)';
+
+}
+
+
+
+// =========================================================
+// BOTÓN GENERAR
+// =========================================================
+
+document.getElementById(
+    'btn-generar'
+).addEventListener(
+
+    'click',
+
+    cargarReporte
+
+);
+
+
+
+// =========================================================
+// EXPORTAR CSV
+// =========================================================
+
+document.getElementById(
+    'btn-exportar'
+).addEventListener(
+
+    'click',
+
+    function () {
+
+
+        const filas =
+            [
+                ...document.querySelectorAll(
+                    '#tabla-reporte tr'
+                )
+            ];
+
+
+        const csv =
+            filas.map(
+
+                fila =>
+
+                    [
+                        ...fila.children
+                    ]
+
+                        .map(
+
+                            celda =>
+
+                                '"'
+
+                                + celda
+                                    .innerText
+                                    .trim()
+                                    .replaceAll(
+                                        '"',
+                                        '""'
+                                    )
+
+                                + '"'
+
+                        )
+
+                        .join(';')
+
+            )
+
+                .join('\n');
+
+
+
+        const blob =
+            new Blob(
+
+                [
+                    '\uFEFF'
+                    + csv
+                ],
+
+                {
+                    type:
+                        'text/csv;charset=utf-8'
+                }
+
+            );
+
+
+
+        const url =
+            URL.createObjectURL(
+                blob
+            );
+
+
+        const enlace =
+            document.createElement(
+                'a'
+            );
+
+
+        enlace.href =
+            url;
+
+
+        enlace.download =
+            'REP-MV-05_'
+            + periodo.value
+            + '.csv';
+
+
+        enlace.click();
+
+
+        URL.revokeObjectURL(
+            url
+        );
+
+    }
+
+);
+
+
+
+// =========================================================
+// CARGA AUTOMÁTICA
+// =========================================================
+
+cargarReporte();
+
+
+</script>
+
+
+</body>
+
+</html>

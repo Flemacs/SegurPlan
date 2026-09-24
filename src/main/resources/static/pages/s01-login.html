@@ -1,75 +1,79 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SEGURPLAN — Iniciar sesión</title>
-  <link rel="stylesheet" href="../assets/styles.css" />
-</head>
-<body>
-<div class="page-wrap center-content">
-  <div class="login-card">
-    <div class="login-header">
-      <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
-      <p>Inicia sesión para continuar</p>
-    </div>
-    <div class="login-body">
-      <div class="form-group">
-        <label for="email">Correo electrónico</label>
-        <input class="form-control" type="email" id="email" placeholder="usuario@correo.com" />
-      </div>
-      <div class="form-group">
-        <label for="password">Contraseña</label>
-        <input class="form-control" type="password" id="password" placeholder="••••••••" />
-      </div>
-      <div id="login-error" class="notice error" style="display:none;margin-bottom:12px;"></div>
-      <button class="btn btn-primary btn-block" onclick="iniciarSesion()">INICIAR SESIÓN</button>
-      <p style="text-align:center;margin-top:16px;font-size:13px;">
-        <a href="s00-registro.html" style="color:var(--primary);">¿No tienes cuenta? Registrarse</a>
-      </p>
-    </div>
-  </div>
-</div>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SEGURPLAN — Iniciar sesión</title>
+        <link rel="stylesheet" href="../assets/styles.css" />
+    </head>
+    <body>
+        <div class="page-wrap center-content">
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+                    <p>Inicia sesión para continuar</p>
+                </div>
+                <div class="login-body">
+                    <div class="form-group">
+                        <label for="email">Correo electrónico</label>
+                        <input class="form-control" type="email" id="email" placeholder="usuario@correo.com" />
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Contraseña</label>
+                        <input class="form-control" type="password" id="password" placeholder="••••••••" />
+                    </div>
+                    <div id="login-error" class="notice error" style="display:none;margin-bottom:12px;"></div>
+                    <button class="btn btn-primary btn-block" onclick="iniciarSesion()">INICIAR SESIÓN</button>
+                    <p style="text-align:center;margin-top:16px;font-size:13px;">
+                        <a href="s00-registro.html" style="color:var(--primary);">¿No tienes cuenta? Registrarse</a>
+                    </p>
+                </div>
+            </div>
+        </div>
 
-<footer class="site-footer">
-  <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
-  <nav class="footer-links">
-    <a href="../index.html">Inicio</a>
-    <a href="s01-login.html">Iniciar sesión</a>
-    <a href="s00-registro.html">Registrarse</a>
-  </nav>
-  <div class="footer-meta">
-    <span>© 2026 SEGURPLAN. Todos los derechos reservados.</span>
-  </div>
-</footer>
-<script src="../assets/app.js"></script>
-<script>
-  async function iniciarSesion() {
-    const email    = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    const errEl    = document.getElementById('login-error');
-    if (!email || !password) {
-      errEl.textContent = 'Ingrese su correo y contraseña.';
-      errEl.style.display = 'block'; return;
-    }
-    const result = await sp_login(email, password);
-    if (!result.ok) {
-  errEl.textContent = result.error;
-  errEl.style.display = 'block';
-  return;
-}
+        <footer class="site-footer">
+            <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+            <nav class="footer-links">
+                <a href="../index.html">Inicio</a>
+                <a href="s01-login.html">Iniciar sesión</a>
+                <a href="s00-registro.html">Registrarse</a>
+            </nav>
+            <div class="footer-meta">
+                <span>© 2026 SEGURPLAN. Todos los derechos reservados.</span>
+            </div>
+        </footer>
+        <script src="../assets/app.js"></script>
+        <script>
+                  async function iniciarSesion() {
+                      const email = document.getElementById('email').value.trim();
+                      const password = document.getElementById('password').value;
+                      const errEl = document.getElementById('login-error');
+                      if (!email || !password) {
+                          errEl.textContent = 'Ingrese su correo y contraseña.';
+                          errEl.style.display = 'block';
+                          return;
+                      }
+                      const result = await sp_login(email, password);
+                      if (!result.ok) {
+                          errEl.textContent = result.error;
+                          errEl.style.display = 'block';
+                          return;
+                      }
 
-    if (result.usuario.rol === 'Administrador') {
+                      if (result.usuario.rol === 'Administrador') {
 
-    window.location.href = 's14-administracion.html';
+                          window.location.href = 's14-administracion.html';
 
-} else {
+                      } else {
 
-    window.location.href = 's02-panel-usuario.html';
+                          window.location.href = 's02-panel-usuario.html';
 
-}
-}
-  document.addEventListener('keydown', e => { if (e.key === 'Enter') iniciarSesion(); });
-</script>
-</body>
+                      }
+                  }
+                  document.addEventListener('keydown', e => {
+                      if (e.key === 'Enter')
+                          iniciarSesion();
+                  });
+        </script>
+    </body>
 </html>

@@ -1,100 +1,1492 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SEGURPLAN — Reporte de siniestros</title>
-  <link rel="stylesheet" href="../assets/styles.css" />
-</head>
-<body>
-<header class="site-header">
-  <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
-  <div class="header-right">
-    <span class="user-name">Usuario: Luis Mendoza — Administrador</span>
-    <button class="bell-btn" title="Notificaciones">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-    </button>
-    <button class="profile-btn">MI PERFIL</button>
-  </div>
-</header>
 
-<div class="page-wrap">
-  <nav class="breadcrumb">SEGURPLAN &rsaquo; Reportes &rsaquo; Reporte de siniestros</nav>
-  <h1 class="page-title">Reporte de siniestros</h1>
+    <head>
 
-  <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
-    <label style="font-weight:600;font-size:14px;">Período:</label>
-    <select class="form-control" style="width:auto;">
-      <option>Agosto 2026</option>
-      <option>Julio 2026</option>
-      <option>Junio 2026</option>
-    </select>
-    <button class="btn btn-primary">GENERAR</button>
-  </div>
+        <meta charset="UTF-8" />
 
-  <div class="stats-grid cols-4">
-    <div class="stat-box">
-      <div class="stat-value">38</div>
-      <div class="stat-label">Total registrados</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-value">12</div>
-      <div class="stat-label">En revisión</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-value">18</div>
-      <div class="stat-label">Derivados</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-value">8</div>
-      <div class="stat-label">Con resultado</div>
-    </div>
-  </div>
+        <meta name="viewport"
+              content="width=device-width,
+              initial-scale=1.0" />
 
-  <div class="card">
-    <div class="card-header">
-      <h2>Estado de casos</h2>
-    </div>
-    <div class="card-body">
-      <div class="bar-group">
-        <span class="bar-label">Registrado</span>
-        <div class="bar-track"><div class="bar-fill" style="width:100%;"></div></div>
-        <span class="bar-pct">100%</span>
-      </div>
-      <div class="bar-group">
-        <span class="bar-label">En revisión</span>
-        <div class="bar-track"><div class="bar-fill" style="width:32%;"></div></div>
-        <span class="bar-pct">32%</span>
-      </div>
-      <div class="bar-group">
-        <span class="bar-label">Derivado</span>
-        <div class="bar-track"><div class="bar-fill" style="width:47%;"></div></div>
-        <span class="bar-pct">47%</span>
-      </div>
-      <div class="bar-group">
-        <span class="bar-label">Con resultado</span>
-        <div class="bar-track"><div class="bar-fill" style="width:21%;"></div></div>
-        <span class="bar-pct">21%</span>
-      </div>
-    </div>
-    <div class="card-footer">
-      <button class="btn btn-primary">EXPORTAR</button>
-      <button class="btn btn-outline">IMPRIMIR</button>
-    </div>
-  </div>
-</div>
+        <title>
+            SEGURPLAN — Reporte de siniestros
+        </title>
 
-<footer class="site-footer">
-  <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
-  <nav class="footer-links">
-    <a href="../index.html">Inicio</a>
-    <a href="s01-login.html">Iniciar sesión</a>
-    <a href="s00-registro.html">Registrarse</a>
-  </nav>
-  <div class="footer-meta">
-    <span>© 2026 SEGURPLAN. Todos los derechos reservados.</span>
-  </div>
-</footer>
-<script src="../assets/app.js"></script>
-</body>
+        <link rel="stylesheet"
+              href="../assets/styles.css" />
+
+    </head>
+
+    <body>
+
+
+        <!-- ======================================================
+             HEADER
+        ======================================================= -->
+
+        <header class="site-header">
+
+            <div class="logo">
+
+                SEGURPLAN
+
+                <span>
+                    Plataforma de seguros y AFP
+                </span>
+
+            </div>
+
+
+            <div class="header-right">
+
+                <span
+                    class="user-name"
+                    id="header-user">
+
+                    Usuario
+
+                </span>
+
+
+                <button
+                    class="bell-btn"
+                    type="button"
+                    title="Notificaciones">
+
+                    <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round">
+
+                    <path
+                        d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9">
+                    </path>
+
+                    <path
+                        d="M13.73 21a2 2 0 0 1-3.46 0">
+                    </path>
+
+                    </svg>
+
+                </button>
+
+
+                <button
+                    class="profile-btn"
+                    type="button">
+
+                    MI PERFIL
+
+                </button>
+
+
+                <button
+                    class="btn-logout"
+                    type="button">
+
+                    CERRAR SESIÓN
+
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- ======================================================
+             CONTENIDO
+        ======================================================= -->
+
+        <div class="page-wrap">
+
+            <nav class="breadcrumb">
+
+                SEGURPLAN
+                &rsaquo;
+                Reportes
+                &rsaquo;
+                Reporte de siniestros
+
+            </nav>
+
+
+            <h1 class="page-title">
+                Reporte de siniestros
+            </h1>
+
+
+            <p class="page-subtitle">
+
+                Seguimiento mensual de los siniestros
+                registrados en SEGURPLAN.
+
+            </p>
+
+
+            <!-- ==================================================
+                 PERIODO
+            =================================================== -->
+
+            <div style="
+                 display:flex;
+                 align-items:center;
+                 gap:12px;
+                 margin-bottom:24px;
+                 flex-wrap:wrap;
+                 ">
+
+                <label
+                    for="periodo"
+                    style="
+                    font-weight:600;
+                    font-size:14px;
+                    ">
+
+                    Período:
+
+                </label>
+
+
+                <input
+                    class="form-control"
+                    type="month"
+                    id="periodo"
+                    style="width:auto;" />
+
+
+                <button
+                    class="btn btn-primary"
+                    type="button"
+                    id="btn-generar">
+
+                    GENERAR
+
+                </button>
+
+            </div>
+
+
+            <!-- ==================================================
+                 MENSAJE
+            =================================================== -->
+
+            <div
+                id="mensaje-reporte"
+                style="
+                display:none;
+                margin-bottom:20px;
+                ">
+            </div>
+
+
+            <!-- ==================================================
+                 ESTADÍSTICAS
+            =================================================== -->
+
+            <div class="stats-grid cols-4">
+
+                <div class="stat-box">
+
+                    <div
+                        class="stat-value"
+                        id="total-siniestros">
+
+                        0
+
+                    </div>
+
+                    <div class="stat-label">
+                        TOTAL REGISTRADOS
+                    </div>
+
+                </div>
+
+
+                <div class="stat-box">
+
+                    <div
+                        class="stat-value"
+                        id="total-revision">
+
+                        0
+
+                    </div>
+
+                    <div class="stat-label">
+                        EN REVISIÓN
+                    </div>
+
+                </div>
+
+
+                <div class="stat-box">
+
+                    <div
+                        class="stat-value"
+                        id="total-derivados">
+
+                        0
+
+                    </div>
+
+                    <div class="stat-label">
+                        DERIVADOS
+                    </div>
+
+                </div>
+
+
+                <div class="stat-box">
+
+                    <div
+                        class="stat-value"
+                        id="total-resultado">
+
+                        0
+
+                    </div>
+
+                    <div class="stat-label">
+                        CON RESULTADO
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 ESTADO DE CASOS
+            =================================================== -->
+
+            <div class="card">
+
+                <div class="card-header">
+
+                    <h2>
+                        Estado de casos
+                    </h2>
+
+                </div>
+
+
+                <div class="card-body">
+
+
+                    <!-- REGISTRADOS -->
+
+                    <div class="bar-group">
+
+                        <span class="bar-label">
+                            Registrado
+                        </span>
+
+                        <div class="bar-track">
+
+                            <div
+                                class="bar-fill"
+                                id="bar-registrados"
+                                style="width:0%;">
+                            </div>
+
+                        </div>
+
+                        <span
+                            class="bar-pct"
+                            id="pct-registrados">
+
+                            0%
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- REVISIÓN -->
+
+                    <div class="bar-group">
+
+                        <span class="bar-label">
+                            En revisión
+                        </span>
+
+                        <div class="bar-track">
+
+                            <div
+                                class="bar-fill"
+                                id="bar-revision"
+                                style="width:0%;">
+                            </div>
+
+                        </div>
+
+                        <span
+                            class="bar-pct"
+                            id="pct-revision">
+
+                            0%
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- DERIVADOS -->
+
+                    <div class="bar-group">
+
+                        <span class="bar-label">
+                            Derivado
+                        </span>
+
+                        <div class="bar-track">
+
+                            <div
+                                class="bar-fill"
+                                id="bar-derivados"
+                                style="width:0%;">
+                            </div>
+
+                        </div>
+
+                        <span
+                            class="bar-pct"
+                            id="pct-derivados">
+
+                            0%
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- RESULTADO -->
+
+                    <div class="bar-group">
+
+                        <span class="bar-label">
+                            Con resultado
+                        </span>
+
+                        <div class="bar-track">
+
+                            <div
+                                class="bar-fill"
+                                id="bar-resultado"
+                                style="width:0%;">
+                            </div>
+
+                        </div>
+
+                        <span
+                            class="bar-pct"
+                            id="pct-resultado">
+
+                            0%
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 DETALLE
+            =================================================== -->
+
+            <div
+                class="card"
+                style="margin-top:24px;">
+
+                <div class="card-header">
+
+                    <h2>
+                        Detalle de siniestros
+                    </h2>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div style="overflow-x:auto;">
+
+                        <table class="data-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>N.º Siniestro</th>
+
+                                    <th>Cliente</th>
+
+                                    <th>Fecha accidente</th>
+
+                                    <th>Vehículo</th>
+
+                                    <th>Placa</th>
+
+                                    <th>Lugar</th>
+
+                                    <th>Estado</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody id="tabla-siniestros">
+
+                                <tr>
+
+                                    <td colspan="7">
+
+                                        Cargando información...
+
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==============================================
+                     BOTONES
+                =============================================== -->
+
+                <div class="card-footer">
+
+                    <button
+                        class="btn btn-primary"
+                        type="button"
+                        id="btn-exportar">
+
+                        EXPORTAR
+
+                    </button>
+
+
+                    <button
+                        class="btn btn-outline"
+                        type="button"
+                        id="btn-imprimir">
+
+                        IMPRIMIR
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ======================================================
+             FOOTER
+        ======================================================= -->
+
+        <footer class="site-footer">
+
+            <div class="footer-brand">
+
+                SEGURPLAN
+
+                <span>
+                    Plataforma de seguros y AFP
+                </span>
+
+            </div>
+
+
+            <nav class="footer-links">
+
+                <a href="s15-reporte-general.html">
+                    Reporte general
+                </a>
+
+                <a href="s17-reporte-afp.html">
+                    Reporte AFP
+                </a>
+
+                <a
+                    href="#"
+                    class="btn-logout">
+
+                    Cerrar sesión
+
+                </a>
+
+            </nav>
+
+
+            <div class="footer-meta">
+
+                <span>
+                    © 2026 SEGURPLAN.
+                    Todos los derechos reservados.
+                </span>
+
+            </div>
+
+        </footer>
+
+
+        <script src="../assets/app.js"></script>
+
+
+        <script>
+
+            // ==========================================================
+            // REPORTE ACTUAL
+            // ==========================================================
+
+            let reporteActual = null;
+
+
+            // ==========================================================
+            // INICIO
+            // ==========================================================
+
+            document.addEventListener(
+                    'DOMContentLoaded',
+                    async function () {
+
+                        const session =
+                                sp_getSession();
+
+
+                        if (!session) {
+
+                            window.location.href =
+                                    's01-login.html';
+
+                            return;
+                        }
+
+
+                        // ==================================================
+                        // ROLES
+                        // ==================================================
+
+                        if (
+                                session.rol !== 'Administrador' &&
+                                session.rol !== 'Gerente'
+                                ) {
+
+                            window.location.href =
+                                    's02-panel-usuario.html';
+
+                            return;
+                        }
+
+
+                        // ==================================================
+                        // USUARIO
+                        // ==================================================
+
+                        document.getElementById(
+                                'header-user'
+                                ).textContent =
+                                session.nombres +
+                                ' ' +
+                                session.apellidos +
+                                ' — ' +
+                                session.rol;
+
+
+                        // ==================================================
+                        // MES ACTUAL
+                        // ==================================================
+
+                        const hoy =
+                                new Date();
+
+
+                        const mes =
+                                String(
+                                        hoy.getMonth() + 1
+                                        ).padStart(
+                                2,
+                                '0'
+                                );
+
+
+                        document.getElementById(
+                                'periodo'
+                                ).value =
+                                hoy.getFullYear() +
+                                '-' +
+                                mes;
+
+
+                        // ==================================================
+                        // EVENTOS
+                        // ==================================================
+
+                        document.getElementById(
+                                'btn-generar'
+                                ).addEventListener(
+                                'click',
+                                cargarReporte
+                                );
+
+
+                        document.getElementById(
+                                'btn-imprimir'
+                                ).addEventListener(
+                                'click',
+                                function () {
+
+                                    window.print();
+
+                                }
+                        );
+
+
+                        document.getElementById(
+                                'btn-exportar'
+                                ).addEventListener(
+                                'click',
+                                exportarCSV
+                                );
+
+
+                        await cargarReporte();
+
+                    }
+            );
+
+
+            // ==========================================================
+            // CARGAR REPORTE
+            // ==========================================================
+
+            async function cargarReporte() {
+
+                const periodo =
+                        document.getElementById(
+                                'periodo'
+                                ).value;
+
+
+                if (!periodo) {
+
+                    mostrarMensaje(
+                            'Seleccione un período.',
+                            'error'
+                            );
+
+                    return;
+                }
+
+
+                const partes =
+                        periodo.split('-');
+
+
+                const anio =
+                        Number(partes[0]);
+
+
+                const mes =
+                        Number(partes[1]);
+
+
+                const boton =
+                        document.getElementById(
+                                'btn-generar'
+                                );
+
+
+                boton.disabled =
+                        true;
+
+
+                boton.textContent =
+                        'GENERANDO...';
+
+
+                try {
+
+                    const response =
+                            await fetch(
+                                    '/api/reportes/siniestros' +
+                                    '?anio=' +
+                                    encodeURIComponent(anio) +
+                                    '&mes=' +
+                                    encodeURIComponent(mes),
+                                    {
+
+                                        method:
+                                                'GET',
+
+                                        credentials:
+                                                'same-origin'
+
+                                    }
+                            );
+
+
+                    if (response.status === 401) {
+
+                        window.location.href =
+                                's01-login.html';
+
+                        return;
+                    }
+
+
+                    if (response.status === 403) {
+
+                        throw new Error(
+                                'No tiene permisos para consultar este reporte.'
+                                );
+                    }
+
+
+                    let data = {};
+
+
+                    try {
+
+                        data =
+                                await response.json();
+
+                    } catch (e) {
+
+                        data = {};
+
+                    }
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                                data.mensaje ||
+                                'No se pudo generar el reporte.'
+                                );
+                    }
+
+
+                    reporteActual =
+                            data;
+
+
+                    mostrarReporte(
+                            data
+                            );
+
+
+                    mostrarMensaje(
+                            'Reporte de siniestros generado correctamente.',
+                            'success'
+                            );
+
+
+                } catch (error) {
+
+                    console.error(
+                            'Error reporte siniestros:',
+                            error
+                            );
+
+
+                    mostrarMensaje(
+                            error.message,
+                            'error'
+                            );
+
+
+                } finally {
+
+                    boton.disabled =
+                            false;
+
+
+                    boton.textContent =
+                            'GENERAR';
+
+                }
+
+            }
+
+
+            // ==========================================================
+            // MOSTRAR REPORTE
+            // ==========================================================
+
+            function mostrarReporte(
+                    data
+                    ) {
+
+                document.getElementById(
+                        'total-siniestros'
+                        ).textContent =
+                        numero(
+                                data.total
+                                );
+
+
+                document.getElementById(
+                        'total-revision'
+                        ).textContent =
+                        numero(
+                                data.enRevision
+                                );
+
+
+                document.getElementById(
+                        'total-derivados'
+                        ).textContent =
+                        numero(
+                                data.derivados
+                                );
+
+
+                document.getElementById(
+                        'total-resultado'
+                        ).textContent =
+                        numero(
+                                data.conResultado
+                                );
+
+
+                // ======================================================
+                // BARRAS
+                // ======================================================
+
+                aplicarBarra(
+                        'bar-registrados',
+                        'pct-registrados',
+                        data.porcentajeRegistrados
+                        );
+
+
+                aplicarBarra(
+                        'bar-revision',
+                        'pct-revision',
+                        data.porcentajeRevision
+                        );
+
+
+                aplicarBarra(
+                        'bar-derivados',
+                        'pct-derivados',
+                        data.porcentajeDerivados
+                        );
+
+
+                aplicarBarra(
+                        'bar-resultado',
+                        'pct-resultado',
+                        data.porcentajeConResultado
+                        );
+
+
+                renderTabla(
+                        data.siniestros
+                        );
+
+            }
+
+
+            // ==========================================================
+            // TABLA
+            // ==========================================================
+
+            function renderTabla(
+                    siniestros
+                    ) {
+
+                const tbody =
+                        document.getElementById(
+                                'tabla-siniestros'
+                                );
+
+
+                tbody.innerHTML = '';
+
+
+                if (
+                        !Array.isArray(siniestros) ||
+                        siniestros.length === 0
+                        ) {
+
+                    tbody.innerHTML =
+                            '<tr>' +
+                            '<td colspan="7">' +
+                            'No existen siniestros registrados en el período seleccionado.' +
+                            '</td>' +
+                            '</tr>';
+
+                    return;
+                }
+
+
+                siniestros.forEach(
+                        function (siniestro) {
+
+                            const fila =
+                                    document.createElement(
+                                            'tr'
+                                            );
+
+
+                            // ==============================================
+                            // VEHÍCULO
+                            // ==============================================
+
+                            let vehiculo = '—';
+
+
+                            if (
+                                    siniestro.marca ||
+                                    siniestro.modelo
+                                    ) {
+
+                                vehiculo =
+                                        (
+                                                siniestro.marca ||
+                                                ''
+                                                )
+                                        +
+                                        ' '
+                                        +
+                                        (
+                                                siniestro.modelo ||
+                                                ''
+                                                );
+
+
+                                vehiculo =
+                                        vehiculo.trim();
+
+
+                                if (siniestro.anio) {
+
+                                    vehiculo +=
+                                            ' (' +
+                                            siniestro.anio +
+                                            ')';
+
+                                }
+
+                            }
+
+
+                            // ==============================================
+                            // FILA
+                            // ==============================================
+
+                            fila.innerHTML = `
+
+                <td>
+                    ${escapeHtml(
+                                    siniestro.numeroSiniestro ||
+                                    '—'
+                                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                                    siniestro.cliente ||
+                                    '—'
+                                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                                    formatoFechaHora(
+                                            siniestro.fechaAccidente
+                                            )
+                                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                                    vehiculo
+                                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                                    siniestro.placa ||
+                                    '—'
+                                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                                    siniestro.lugar ||
+                                    '—'
+                                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                                    siniestro.estado ||
+                                    '—'
+                                    )}
+                </td>
+
+            `;
+                            tbody.appendChild(
+                                    fila
+                                    );
+
+                        }
+                );
+
+            }
+
+
+            // ==========================================================
+            // BARRAS
+            // ==========================================================
+
+            function aplicarBarra(
+                    idBarra,
+                    idTexto,
+                    valor
+                    ) {
+
+                let porcentaje =
+                        Number(valor);
+
+
+                if (!Number.isFinite(porcentaje)) {
+
+                    porcentaje = 0;
+
+                }
+
+
+                porcentaje =
+                        Math.max(
+                                0,
+                                Math.min(
+                                        100,
+                                        porcentaje
+                                        )
+                                );
+
+
+                document.getElementById(
+                        idBarra
+                        ).style.width =
+                        porcentaje + '%';
+
+
+                document.getElementById(
+                        idTexto
+                        ).textContent =
+                        porcentaje.toFixed(1) +
+                        '%';
+
+            }
+
+
+            // ==========================================================
+            // EXPORTAR CSV
+            // ==========================================================
+
+            function exportarCSV() {
+
+                if (!reporteActual) {
+
+                    mostrarMensaje(
+                            'Primero genere el reporte.',
+                            'error'
+                            );
+
+                    return;
+                }
+
+
+                const periodo =
+                        document.getElementById(
+                                'periodo'
+                                ).value;
+
+
+                const filas = [
+
+                    [
+                        'REPORTE DE SINIESTROS SEGURPLAN'
+                    ],
+
+                    [
+                        'Periodo',
+                        periodo
+                    ],
+
+                    [],
+
+                    [
+                        'Total',
+                        reporteActual.total
+                    ],
+
+                    [
+                        'En revisión',
+                        reporteActual.enRevision
+                    ],
+
+                    [
+                        'Derivados',
+                        reporteActual.derivados
+                    ],
+
+                    [
+                        'Con resultado',
+                        reporteActual.conResultado
+                    ],
+
+                    [],
+
+                    [
+                        'Número siniestro',
+                        'Cliente',
+                        'Fecha accidente',
+                        'Vehículo',
+                        'Placa',
+                        'Lugar',
+                        'Estado'
+                    ]
+
+                ];
+                if (
+                        Array.isArray(
+                                reporteActual.siniestros
+                                )
+                        ) {
+
+                    reporteActual
+                            .siniestros
+                            .forEach(
+                                    function (s) {
+
+                                        let vehiculo =
+                                                (
+                                                        (s.marca || '') +
+                                                        ' ' +
+                                                        (s.modelo || '')
+                                                        ).trim();
+
+
+                                        if (s.anio) {
+
+                                            vehiculo +=
+                                                    ' (' +
+                                                    s.anio +
+                                                    ')';
+
+                                        }
+
+
+                                        filas.push([
+
+                                            s.numeroSiniestro || '',
+
+                                            s.cliente || '',
+
+                                            s.fechaAccidente || '',
+
+                                            vehiculo,
+
+                                            s.placa || '',
+
+                                            s.lugar || '',
+
+                                            s.estado || ''
+
+                                        ]);
+
+                                    }
+                            );
+
+                }
+
+
+                descargarCSV(
+                        filas,
+                        'SEGURPLAN_Reporte_Siniestros_' +
+                        periodo +
+                        '.csv'
+                        );
+
+            }
+
+
+            // ==========================================================
+            // DESCARGAR CSV
+            // ==========================================================
+
+            function descargarCSV(
+                    filas,
+                    nombre
+                    ) {
+
+                const contenido =
+                        filas
+                        .map(
+                                fila =>
+                            fila
+                                    .map(
+                                            celda =>
+                                        '"' +
+                                                String(
+                                                        celda ?? ''
+                                                        )
+                                                .replaceAll(
+                                                        '"',
+                                                        '""'
+                                                        ) +
+                                                '"'
+                                    )
+                                    .join(';')
+                        )
+                        .join('\n');
+
+
+                const blob =
+                        new Blob(
+                                [
+                                    '\uFEFF' +
+                                            contenido
+                                ],
+                                {
+                                    type:
+                                            'text/csv;charset=utf-8;'
+                                }
+                        );
+
+
+                const url =
+                        URL.createObjectURL(
+                                blob
+                                );
+
+
+                const enlace =
+                        document.createElement(
+                                'a'
+                                );
+
+
+                enlace.href =
+                        url;
+
+
+                enlace.download =
+                        nombre;
+
+
+                document.body.appendChild(
+                        enlace
+                        );
+
+
+                enlace.click();
+
+
+                enlace.remove();
+
+
+                URL.revokeObjectURL(
+                        url
+                        );
+
+            }
+
+
+            // ==========================================================
+            // FECHA
+            // ==========================================================
+
+            function formatoFecha(
+                    valor
+                    ) {
+
+                if (!valor) {
+
+                    return '—';
+
+                }
+
+
+                /*
+                 * Evitamos problemas de zona horaria para LocalDate
+                 * recibido como YYYY-MM-DD.
+                 */
+
+                const partes =
+                        String(valor)
+                        .split('-');
+
+
+                if (partes.length === 3) {
+
+                    return partes[2] +
+                            '/' +
+                            partes[1] +
+                            '/' +
+                            partes[0];
+
+                }
+
+
+                return String(valor);
+
+            }
+
+
+            // ==========================================================
+            // NÚMERO
+            // ==========================================================
+
+            function numero(
+                    valor
+                    ) {
+
+                const n =
+                        Number(valor);
+
+
+                return Number.isFinite(n)
+                        ? String(n)
+                        : '0';
+
+            }
+
+
+            // ==========================================================
+            // MENSAJE
+            // ==========================================================
+
+            function mostrarMensaje(
+                    mensaje,
+                    tipo
+                    ) {
+
+                const contenedor =
+                        document.getElementById(
+                                'mensaje-reporte'
+                                );
+
+
+                contenedor.style.display =
+                        'block';
+
+
+                contenedor.className =
+                        tipo === 'success'
+                        ? 'notice success'
+                        : 'notice error';
+
+
+                contenedor.textContent =
+                        mensaje;
+
+            }
+
+
+            // ==========================================================
+            // SEGURIDAD HTML
+            // ==========================================================
+
+            function escapeHtml(
+                    valor
+                    ) {
+
+                return String(
+                        valor ?? ''
+                        )
+                        .replaceAll(
+                                '&',
+                                '&amp;'
+                                )
+                        .replaceAll(
+                                '<',
+                                '&lt;'
+                                )
+                        .replaceAll(
+                                '>',
+                                '&gt;'
+                                )
+                        .replaceAll(
+                                '"',
+                                '&quot;'
+                                )
+                        .replaceAll(
+                                "'",
+                                '&#039;'
+                                );
+
+            }
+            function formatoFechaHora(
+                    valor
+                    ) {
+
+                if (!valor) {
+
+                    return '—';
+
+                }
+
+
+                const fecha =
+                        new Date(
+                                valor
+                                );
+
+
+                if (
+                        Number.isNaN(
+                                fecha.getTime()
+                                )
+                        ) {
+
+                    return String(
+                            valor
+                            );
+
+                }
+
+
+                return fecha.toLocaleString(
+                        'es-PE',
+                        {
+
+                            dateStyle:
+                                    'short',
+
+                            timeStyle:
+                                    'short'
+
+                        }
+                );
+
+            }
+
+        </script>
+
+    </body>
 </html>
