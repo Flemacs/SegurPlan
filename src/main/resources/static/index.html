@@ -1,177 +1,1319 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SEGURPLAN — Inicio</title>
-  <link rel="stylesheet" href="assets/styles.css" />
-  <style>
-    .index-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 14px;
-      margin-top: 8px;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>SegurPlan — Seguros y futuro previsional en un solo lugar</title>
+
+<meta name="description"
+      content="SegurPlan te ayuda a cotizar seguros, simular tu pensión AFP y dar seguimiento a tus siniestros vehiculares desde un solo lugar.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Source+Sans+3:wght@400;600&display=swap"
+      rel="stylesheet">
+
+<style>
+
+/* =========================================================
+   SEGURPLAN - INDEX PRINCIPAL
+   ========================================================= */
+
+:root {
+    --navy: #1c3f6e;
+    --ink: #122a4a;
+    --blue: #0f6cbf;
+    --sky: #f0f4f8;
+    --white: #ffffff;
+    --amber: #f2b134;
+    --amber-d: #dd9d1f;
+    --text: #1a2535;
+    --sub: #4d5d72;
+    --line: #c8d3e0;
+
+    --display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+    --body: 'Source Sans 3', 'Segoe UI', system-ui, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--body);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    color: var(--text);
+    background: var(--white);
+}
+
+a {
+    color: inherit;
+}
+
+:focus-visible {
+    outline: 3px solid var(--blue);
+    outline-offset: 3px;
+}
+
+.wrap {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+h1,
+h2,
+h3 {
+    font-family: var(--display);
+    line-height: 1.1;
+    color: var(--ink);
+}
+
+
+/* =========================================================
+   BOTONES
+   ========================================================= */
+
+.btn {
+    display: inline-block;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    padding: 13px 26px;
+    border-radius: 6px;
+    border: 2px solid transparent;
+    transition:
+        background .15s,
+        color .15s,
+        border-color .15s,
+        transform .15s;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn-main {
+    background: var(--amber);
+    color: var(--ink);
+}
+
+.btn-main:hover {
+    background: var(--amber-d);
+}
+
+.btn-line {
+    border-color: var(--navy);
+    color: var(--navy);
+    background: transparent;
+}
+
+.btn-line:hover {
+    background: var(--navy);
+    color: var(--white);
+}
+
+.on-dark .btn-line {
+    border-color: var(--white);
+    color: var(--white);
+}
+
+.on-dark .btn-line:hover {
+    background: var(--white);
+    color: var(--navy);
+}
+
+.btn-sm {
+    padding: 9px 18px;
+    font-size: .95rem;
+}
+
+
+/* =========================================================
+   CABECERA
+   ========================================================= */
+
+.top {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+
+    background: rgba(255, 255, 255, .94);
+    backdrop-filter: blur(6px);
+
+    border-bottom: 1px solid var(--line);
+}
+
+.top .wrap {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    height: 68px;
+}
+
+.logo {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.35rem;
+    color: var(--navy);
+    text-decoration: none;
+    margin-right: auto;
+}
+
+.logo span {
+    color: var(--blue);
+}
+
+.top nav a {
+    text-decoration: none;
+    color: var(--sub);
+    font-weight: 600;
+    margin-left: 22px;
+}
+
+.top nav a:hover {
+    color: var(--navy);
+}
+
+.top .acciones {
+    display: flex;
+    gap: 10px;
+}
+
+
+/* =========================================================
+   PORTADA / HERO
+   ========================================================= */
+
+.hero {
+    background: var(--sky);
+    padding: 72px 0 80px;
+}
+
+.hero .wrap {
+    display: grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap: 56px;
+    align-items: center;
+}
+
+.hero h1 {
+    font-size: clamp(2.3rem, 5vw, 3.6rem);
+    font-weight: 800;
+    letter-spacing: -.02em;
+    margin-bottom: 20px;
+}
+
+.hero p.lead {
+    font-size: 1.2rem;
+    color: var(--sub);
+    max-width: 34rem;
+    margin-bottom: 30px;
+}
+
+.hero .acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.hero small {
+    display: block;
+    margin-top: 18px;
+    color: var(--sub);
+    font-size: .95rem;
+}
+
+
+/* =========================================================
+   SEGUIMIENTO DEL SINIESTRO
+   ========================================================= */
+
+.track {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+
+    padding: 26px 28px;
+
+    box-shadow:
+        0 18px 40px -20px rgba(18, 42, 74, .35);
+}
+
+.track h3 {
+    font-size: 1.05rem;
+    margin-bottom: 4px;
+}
+
+.track .meta {
+    color: var(--sub);
+    font-size: .95rem;
+    margin-bottom: 20px;
+}
+
+.track ol {
+    list-style: none;
+    position: relative;
+}
+
+.track ol::before {
+    content: "";
+    position: absolute;
+
+    left: 11px;
+    top: 12px;
+    bottom: 12px;
+
+    width: 2px;
+    background: var(--line);
+}
+
+.track li {
+    position: relative;
+    padding: 0 0 18px 40px;
+    font-weight: 600;
+
+    opacity: 0;
+
+    animation: aparece .5s ease forwards;
+}
+
+.track li:last-child {
+    padding-bottom: 0;
+}
+
+.track li span {
+    display: block;
+    font-weight: 400;
+    color: var(--sub);
+    font-size: .92rem;
+}
+
+.track li::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 2px;
+
+    width: 24px;
+    height: 24px;
+
+    border-radius: 50%;
+
+    background: var(--navy);
+
+    border: 3px solid var(--white);
+
+    box-shadow:
+        0 0 0 2px var(--navy);
+}
+
+.track li.actual::before {
+    background: var(--amber);
+
+    box-shadow:
+        0 0 0 2px var(--amber-d);
+}
+
+.track li.pend {
+    color: var(--sub);
+}
+
+.track li.pend::before {
+    background: var(--white);
+
+    box-shadow:
+        0 0 0 2px var(--line);
+}
+
+.track li:nth-child(1) {
+    animation-delay: .2s;
+}
+
+.track li:nth-child(2) {
+    animation-delay: .6s;
+}
+
+.track li:nth-child(3) {
+    animation-delay: 1s;
+}
+
+.track li:nth-child(4) {
+    animation-delay: 1.4s;
+}
+
+.track li:nth-child(5) {
+    animation-delay: 1.8s;
+}
+
+@keyframes aparece {
+
+    from {
+        opacity: 0;
+        transform: translateY(8px);
     }
-    .index-card {
-      background: var(--white); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 16px 18px;
-      cursor: pointer; text-decoration: none; color: var(--text);
-      box-shadow: var(--shadow-sm); transition: box-shadow .2s, border-color .2s, transform .15s;
-      display: block;
+
+    to {
+        opacity: 1;
+        transform: none;
     }
-    .index-card:hover { box-shadow: var(--shadow); border-color: var(--primary); transform: translateY(-2px); text-decoration: none; }
-    .index-card .ic-num  { font-size: 10px; font-weight: 700; color: var(--text-muted); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
-    .index-card .ic-title{ font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
-    .index-card .ic-role { font-size: 11px; color: var(--text-sub); }
-    .index-card .ic-arrow{ float: right; color: var(--text-muted); font-size: 16px; margin-top: -2px; }
-    .group-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--primary); margin: 28px 0 10px; padding-bottom: 6px; border-bottom: 2px solid var(--primary); }
-    .group-title:first-child { margin-top: 0; }
-  </style>
+}
+
+
+/* =========================================================
+   SECCIONES
+   ========================================================= */
+
+section {
+    padding: 84px 0;
+}
+
+.sec-head {
+    max-width: 40rem;
+    margin-bottom: 44px;
+}
+
+.sec-head h2 {
+    font-size: clamp(1.8rem, 3.4vw, 2.5rem);
+    letter-spacing: -.01em;
+    margin-bottom: 12px;
+}
+
+.sec-head p {
+    color: var(--sub);
+    font-size: 1.15rem;
+}
+
+
+/* =========================================================
+   SERVICIOS
+   ========================================================= */
+
+.servicio {
+    display: grid;
+
+    grid-template-columns:
+        280px 1fr;
+
+    gap: 32px;
+
+    padding: 30px 0;
+
+    border-top:
+        1px solid var(--line);
+}
+
+.servicio:last-child {
+    border-bottom:
+        1px solid var(--line);
+}
+
+.servicio h3 {
+    font-size: 1.5rem;
+}
+
+.servicio p {
+    color: var(--sub);
+    max-width: 42rem;
+}
+
+.servicio ul {
+    list-style: none;
+
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    margin-top: 14px;
+}
+
+.servicio li {
+    background: var(--sky);
+
+    color: var(--navy);
+
+    font-weight: 600;
+    font-size: .92rem;
+
+    padding: 4px 12px;
+
+    border-radius: 99px;
+}
+
+
+/* =========================================================
+   COMO FUNCIONA
+   ========================================================= */
+
+.pasos {
+    background: var(--sky);
+}
+
+.pasos ol {
+    list-style: none;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 40px;
+
+    counter-reset: p;
+}
+
+.pasos li {
+    counter-increment: p;
+
+    border-top:
+        4px solid var(--navy);
+
+    padding-top: 18px;
+}
+
+.pasos li::before {
+    content: counter(p);
+
+    font-family: var(--display);
+
+    font-weight: 800;
+    font-size: 2.4rem;
+
+    color: var(--blue);
+
+    display: block;
+
+    line-height: 1;
+
+    margin-bottom: 10px;
+}
+
+.pasos h3 {
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+}
+
+.pasos p {
+    color: var(--sub);
+}
+
+
+/* =========================================================
+   NOSOTROS
+   ========================================================= */
+
+.nosotros .wrap {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 64px;
+}
+
+.nosotros .texto p {
+    color: var(--sub);
+    margin-bottom: 16px;
+}
+
+.nosotros .texto p strong {
+    color: var(--ink);
+}
+
+.valores dl {
+    border-left:
+        4px solid var(--amber);
+
+    padding-left: 24px;
+}
+
+.valores dt {
+    font-family: var(--display);
+
+    font-weight: 700;
+
+    color: var(--ink);
+
+    font-size: 1.15rem;
+}
+
+.valores dd {
+    color: var(--sub);
+
+    margin:
+        4px 0 22px;
+}
+
+.valores dd:last-child {
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   CTA FINAL
+   ========================================================= */
+
+.cierre {
+    background: var(--navy);
+
+    color: var(--white);
+
+    text-align: center;
+}
+
+.cierre h2 {
+    color: var(--white);
+
+    font-size:
+        clamp(1.8rem, 3.4vw, 2.5rem);
+
+    margin-bottom: 12px;
+}
+
+.cierre p {
+    color: #d3deec;
+
+    max-width: 34rem;
+
+    margin:
+        0 auto 28px;
+
+    font-size: 1.15rem;
+}
+
+.cierre .acciones {
+    display: flex;
+
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+footer {
+    background: var(--ink);
+
+    color: #9fb0c6;
+
+    padding: 28px 0;
+
+    font-size: .92rem;
+}
+
+footer .wrap {
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 860px) {
+
+    .top nav {
+        display: none;
+    }
+
+    .hero .wrap,
+    .nosotros .wrap {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .servicio {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .pasos ol {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+
+    section {
+        padding: 60px 0;
+    }
+
+    .hero {
+        padding: 48px 0 56px;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .top .wrap {
+        gap: 10px;
+    }
+
+    .top .btn-line {
+        display: none;
+    }
+
+    .btn {
+        padding: 11px 18px;
+    }
+
+    .hero h1 {
+        font-size: 2.25rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .track li {
+        animation: none;
+        opacity: 1;
+    }
+
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+</style>
 </head>
+
+
 <body>
-<header class="site-header">
-  <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
-  <div class="header-right">
-    <span class="user-name" style="opacity:.7;font-size:12px;">Seleccione una pantalla</span>
-  </div>
+
+<!-- ======================================================
+     CABECERA
+     ====================================================== -->
+
+<header class="top">
+
+    <div class="wrap">
+
+        <a class="logo" href="#inicio">
+            Segur<span>Plan</span>
+        </a>
+
+        <nav aria-label="Secciones">
+
+            <a href="#servicios">
+                Servicios
+            </a>
+
+            <a href="#como-funciona">
+                Cómo funciona
+            </a>
+
+            <a href="#nosotros">
+                Nosotros
+            </a>
+
+        </nav>
+
+        <div class="acciones">
+
+            <a
+                class="btn btn-line btn-sm"
+                href="pages/s01-login.html">
+                Iniciar sesión
+            </a>
+
+            <a
+                class="btn btn-main btn-sm"
+                href="pages/s00-registro.html">
+                Registrarse
+            </a>
+
+        </div>
+
+    </div>
+
 </header>
 
-<div class="page-wrap wide">
-  <h1 class="page-title">Módulos del sistema</h1>
-  <p class="page-subtitle">Seleccione un módulo para comenzar.</p>
 
-  <p class="group-title">Acceso general</p>
-  <div class="index-grid">
-    <a class="index-card" href="pages/s00-registro.html">
-      <span class="ic-arrow">›</span>
-      <div class="ic-num">Registro</div>
-      <div class="ic-title">Registro de usuario</div>
-      <div class="ic-role">Actor: Usuario nuevo</div>
-    </a>
-    <a class="index-card" href="pages/s01-login.html">
-      <span class="ic-arrow">›</span>
-      <div class="ic-num">3.2.1</div>
-      <div class="ic-title">Inicio de sesión</div>
-      <div class="ic-role">Actor: todos los roles</div>
-    </a>
-    <a class="index-card" href="pages/s02-panel-usuario.html">
-      <span class="ic-arrow">›</span>
-      <div class="ic-num">3.2.2</div>
-      <div class="ic-title">Panel principal del usuario</div>
-      <div class="ic-role">Actor: Usuario</div>
-    </a>
-  </div>
+<!-- ======================================================
+     CONTENIDO PRINCIPAL
+     ====================================================== -->
 
-  <p class="group-title">Cotizaciones y ventas</p>
-  <div class="index-grid">
-    <a class="index-card" href="pages/s03-cotizacion.html">
-      <span class="ic-arrow">›</span>
-      <div class="ic-num">3.2.3</div>
-      <div class="ic-title">Solicitud de cotización</div>
-      <div class="ic-role">Actor: Usuario</div>
-    </a>
-    <a class="index-card" href="pages/s04-cotizacion-recibida.html">
-      <span class="ic-arrow">›</span>
-      <div class="ic-num">3.2.4</div>
-      <div class="ic-title">Cotización recibida</div>
-      <div class="ic-role">Actor: Usuario</div>
-    </a>
-    <a class="index-card" href="pages/s05-poliza.html">
-      <span class="ic-arrow">›</span>
-      <div class="ic-num">3.2.5</div>
-      <div class="ic-title">Contrato / póliza</div>
-      <div class="ic-role">Actor: Usuario / Asesor</div>
-    </a>
-  </div>
+<main id="inicio">
 
-  <p class="group-title">Módulo AFP</p>
-  <div class="index-grid">
-    <a class="index-card" href="pages/s06-afp-perfil.html">
-      <span class="ic-arrow">›</span>
-      <div class="ic-num">3.2.6</div>
-      <div class="ic-title">Selección de perfil AFP</div>
-      <div class="ic-role">Actor: Usuario</div>
-    </a>
-    <a class="index-card" href="pages/s07-simulacion-afp.html">
-      <span class="ic-arrow">›</span>
-      <div class="ic-num">3.2.7</div>
-      <div class="ic-title">Datos para simulación AFP</div>
-      <div class="ic-role">Actor: Usuario</div>
-    </a>
-    <a class="index-card" href="pages/s08-resultado-afp.html">
-      <span class="ic-arrow">›</span>
-      <div class="ic-num">3.2.8</div>
-      <div class="ic-title">Resultado de pensión mensual</div>
-      <div class="ic-role">Actor: Usuario</div>
-    </a>
-  </div>
 
-  <p class="group-title">Siniestros vehiculares</p>
-  <div class="index-grid">
-    <a class="index-card" href="pages/s09-siniestro.html">
-      <span class="ic-arrow">›</span>
-      <div class="ic-num">3.2.9</div>
-      <div class="ic-title">Registro de siniestro</div>
-      <div class="ic-role">Actor: Usuario</div>
-    </a>
-    <a class="index-card" href="pages/s10-evidencias.html">
-      <span class="ic-arrow">›</span>
-      <div class="ic-num">3.2.10</div>
-      <div class="ic-title">Carga de evidencias</div>
-      <div class="ic-role">Actor: Usuario</div>
-    </a>
-    <a class="index-card" href="pages/s11-revision.html">
-      <span class="ic-arrow">›</span>
-      <div class="ic-num">3.2.11</div>
-      <div class="ic-title">Revisión preliminar</div>
-      <div class="ic-role">Actor: Asesor</div>
-    </a>
-    <a class="index-card" href="pages/s12-seguimiento.html">
-      <span class="ic-arrow">›</span>
-      <div class="ic-num">3.2.12</div>
-      <div class="ic-title">Seguimiento del siniestro</div>
-      <div class="ic-role">Actor: Usuario</div>
-    </a>
-  </div>
+<!-- ======================================================
+     HERO
+     ====================================================== -->
 
-  <p class="group-title">Gestión interna</p>
-  <div class="index-grid">
-    <a class="index-card" href="pages/s13-panel-asesor.html">
-      <span class="ic-arrow">›</span>
-      <div class="ic-num">3.2.13</div>
-      <div class="ic-title">Panel del asesor</div>
-      <div class="ic-role">Actor: Asesor</div>
-    </a>
-    <a class="index-card" href="pages/s14-administracion.html">
-      <span class="ic-arrow">›</span>
-      <div class="ic-num">3.2.14</div>
-      <div class="ic-title">Administración</div>
-      <div class="ic-role">Actor: Administrador</div>
-    </a>
-  </div>
+<div class="hero">
 
-  <p class="group-title">Reportes</p>
-  <div class="index-grid">
-    <a class="index-card" href="pages/s15-reporte-general.html">
-      <span class="ic-arrow">›</span>
-      <div class="ic-num">3.2.15</div>
-      <div class="ic-title">Reporte general</div>
-      <div class="ic-role">Actor: Gerente / Administrador</div>
-    </a>
-    <a class="index-card" href="pages/s16-reporte-siniestros.html">
-      <span class="ic-arrow">›</span>
-      <div class="ic-num">3.2.16</div>
-      <div class="ic-title">Reporte de siniestros</div>
-      <div class="ic-role">Actor: Gerente / Administrador</div>
-    </a>
-    <a class="index-card" href="pages/s17-reporte-afp.html">
-      <span class="ic-arrow">›</span>
-      <div class="ic-num">3.2.17</div>
-      <div class="ic-title">Reporte AFP</div>
-      <div class="ic-role">Actor: Gerente / Administrador</div>
-    </a>
-  </div>
+    <div class="wrap">
+
+        <div>
+
+            <h1>
+                Tus seguros y tu futuro previsional,
+                en un solo lugar.
+            </h1>
+
+            <p class="lead">
+                Cotiza seguros con distintas aseguradoras,
+                simula tu pensión AFP y sigue cada trámite
+                paso a paso, sin llamadas ni documentos
+                dispersos.
+            </p>
+
+            <div class="acciones">
+
+                <a
+                    class="btn btn-main"
+                    href="pages/s00-registro.html">
+
+                    Crear mi cuenta
+
+                </a>
+
+                <a
+                    class="btn btn-line"
+                    href="pages/s01-login.html">
+
+                    Ya tengo cuenta
+
+                </a>
+
+            </div>
+
+            <small>
+                Registrarte es gratis y toma unos minutos.
+            </small>
+
+        </div>
+
+
+        <!-- Seguimiento -->
+
+        <aside
+            class="track"
+            aria-label="Ejemplo de seguimiento de un siniestro">
+
+            <h3>
+                Siniestro vehicular
+            </h3>
+
+            <p class="meta">
+                Así ves el avance de tu caso
+            </p>
+
+            <ol>
+
+                <li>
+                    Registrado
+                    <span>
+                        Cargaste los datos y las fotos
+                    </span>
+                </li>
+
+                <li>
+                    Información revisada
+                    <span>
+                        Un asesor verificó tu expediente
+                    </span>
+                </li>
+
+                <li>
+                    Derivado a la aseguradora
+                    <span>
+                        Tu caso ya está en sus manos
+                    </span>
+                </li>
+
+                <li class="actual">
+                    Evaluación en curso
+                    <span>
+                        La aseguradora inspecciona
+                        el vehículo
+                    </span>
+                </li>
+
+                <li class="pend">
+                    Resultado
+                    <span>
+                        Te avisamos apenas responda
+                    </span>
+                </li>
+
+            </ol>
+
+        </aside>
+
+    </div>
+
 </div>
-<script src="assets/app.js"></script>
+
+
+
+<!-- ======================================================
+     SERVICIOS
+     ====================================================== -->
+
+<section id="servicios">
+
+<div class="wrap">
+
+<div class="sec-head">
+
+    <h2>
+        Lo que puedes hacer en SegurPlan
+    </h2>
+
+    <p>
+        Tres servicios en una misma cuenta,
+        con el estado de cada solicitud
+        siempre a la vista.
+    </p>
+
+</div>
+
+
+<!-- SEGUROS -->
+
+<article class="servicio">
+
+<h3>
+    Cotiza tu seguro
+</h3>
+
+<div>
+
+<p>
+    Elige la aseguradora y el tipo de seguro,
+    completa tus datos y recibe una cotización
+    con prima, cobertura, deducible y vigencia.
+
+    Si te conviene, podrás continuar con el
+    proceso y mantener la información de tu
+    póliza dentro de tu cuenta.
+</p>
+
+<ul>
+
+<li>Vehicular</li>
+
+<li>SOAT</li>
+
+<li>Vida</li>
+
+<li>Salud</li>
+
+<li>Hogar</li>
+
+<li>Accidentes personales</li>
+
+<li>Viaje</li>
+
+</ul>
+
+</div>
+
+</article>
+
+
+
+<!-- AFP -->
+
+<article class="servicio">
+
+<h3>
+    Simula tu pensión AFP
+</h3>
+
+<div>
+
+<p>
+    Ingresa tu edad, tus años de aporte
+    y tu fondo acumulado.
+
+    Si estás empezando, proyectamos cómo
+    puede crecer tu fondo; si ya estás
+    cerca de jubilarte, estimamos cuánto
+    podrías recibir cada mes.
+
+    El resultado es referencial y puedes
+    solicitar orientación de un asesor.
+</p>
+
+<ul>
+
+<li>Simulación AFP</li>
+
+<li>Proyección del fondo</li>
+
+<li>Pensión estimada</li>
+
+<li>Orientación</li>
+
+</ul>
+
+</div>
+
+</article>
+
+
+
+<!-- SINIESTROS -->
+
+<article class="servicio">
+
+<h3>
+    Reporta y sigue tu siniestro
+</h3>
+
+<div>
+
+<p>
+    Registra el accidente, los datos del
+    vehículo y adjunta tus fotos y documentos.
+
+    Revisamos tu expediente, te indicamos
+    si falta información y posteriormente
+    puede ser derivado a la aseguradora.
+
+    Desde SegurPlan podrás consultar el
+    estado del proceso.
+</p>
+
+<ul>
+
+<li>Expediente digital</li>
+
+<li>Evidencias</li>
+
+<li>Historial de cambios</li>
+
+<li>Seguimiento</li>
+
+<li>Avisos de estado</li>
+
+</ul>
+
+</div>
+
+</article>
+
+
+</div>
+
+</section>
+
+
+
+<!-- ======================================================
+     COMO FUNCIONA
+     ====================================================== -->
+
+<section
+    id="como-funciona"
+    class="pasos">
+
+<div class="wrap">
+
+<div class="sec-head">
+
+<h2>
+    Cómo funciona
+</h2>
+
+<p>
+    De la solicitud al resultado,
+    todo queda registrado en tu cuenta.
+</p>
+
+</div>
+
+
+<ol>
+
+<li>
+
+<h3>
+    Crea tu cuenta
+</h3>
+
+<p>
+    Regístrate con tu correo y accede
+    a SegurPlan desde tu computadora
+    o dispositivo móvil.
+</p>
+
+</li>
+
+
+<li>
+
+<h3>
+    Haz tu solicitud
+</h3>
+
+<p>
+    Solicita una cotización,
+    realiza una simulación AFP
+    o registra un siniestro.
+</p>
+
+</li>
+
+
+<li>
+
+<h3>
+    Sigue tu trámite
+</h3>
+
+<p>
+    Consulta el estado,
+    las observaciones y el historial
+    de tus solicitudes.
+</p>
+
+</li>
+
+</ol>
+
+</div>
+
+</section>
+
+
+
+<!-- ======================================================
+     NOSOTROS
+     ====================================================== -->
+
+<section
+    id="nosotros"
+    class="nosotros">
+
+<div class="wrap">
+
+
+<div class="texto">
+
+<div
+    class="sec-head"
+    style="margin-bottom:24px">
+
+<h2>
+    Quiénes somos
+</h2>
+
+</div>
+
+
+<p>
+
+<strong>
+SegurPlan es una plataforma de intermediación digital
+</strong>
+
+orientada a facilitar la gestión de seguros,
+servicios previsionales AFP y el seguimiento
+de siniestros.
+
+</p>
+
+
+<p>
+
+Nuestro proyecto surge ante la necesidad
+de centralizar procesos que normalmente
+se encuentran distribuidos entre diferentes
+canales, documentos y entidades.
+
+</p>
+
+
+<p>
+
+SegurPlan permite organizar la información,
+gestionar solicitudes y consultar su estado
+desde una misma plataforma.
+
+</p>
+
+
+<p>
+
+<strong>
+No somos una aseguradora ni una AFP.
+</strong>
+
+Las decisiones que corresponden a estas
+entidades, como la aprobación de una
+cobertura o las condiciones de un producto,
+continúan siendo responsabilidad de ellas.
+
+</p>
+
+</div>
+
+
+
+<div class="valores">
+
+<dl>
+
+
+<dt>
+Misión
+</dt>
+
+<dd>
+
+Facilitar la gestión, orientación y seguimiento
+de seguros y servicios previsionales mediante
+una plataforma digital que centralice la
+información y permita procesos más ordenados,
+accesibles y transparentes.
+
+</dd>
+
+
+<dt>
+Visión
+</dt>
+
+<dd>
+
+Ser una plataforma de referencia para
+la intermediación digital de servicios
+financieros y de seguros, ofreciendo
+procesos claros y seguimiento de las
+solicitudes de los usuarios.
+
+</dd>
+
+
+<dt>
+Cómo trabajamos
+</dt>
+
+<dd>
+
+Centralizamos las solicitudes,
+facilitamos la comunicación con asesores
+y mantenemos un historial de los procesos
+realizados dentro de la plataforma.
+
+</dd>
+
+
+</dl>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+
+<!-- ======================================================
+     CTA FINAL
+     ====================================================== -->
+
+<section
+    class="cierre on-dark">
+
+<div class="wrap">
+
+
+<h2>
+    Empieza hoy con SegurPlan
+</h2>
+
+
+<p>
+
+Crea tu cuenta y gestiona tus
+cotizaciones, simulaciones AFP
+y siniestros desde un solo lugar.
+
+</p>
+
+
+<div class="acciones">
+
+
+<a
+    class="btn btn-main"
+    href="pages/s00-registro.html">
+
+Registrarme
+
+</a>
+
+
+<a
+    class="btn btn-line"
+    href="pages/s01-login.html">
+
+Iniciar sesión
+
+</a>
+
+
+</div>
+
+
+</div>
+
+</section>
+
+
+</main>
+
+
+
+<!-- ======================================================
+     FOOTER
+     ====================================================== -->
+
+<footer>
+
+<div class="wrap">
+
+<span>
+© 2026 SegurPlan
+</span>
+
+<span>
+Proyecto académico · Curso Integrador I · UTP
+</span>
+
+</div>
+
+</footer>
+
+
 </body>
 </html>
