@@ -3,115 +3,1435 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
         <title>SEGURPLAN — Seguimiento del siniestro</title>
+
         <link rel="stylesheet" href="../assets/styles.css" />
-    </head>
+    <link rel="stylesheet" href="../assets/theme.css">
+<script src="../assets/theme.js"></script>
+</head>
+
     <body>
+
+        <!-- =====================================================
+             HEADER
+        ====================================================== -->
+
         <header class="site-header">
-            <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
-            <div class="header-right">
-                <span class="user-name">Usuario: Juan García</span>
-                <button class="bell-btn" title="Notificaciones">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                </button>
-                <button class="profile-btn">MI PERFIL</button>
+
+            <div class="logo">
+                SEGURPLAN
+                <span>Plataforma de seguros y AFP</span>
             </div>
+
+            <div class="header-right">
+
+                <span class="user-name">
+                    Usuario
+                </span>
+
+                <button
+                    class="bell-btn"
+                    title="Notificaciones"
+                    type="button"
+                    >
+                    <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        >
+                    <path
+                        d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"
+                        ></path>
+
+                    <path
+                        d="M13.73 21a2 2 0 0 1-3.46 0"
+                        ></path>
+                    </svg>
+                </button>
+
+                <button
+                    class="profile-btn"
+                    type="button"
+                    >
+                    MI PERFIL
+                </button>
+
+            </div>
+
         </header>
 
-        <div class="page-wrap narrow">
-            <nav class="breadcrumb">SEGURPLAN &rsaquo; Siniestros &rsaquo; Seguimiento #000248</nav>
-            <h1 class="page-title">Seguimiento del siniestro</h1>
 
-            <div class="status-block info">Estado actual: En evaluación por aseguradora</div>
+        <!-- =====================================================
+             CONTENIDO
+        ====================================================== -->
+
+        <div class="page-wrap narrow">
+
+            <nav class="breadcrumb">
+                SEGURPLAN &rsaquo;
+                Siniestros &rsaquo;
+                Seguimiento
+            </nav>
+
+            <h1 class="page-title">
+                Seguimiento del siniestro
+            </h1>
+
+
+            <!-- ESTADO -->
+
+            <div class="status-block info">
+                Consultando estado del siniestro...
+            </div>
+
+
+            <!-- TARJETA -->
 
             <div class="card">
+
                 <div class="card-header">
-                    <h2>Siniestro #000248</h2>
-                    <p>Toyota Corolla ABC123 — 25/08/2026</p>
+
+                    <h2>
+                        Cargando siniestro...
+                    </h2>
+
+                    <p>
+                        Consultando información...
+                    </p>
+
                 </div>
+
+
                 <div class="card-body">
+
+                    <!-- =================================================
+                         TIMELINE
+                    ================================================== -->
+
                     <ul class="timeline">
+
                         <li>
+
                             <div class="tl-left">
-                                <div class="tl-dot done"></div>
-                                <div class="tl-line done"></div>
-                            </div>
-                            <div class="tl-content">
-                                <div class="tl-label">Siniestro registrado</div>
-                                <div class="tl-date">25/08/2026 10:14</div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="tl-left">
-                                <div class="tl-dot done"></div>
-                                <div class="tl-line done"></div>
-                            </div>
-                            <div class="tl-content">
-                                <div class="tl-label">Información revisada por asesor</div>
-                                <div class="tl-date">26/08/2026 09:30</div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="tl-left">
-                                <div class="tl-dot done"></div>
-                                <div class="tl-line done"></div>
-                            </div>
-                            <div class="tl-content">
-                                <div class="tl-label">Derivado a aseguradora</div>
-                                <div class="tl-date">27/08/2026 11:00</div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="tl-left">
+
                                 <div class="tl-dot active"></div>
-                                <div class="tl-line"></div>
+
                             </div>
+
                             <div class="tl-content">
-                                <div class="tl-label">Evaluación por aseguradora</div>
-                                <div class="tl-date">En proceso</div>
+
+                                <div class="tl-label">
+                                    Cargando seguimiento...
+                                </div>
+
+                                <div class="tl-date">
+                                    Consultando información del siniestro
+                                </div>
+
                             </div>
+
                         </li>
-                        <li>
-                            <div class="tl-left">
-                                <div class="tl-dot pending"></div>
-                            </div>
-                            <div class="tl-content">
-                                <div class="tl-label">Resultado final</div>
-                                <div class="tl-date">Pendiente</div>
-                            </div>
-                        </li>
+
                     </ul>
+
                 </div>
+
+
                 <div class="card-footer">
-                    <p style="font-size:12px;color:var(--text-sub);margin:0;">Última actualización: 29/08/2026 08:00</p>
+
+                    <p
+                        style="
+                        font-size:12px;
+                        color:var(--text-sub);
+                        margin:0;
+                        "
+                        >
+                        Última actualización: consultando...
+                    </p>
+
                 </div>
+
             </div>
+
         </div>
 
+
+        <!-- =====================================================
+             FOOTER
+        ====================================================== -->
+
         <footer class="site-footer">
-            <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
-            <nav class="footer-links">
-                <a href="../index.html">Inicio</a>
-                <a href="s01-login.html">Iniciar sesión</a>
-                <a href="s00-registro.html">Registrarse</a>
-            </nav>
-            <div class="footer-meta">
-                <span>© 2026 SEGURPLAN. Todos los derechos reservados.</span>
+
+            <div class="footer-brand">
+
+                SEGURPLAN
+
+                <span>
+                    Plataforma de seguros y AFP
+                </span>
+
             </div>
+
+            <nav class="footer-links">
+
+                <a href="../index.html">
+                    Inicio
+                </a>
+
+                <a href="s01-login.html">
+                    Iniciar sesión
+                </a>
+
+                <a href="s00-registro.html">
+                    Registrarse
+                </a>
+
+            </nav>
+
+            <div class="footer-meta">
+
+                <span>
+                    © 2026 SEGURPLAN.
+                    Todos los derechos reservados.
+                </span>
+
+            </div>
+
         </footer>
+
+
+        <!-- =====================================================
+             JS GENERAL
+        ====================================================== -->
+
         <script src="../assets/app.js"></script>
+
+
+        <!-- =====================================================
+             JS S12
+        ====================================================== -->
+
         <script>
-            const sinId = sessionStorage.getItem('sp_last_sin');
-            if (sinId) {
-                const s = sp_getSiniestro(parseInt(sinId) || sinId);
-                if (s) {
-                    document.querySelector('.breadcrumb').innerHTML =
-                            'SEGURPLAN &rsaquo; Siniestros &rsaquo; Seguimiento ' + s.numero_siniestro;
-                    document.querySelector('.card-header h2').textContent = s.numero_siniestro;
-                    document.querySelector('.card-header p').textContent =
-                            [s.marca, s.modelo, s.placa, s.fecha_accidente || s.fecha_registro].filter(Boolean).join(' — ');
-                    document.querySelector('.status-block').textContent = 'Estado actual: ' + s.estado;
+
+            // =========================================================
+            // S12 - SEGUIMIENTO DEL SINIESTRO
+            // =========================================================
+
+            document.addEventListener(
+                    'DOMContentLoaded',
+                    async function () {
+
+                        const session = sp_getSession();
+
+
+                        // =================================================
+                        // VALIDAR SESIÓN
+                        // =================================================
+
+                        if (!session) {
+
+                            window.location.href =
+                                    's01-login.html';
+
+                            return;
+                        }
+
+
+                        // =================================================
+                        // MOSTRAR USUARIO
+                        // =================================================
+
+                        mostrarUsuarioSesion(
+                                session
+                                );
+
+
+                        // =================================================
+                        // OBTENER SINIESTRO SELECCIONADO
+                        // =================================================
+
+                        let idSiniestro =
+                                sessionStorage.getItem(
+                                        'sp_last_sin'
+                                        );
+
+
+                        // =================================================
+                        // ASESOR / ADMINISTRADOR
+                        // =================================================
+
+                        if (
+                                session.rol === 'Asesor' ||
+                                session.rol === 'Administrador'
+                                ) {
+
+                            if (!idSiniestro) {
+
+                                mostrarError(
+                                        'No se encontró el siniestro seleccionado.'
+                                        );
+
+                                return;
+                            }
+
+
+                            await cargarSeguimiento(
+                                    idSiniestro,
+                                    session
+                                    );
+
+                            return;
+                        }
+
+
+                        // =================================================
+                        // CLIENTE
+                        // =================================================
+
+                        /*
+                         * No confiamos directamente en sp_last_sin.
+                         *
+                         * Puede existir un ID guardado de una sesión
+                         * anterior perteneciente a otro usuario.
+                         */
+
+                        try {
+
+                            idSiniestro =
+                                    await obtenerSiniestroDelCliente(
+                                            idSiniestro
+                                            );
+
+
+                            if (!idSiniestro) {
+
+                                mostrarSinSiniestros();
+
+                                return;
+                            }
+
+
+                            /*
+                             * Guardamos solamente un siniestro que
+                             * realmente pertenece al cliente actual.
+                             */
+
+                            sessionStorage.setItem(
+                                    'sp_last_sin',
+                                    String(idSiniestro)
+                                    );
+
+
+                            await cargarSeguimiento(
+                                    idSiniestro,
+                                    session
+                                    );
+
+
+                        } catch (error) {
+
+                            console.error(
+                                    'Error inicializando seguimiento:',
+                                    error
+                                    );
+
+
+                            mostrarError(
+                                    error.message ||
+                                    'No se pudo cargar el seguimiento.'
+                                    );
+                        }
+
+                    }
+            );
+
+
+            // =========================================================
+            // MOSTRAR USUARIO DE LA SESIÓN
+            // =========================================================
+
+            function mostrarUsuarioSesion(
+                    session
+                    ) {
+
+                const userName =
+                        document.querySelector(
+                                '.user-name'
+                                );
+
+
+                if (!userName) {
+
+                    return;
                 }
+
+
+                const nombreCompleto =
+                        [
+                            session.nombres ||
+                                    session.nombre,
+
+                            session.apellidos
+                        ]
+                        .filter(Boolean)
+                        .join(' ')
+                        .trim();
+
+
+                const nombre =
+                        nombreCompleto ||
+                        session.correo ||
+                        'Usuario';
+
+
+                const rol =
+                        session.rol
+                        ? ' — ' + session.rol
+                        : '';
+
+
+                userName.textContent =
+                        'Usuario: ' +
+                        nombre +
+                        rol;
+            }
+
+
+            // =========================================================
+            // OBTENER SINIESTRO DEL CLIENTE
+            // =========================================================
+
+            async function obtenerSiniestroDelCliente(
+                    idPreferido
+                    ) {
+
+                const response =
+                        await fetch(
+                                '/api/siniestros/mis-siniestros',
+                                {
+                                    method: 'GET',
+                                    credentials: 'same-origin'
+                                }
+                        );
+
+
+                // =====================================================
+                // SESIÓN EXPIRADA
+                // =====================================================
+
+                if (response.status === 401) {
+
+                    window.location.href =
+                            's01-login.html';
+
+                    return null;
+                }
+
+
+                let resultado = null;
+
+
+                try {
+
+                    resultado =
+                            await response.json();
+
+                } catch (error) {
+
+                    resultado = null;
+                }
+
+
+                // =====================================================
+                // ERROR BACKEND
+                // =====================================================
+
+                if (!response.ok) {
+
+                    throw new Error(
+                            resultado?.mensaje ||
+                            `Error HTTP ${response.status}`
+                            );
+                }
+
+
+                // =====================================================
+                // SIN SINIESTROS
+                // =====================================================
+
+                if (
+                        !Array.isArray(resultado) ||
+                        resultado.length === 0
+                        ) {
+
+                    return null;
+                }
+
+
+                // =====================================================
+                // VERIFICAR SINIESTRO PREFERIDO
+                // =====================================================
+
+                /*
+                 * Si sp_last_sin pertenece realmente al cliente
+                 * autenticado, seguimos utilizando ese siniestro.
+                 */
+
+                if (idPreferido) {
+
+                    const encontrado =
+                            resultado.find(
+                                    siniestro =>
+                                String(
+                                        siniestro.idSiniestro
+                                        ) ===
+                                        String(
+                                                idPreferido
+                                                )
+                            );
+
+
+                    if (encontrado) {
+
+                        return encontrado.idSiniestro;
+                    }
+                }
+
+
+                // =====================================================
+                // USAR EL MÁS RECIENTE
+                // =====================================================
+
+                /*
+                 * El endpoint devuelve los siniestros ordenados
+                 * por fechaRegistro DESC.
+                 *
+                 * Por eso el elemento [0] corresponde al más
+                 * reciente.
+                 */
+
+                return resultado[0].idSiniestro;
+            }
+
+
+            // =========================================================
+            // CARGAR SEGUIMIENTO
+            // =========================================================
+
+            async function cargarSeguimiento(
+                    idSiniestro,
+                    session
+                    ) {
+
+                try {
+
+                    let url;
+
+
+                    // =================================================
+                    // ENDPOINT SEGÚN ROL
+                    // =================================================
+
+                    if (
+                            session.rol === 'Asesor' ||
+                            session.rol === 'Administrador'
+                            ) {
+
+                        url =
+                                `/api/siniestros/asesor/${idSiniestro}`;
+
+                    } else {
+
+                        url =
+                                `/api/siniestros/${idSiniestro}`;
+                    }
+
+
+                    // =================================================
+                    // CONSULTAR BACKEND
+                    // =================================================
+
+                    const response =
+                            await fetch(
+                                    url,
+                                    {
+                                        method: 'GET',
+                                        credentials: 'same-origin'
+                                    }
+                            );
+
+
+                    // =================================================
+                    // SESIÓN EXPIRADA
+                    // =================================================
+
+                    if (response.status === 401) {
+
+                        window.location.href =
+                                's01-login.html';
+
+                        return;
+                    }
+
+
+                    let resultado = null;
+
+
+                    try {
+
+                        resultado =
+                                await response.json();
+
+                    } catch (error) {
+
+                        resultado = null;
+                    }
+
+
+                    // =================================================
+                    // ERROR HTTP
+                    // =================================================
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                                resultado?.mensaje ||
+                                `Error HTTP ${response.status}`
+                                );
+                    }
+
+
+                    // =================================================
+                    // MOSTRAR
+                    // =================================================
+
+                    renderSeguimiento(
+                            resultado
+                            );
+
+
+                } catch (error) {
+
+                    console.error(
+                            'Error cargando seguimiento:',
+                            error
+                            );
+
+
+                    mostrarError(
+                            error.message ||
+                            'No se pudo cargar el seguimiento del siniestro.'
+                            );
+                }
+            }
+
+
+            // =========================================================
+            // RENDER SEGUIMIENTO
+            // =========================================================
+
+            function renderSeguimiento(
+                    siniestro
+                    ) {
+
+                // =====================================================
+                // NÚMERO DEL SINIESTRO
+                // =====================================================
+
+                const numero =
+                        siniestro.numeroSiniestro ||
+                        (
+                                'SIN-' +
+                                siniestro.idSiniestro
+                                );
+
+
+                const breadcrumb =
+                        document.querySelector(
+                                '.breadcrumb'
+                                );
+
+
+                if (breadcrumb) {
+
+                    breadcrumb.innerHTML =
+                            'SEGURPLAN &rsaquo; ' +
+                            'Siniestros &rsaquo; ' +
+                            'Seguimiento ' +
+                            escapeHtml(numero);
+                }
+
+
+                const titulo =
+                        document.querySelector(
+                                '.card-header h2'
+                                );
+
+
+                if (titulo) {
+
+                    titulo.textContent =
+                            'Siniestro ' +
+                            numero;
+                }
+
+
+                // =====================================================
+                // VEHÍCULO
+                // =====================================================
+
+                const vehiculo =
+                        [
+                            siniestro.marca,
+                            siniestro.modelo,
+                            siniestro.placa
+                        ]
+                        .filter(Boolean)
+                        .join(' — ');
+
+
+                const fechaAccidente =
+                        formatearFecha(
+                                siniestro.fechaAccidente
+                                );
+
+
+                const subtitulo =
+                        document.querySelector(
+                                '.card-header p'
+                                );
+
+
+                if (subtitulo) {
+
+                    const datos =
+                            [
+                                vehiculo,
+                                fechaAccidente
+                            ]
+                            .filter(
+                                    dato =>
+                                dato &&
+                                        dato !== '—'
+                            );
+
+
+                    subtitulo.textContent =
+                            datos.length > 0
+                            ? datos.join(' — ')
+                            : 'Información del siniestro';
+                }
+
+
+                // =====================================================
+                // ESTADO
+                // =====================================================
+
+                const estado =
+                        siniestro.estado ||
+                        'Registrado';
+
+
+                const status =
+                        document.querySelector(
+                                '.status-block'
+                                );
+
+
+                if (status) {
+
+                    status.className =
+                            'status-block info';
+
+
+                    status.textContent =
+                            'Estado actual: ' +
+                            obtenerDescripcionEstado(
+                                    estado
+                                    );
+                }
+
+
+                // =====================================================
+                // TIMELINE
+                // =====================================================
+
+                renderTimeline(
+                        siniestro
+                        );
+
+
+                // =====================================================
+                // ÚLTIMA ACTUALIZACIÓN
+                // =====================================================
+
+                const footer =
+                        document.querySelector(
+                                '.card-footer p'
+                                );
+
+
+                if (footer) {
+
+                    footer.textContent =
+                            'Última actualización: ' +
+                            formatearFechaHora(
+                                    siniestro.fechaRegistro
+                                    );
+                }
+            }
+
+
+            // =========================================================
+            // TIMELINE
+            // =========================================================
+
+            function renderTimeline(
+                    siniestro
+                    ) {
+
+                const timeline =
+                        document.querySelector(
+                                '.timeline'
+                                );
+
+
+                if (!timeline) {
+
+                    return;
+                }
+
+
+                const estado =
+                        normalizarEstado(
+                                siniestro.estado
+                                );
+
+
+                /*
+                 * NIVEL DEL PROCESO
+                 *
+                 * 1 = Registrado
+                 * 2 = En revisión
+                 * 3 = Derivado
+                 * 4 = En evaluación
+                 * 5 = Resultado final
+                 */
+
+                let nivel = 1;
+
+
+                // =====================================================
+                // EN REVISIÓN
+                // =====================================================
+
+                if (
+                        estado.includes('revision') ||
+                        estado.includes('revisión')
+                        ) {
+
+                    nivel = 2;
+                }
+
+
+                // =====================================================
+                // DERIVADO
+                // =====================================================
+
+                if (
+                        estado.includes('derivado')
+                        ) {
+
+                    nivel = 3;
+                }
+
+
+                // =====================================================
+                // EVALUACIÓN
+                // =====================================================
+
+                if (
+                        estado.includes('evaluacion') ||
+                        estado.includes('evaluación')
+                        ) {
+
+                    nivel = 4;
+                }
+
+
+                // =====================================================
+                // RESULTADO FINAL
+                // =====================================================
+
+                if (
+                        estado.includes('aprobado') ||
+                        estado.includes('rechazado') ||
+                        estado.includes('finalizado') ||
+                        estado.includes('cerrado')
+                        ) {
+
+                    nivel = 5;
+                }
+
+
+                // =====================================================
+                // FECHA DE REGISTRO
+                // =====================================================
+
+                const fechaRegistro =
+                        formatearFechaHora(
+                                siniestro.fechaRegistro
+                                );
+
+
+                // =====================================================
+                // PASOS
+                // =====================================================
+
+                const pasos = [
+
+                    {
+                        label:
+                                'Siniestro registrado',
+
+                        fecha:
+                                fechaRegistro
+                    },
+
+                    {
+                        label:
+                                'Información revisada por asesor',
+
+                        fecha:
+                                nivel >= 2
+                                ? 'Completado'
+                                : 'Pendiente'
+                    },
+
+                    {
+                        label:
+                                'Derivado a aseguradora',
+
+                        fecha:
+                                nivel >= 3
+                                ? 'Completado'
+                                : 'Pendiente'
+                    },
+
+                    {
+                        label:
+                                'Evaluación por aseguradora',
+
+                        fecha:
+                                nivel === 4
+                                ? 'En proceso'
+                                : (
+                                        nivel > 4
+                                        ? 'Completado'
+                                        : 'Pendiente'
+                                        )
+                    },
+
+                    {
+                        label:
+                                'Resultado final',
+
+                        fecha:
+                                nivel >= 5
+                                ? siniestro.estado
+                                : 'Pendiente'
+                    }
+
+                ];
+
+
+                // =====================================================
+                // LIMPIAR TIMELINE
+                // =====================================================
+
+                timeline.innerHTML = '';
+
+
+                // =====================================================
+                // CREAR PASOS
+                // =====================================================
+                pasos.forEach(
+                        function (
+                                paso,
+                                indice
+                                ) {
+
+                            const numeroPaso =
+                                    indice + 1;
+
+
+                            let clasePunto =
+                                    'pending';
+
+
+                            let claseLinea =
+                                    '';
+                            // =============================================
+                            // PASOS ANTERIORES
+                            // =============================================
+                            if (
+                                    numeroPaso < nivel
+                                    ) {
+
+                                clasePunto =
+                                        'done';
+
+                                claseLinea =
+                                        'done';
+                            }
+                            // =============================================
+                            // PASO ACTUAL
+                            // =============================================
+                            else if (
+                                    numeroPaso === nivel
+                                    ) {
+                                /*
+                                 * Cuando el estado es Derivado,
+                                 * el paso "Derivado a aseguradora"
+                                 * ya se considera completado.
+                                 */
+
+                                if (
+                                        nivel === 3 &&
+                                        numeroPaso === 3
+                                        ) {
+
+                                    clasePunto =
+                                            'done';
+
+                                    claseLinea =
+                                            'done';
+
+                                } else {
+
+                                    clasePunto =
+                                            'active';
+                                }
+                            }
+                            // =============================================
+                            // RESULTADO FINAL
+                            // =============================================
+
+                            if (
+                                    nivel >= 5 &&
+                                    numeroPaso === 5
+                                    ) {
+
+                                clasePunto =
+                                        'done';
+                            }
+                            // =============================================
+                            // CREAR ELEMENTO
+                            // =============================================
+
+                            const li =
+                                    document.createElement(
+                                            'li'
+                                            );
+                            const linea =
+                                    numeroPaso < 5
+                                    ? `
+                                    <div
+                                        class="tl-line ${claseLinea}"
+                                    ></div>
+                                  `
+                                    : '';
+                            li.innerHTML = `
+                            <div class="tl-left">
+
+                                <div
+                                    class="tl-dot ${clasePunto}"
+                                ></div>
+
+                                ${linea}
+
+                            </div>
+                            <div class="tl-content">
+
+                                <div class="tl-label">
+                                    ${escapeHtml(
+                                    paso.label
+                                    )}
+                                </div>
+
+                                <div class="tl-date">
+                                    ${escapeHtml(
+                                    paso.fecha
+                                    )}
+                                </div>
+
+                            </div>
+                        `;
+                            timeline.appendChild(
+                                    li
+                                    );
+                        }
+                );
+            }
+            // =========================================================
+            // DESCRIPCIÓN DEL ESTADO
+            // =========================================================
+            function obtenerDescripcionEstado(
+                    estado
+                    ) {
+
+                const valor =
+                        normalizarEstado(
+                                estado
+                                );
+                if (
+                        valor.includes(
+                                'derivado'
+                                )
+                        ) {
+                    return 'Derivado a aseguradora';
+                }
+                if (
+                        valor.includes(
+                                'evaluacion'
+                                ) ||
+                        valor.includes(
+                                'evaluación'
+                                )
+                        ) {
+                    return 'En evaluación por aseguradora';
+                }
+                if (
+                        valor.includes(
+                                'revision'
+                                ) ||
+                        valor.includes(
+                                'revisión'
+                                )
+                        ) {
+                    return 'En revisión por asesor';
+                }
+                if (
+                        valor.includes(
+                                'registrado'
+                                )
+                        ) {
+                    return 'Registrado';
+                }
+                if (
+                        valor.includes(
+                                'aprobado'
+                                )
+                        ) {
+                    return 'Aprobado';
+                }
+                if (
+                        valor.includes(
+                                'rechazado'
+                                )
+                        ) {
+                    return 'Rechazado';
+                }
+                if (
+                        valor.includes(
+                                'finalizado'
+                                ) ||
+                        valor.includes(
+                                'cerrado'
+                                )
+                        ) {
+                    return 'Finalizado';
+                }
+                return estado;
+            }
+            // =========================================================
+            // NORMALIZAR ESTADO
+            // =========================================================
+            function normalizarEstado(
+                    estado
+                    ) {
+
+                return String(
+                        estado || ''
+                        )
+                        .trim()
+                        .toLowerCase();
+            }
+            // =========================================================
+            // FORMATEAR FECHA
+            // =========================================================
+            function formatearFecha(
+                    fecha
+                    ) {
+                if (!fecha) {
+
+                    return '—';
+                }
+                const texto =
+                        String(fecha)
+                        .substring(
+                                0,
+                                10
+                                );
+                const partes =
+                        texto.split('-');
+                if (
+                        partes.length !== 3
+                        ) {
+                    return texto;
+                }
+                return (
+                        partes[2] +
+                        '/' +
+                        partes[1] +
+                        '/' +
+                        partes[0]
+                        );
+            }
+            // =========================================================
+            // FORMATEAR FECHA Y HORA
+            // =========================================================
+            function formatearFechaHora(
+                    fecha
+                    ) {
+                if (!fecha) {
+
+                    return '—';
+                }
+                try {
+                    const date =
+                            new Date(
+                                    fecha
+                                    );
+                    if (
+                            Number.isNaN(
+                                    date.getTime()
+                                    )
+                            ) {
+
+                        return formatearFecha(
+                                fecha
+                                );
+                    }
+                    return date.toLocaleString(
+                            'es-PE',
+                            {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            }
+                    );
+                } catch (error) {
+
+                    return String(
+                            fecha
+                            );
+                }
+            }
+            // =========================================================
+            // MOSTRAR ERROR
+            // =========================================================
+            function mostrarError(
+                    mensaje
+                    ) {
+                const status =
+                        document.querySelector(
+                                '.status-block'
+                                );
+                if (status) {
+
+                    status.className =
+                            'status-block error';
+                    status.textContent =
+                            mensaje;
+                }
+                const titulo =
+                        document.querySelector(
+                                '.card-header h2'
+                                );
+                if (titulo) {
+
+                    titulo.textContent =
+                            'No se pudo cargar el siniestro';
+                }
+                const subtitulo =
+                        document.querySelector(
+                                '.card-header p'
+                                );
+                if (subtitulo) {
+
+                    subtitulo.textContent =
+                            'No se pudo consultar la información.';
+                }
+                const timeline =
+                        document.querySelector(
+                                '.timeline'
+                                );
+                if (timeline) {
+
+                    timeline.innerHTML = `
+
+                        <li>
+
+                            <div class="tl-left">
+
+                                <div class="tl-dot pending">
+                                </div>
+
+                            </div>
+
+                            <div class="tl-content">
+
+                                <div class="tl-label">
+                                    No se pudo cargar el seguimiento
+                                </div>
+
+                                <div class="tl-date">
+                                    ${escapeHtml(
+                            mensaje
+                            )}
+                                </div>
+
+                            </div>
+
+                        </li>
+                    `;
+                }
+                const footer =
+                        document.querySelector(
+                                '.card-footer p'
+                                );
+                if (footer) {
+
+                    footer.textContent =
+                            'Sin información de actualización.';
+                }
+            }
+            // =========================================================
+            // CLIENTE SIN SINIESTROS
+            // =========================================================
+            function mostrarSinSiniestros() {
+                const breadcrumb =
+                        document.querySelector(
+                                '.breadcrumb'
+                                );
+                if (breadcrumb) {
+                    breadcrumb.innerHTML =
+                            'SEGURPLAN &rsaquo; ' +
+                            'Siniestros &rsaquo; ' +
+                            'Seguimiento';
+                }
+                const status =
+                        document.querySelector(
+                                '.status-block'
+                                );
+                if (status) {
+
+                    status.className =
+                            'status-block info';
+                    status.textContent =
+                            'No tiene siniestros registrados.';
+                }
+                const titulo =
+                        document.querySelector(
+                                '.card-header h2'
+                                );
+                if (titulo) {
+
+                    titulo.textContent =
+                            'Sin siniestros';
+                }
+                const subtitulo =
+                        document.querySelector(
+                                '.card-header p'
+                                );
+                if (subtitulo) {
+                    subtitulo.textContent =
+                            'No existen siniestros para mostrar.';
+                }
+                const timeline =
+                        document.querySelector(
+                                '.timeline'
+                                );
+
+                if (timeline) {
+
+                    timeline.innerHTML = `
+
+                        <li>
+
+                            <div class="tl-left">
+
+                                <div class="tl-dot pending">
+                                </div>
+
+                            </div>
+
+                            <div class="tl-content">
+
+                                <div class="tl-label">
+                                    No existen siniestros registrados
+                                </div>
+
+                                <div class="tl-date">
+                                    Registre un siniestro para consultar
+                                    su seguimiento.
+                                </div>
+
+                            </div>
+
+                        </li>
+                    `;
+                }
+                const footer =
+                        document.querySelector(
+                                '.card-footer p'
+                                );
+
+
+                if (footer) {
+
+                    footer.textContent =
+                            'Sin información de seguimiento.';
+                }
+            }
+            // =========================================================
+            // ESCAPAR HTML
+            // =========================================================
+            function escapeHtml(
+                    valor
+                    ) {
+                return String(
+                        valor ?? ''
+                        )
+                        .replaceAll(
+                                '&',
+                                '&amp;'
+                                )
+                        .replaceAll(
+                                '<',
+                                '&lt;'
+                                )
+                        .replaceAll(
+                                '>',
+                                '&gt;'
+                                )
+                        .replaceAll(
+                                '"',
+                                '&quot;'
+                                )
+                        .replaceAll(
+                                "'",
+                                '&#039;'
+                                );
             }
         </script>
     </body>

@@ -1,0 +1,1771 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        SEGURPLAN — Gestionar usuarios
+    </title>
+
+    <link rel="stylesheet"
+          href="../assets/styles.css">
+
+    <style>
+
+        .usuarios-toolbar {
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .usuarios-search {
+            width: 100%;
+            max-width: 420px;
+            padding: 11px 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font: inherit;
+            box-sizing: border-box;
+        }
+
+        .tabla-contenedor {
+            overflow-x: auto;
+        }
+
+        .tabla-usuarios {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        .tabla-usuarios th {
+            background: #2f4a7a;
+            color: white;
+            text-align: left;
+            padding: 12px;
+            font-size: 13px;
+        }
+
+        .tabla-usuarios td {
+            padding: 12px;
+            border-bottom: 1px solid #d7deea;
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        .tabla-usuarios tbody tr:hover {
+            background: #f7f9fc;
+        }
+
+        .estado {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .estado-activo {
+            background: #e5f4e8;
+            color: #17652c;
+        }
+
+        .estado-inactivo {
+            background: #fdeaea;
+            color: #9f1d1d;
+        }
+
+        .acciones {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .btn-tabla {
+            border: 1px solid #2f4a7a;
+            background: white;
+            color: #203b6c;
+            padding: 7px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .btn-tabla:hover {
+            background: #f0f4fa;
+        }
+
+        .btn-estado {
+            background: #2f4a7a;
+            color: white;
+        }
+
+        .mensaje-usuarios {
+            margin-bottom: 15px;
+            display: none;
+            padding: 12px 14px;
+            border-radius: 4px;
+        }
+
+        .mensaje-error {
+            display: block;
+            background: #fdeaea;
+            color: #9f1d1d;
+        }
+
+        .mensaje-ok {
+            display: block;
+            background: #e5f4e8;
+            color: #17652c;
+        }
+
+        /* =====================================================
+           MODAL
+        ===================================================== */
+
+        .modal-fondo {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .modal-fondo.visible {
+            display: flex;
+        }
+
+        .modal-usuario {
+            background: white;
+            width: 100%;
+            max-width: 520px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 6px;
+            box-shadow: 0 15px 40px
+                rgba(0, 0, 0, .20);
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #d7deea;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: #17376b;
+            font-size: 20px;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .campo-modal {
+            margin-bottom: 15px;
+        }
+
+        .campo-modal label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #203b6c;
+        }
+
+        .campo-modal input,
+        .campo-modal select {
+
+            width: 100%;
+            padding: 10px 11px;
+
+            border:
+                1px solid #cbd5e1;
+
+            border-radius: 4px;
+
+            box-sizing:
+                border-box;
+
+            font: inherit;
+
+            background: white;
+        }
+
+        .campo-modal input:disabled {
+            background: #f2f4f7;
+        }
+
+        .nota-campo {
+            display: block;
+            margin-top: 6px;
+            font-size: 11px;
+            color: #64748b;
+            line-height: 1.4;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #d7deea;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        @media (max-width: 700px) {
+
+            .usuarios-toolbar {
+                align-items: stretch;
+            }
+
+            .usuarios-search {
+                max-width: none;
+            }
+        }
+
+    </style>
+
+<link rel="stylesheet" href="../assets/theme.css">
+<script src="../assets/theme.js"></script>
+</head>
+
+<body>
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="site-header">
+
+    <div class="logo">
+
+        SEGURPLAN
+
+        <span>
+            Plataforma de seguros y AFP
+        </span>
+
+    </div>
+
+    <div class="header-right">
+
+        <span class="user-name"
+              id="usuario-header">
+
+            Usuario: Administrador
+
+        </span>
+
+        <button class="bell-btn"
+                title="Notificaciones">
+
+            <svg width="20"
+                 height="20"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="2">
+
+                <path
+                    d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+
+                <path
+                    d="M13.73 21a2 2 0 0 1-3.46 0"/>
+
+            </svg>
+
+        </button>
+
+        <button class="profile-btn">
+            MI PERFIL
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     CONTENIDO
+===================================================== -->
+
+<div class="page-wrap">
+
+    <nav class="breadcrumb">
+
+        SEGURPLAN
+        &rsaquo;
+        Administración
+        &rsaquo;
+        Usuarios
+
+    </nav>
+
+
+    <h1 class="page-title">
+        Gestionar usuarios
+    </h1>
+
+
+    <p style="
+       margin-top:-8px;
+       margin-bottom:25px;
+       color:var(--text-sub);">
+
+        Consulte, modifique, asigne roles y administre
+        el estado de las cuentas registradas.
+
+    </p>
+
+
+    <div id="mensaje"
+         class="mensaje-usuarios">
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div>
+
+                <h2>
+                    Usuarios registrados
+                </h2>
+
+                <p id="contador">
+                    Cargando usuarios...
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="usuarios-toolbar">
+
+                <input
+                    id="buscar"
+                    class="usuarios-search"
+                    type="search"
+                    name="segurplan_busqueda_usuarios"
+                    placeholder="Buscar por nombre, correo o rol..."
+                    autocomplete="off">
+
+                <button
+                    class="btn btn-outline"
+                    onclick="volverAdministracion()">
+
+                    VOLVER A ADMINISTRACIÓN
+
+                </button>
+
+            </div>
+
+
+            <div class="tabla-contenedor">
+
+                <table class="tabla-usuarios">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+
+                            <th>Usuario</th>
+
+                            <th>Correo</th>
+
+                            <th>Teléfono</th>
+
+                            <th>Rol</th>
+
+                            <th>Estado</th>
+
+                            <th>Registro</th>
+
+                            <th>Acciones</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="usuarios-body">
+
+                        <tr>
+
+                            <td colspan="8"
+                                style="
+                                text-align:center;
+                                padding:25px;">
+
+                                Cargando usuarios...
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MODAL EDITAR USUARIO
+===================================================== -->
+
+<div id="modal"
+     class="modal-fondo">
+
+    <div class="modal-usuario">
+
+        <div class="modal-header">
+
+            <h2>
+                Editar usuario
+            </h2>
+
+        </div>
+
+
+        <div class="modal-body">
+
+            <input
+                type="hidden"
+                id="editar-id">
+
+
+            <!-- NOMBRES -->
+
+            <div class="campo-modal">
+
+                <label>
+                    Nombres
+                </label>
+
+                <input
+                    type="text"
+                    id="editar-nombres"
+                    maxlength="100">
+
+            </div>
+
+
+            <!-- APELLIDOS -->
+
+            <div class="campo-modal">
+
+                <label>
+                    Apellidos
+                </label>
+
+                <input
+                    type="text"
+                    id="editar-apellidos"
+                    maxlength="100">
+
+            </div>
+
+
+            <!-- CORREO -->
+
+            <div class="campo-modal">
+
+                <label>
+                    Correo
+                </label>
+
+                <input
+                    type="email"
+                    id="editar-correo"
+                    disabled>
+
+                <span class="nota-campo">
+                    El correo no puede modificarse
+                    desde esta sección.
+                </span>
+
+            </div>
+
+
+            <!-- TELÉFONO -->
+
+            <div class="campo-modal">
+
+                <label>
+                    Teléfono
+                </label>
+
+                <input
+                    type="text"
+                    id="editar-telefono"
+                    maxlength="20">
+
+            </div>
+
+
+            <!-- ROL -->
+
+            <div class="campo-modal">
+
+                <label>
+                    Rol
+                </label>
+
+                <select
+                    id="editar-rol"
+                    class="form-control">
+
+                    <option value="1">
+                        Cliente
+                    </option>
+
+                    <option value="3">
+                        Asesor
+                    </option>
+
+                    <option value="2">
+                        Administrador
+                    </option>
+
+                </select>
+
+                <span class="nota-campo">
+
+                    El cambio de rol modifica los permisos
+                    del usuario. El usuario deberá iniciar
+                    sesión nuevamente para aplicar el nuevo rol.
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button
+                class="btn btn-outline"
+                onclick="cerrarModal()">
+
+                CANCELAR
+
+            </button>
+
+            <button
+                class="btn btn-primary"
+                onclick="guardarUsuario()">
+
+                GUARDAR CAMBIOS
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer class="site-footer">
+
+    <div class="footer-brand">
+
+        SEGURPLAN
+
+        <span>
+            Plataforma de seguros y AFP
+        </span>
+
+    </div>
+
+    <nav class="footer-links">
+
+        <a href="../index.html">
+            Inicio
+        </a>
+
+    </nav>
+
+    <div class="footer-meta">
+
+        <span>
+            © 2026 SEGURPLAN.
+            Todos los derechos reservados.
+        </span>
+
+    </div>
+
+</footer>
+
+
+<script src="../assets/app.js"></script>
+
+<script>
+
+    // =====================================================
+    // VARIABLES
+    // =====================================================
+
+    let usuarios = [];
+
+
+    // =====================================================
+    // INICIAR PÁGINA
+    // =====================================================
+
+    document.addEventListener(
+        'DOMContentLoaded',
+        iniciarPagina
+    );
+
+
+    async function iniciarPagina() {
+
+        const session =
+            sp_getSession();
+
+
+        if (!session) {
+
+            window.location.replace(
+                's01-login.html'
+            );
+
+            return;
+        }
+
+
+        const rol =
+            String(
+                session.rol || ''
+            )
+            .trim()
+            .toLowerCase();
+
+
+        if (rol !== 'administrador') {
+
+            alert(
+                'Esta sección es exclusiva ' +
+                'para administradores.'
+            );
+
+            window.location.replace(
+                's02-panel-usuario.html'
+            );
+
+            return;
+        }
+
+
+        // =================================================
+        // HEADER
+        // =================================================
+
+        const header =
+            document.getElementById(
+                'usuario-header'
+            );
+
+
+        header.textContent =
+            'Usuario: '
+            + (session.nombres || '')
+            + ' '
+            + (session.apellidos || '')
+            + ' — Administrador';
+
+
+        // =================================================
+        // BUSCADOR
+        // =================================================
+
+        const buscador =
+            document.getElementById(
+                'buscar'
+            );
+
+
+        // Evitar valores restaurados
+        // automáticamente por el navegador.
+
+        buscador.value = '';
+
+
+        buscador.addEventListener(
+            'input',
+            filtrarUsuarios
+        );
+
+
+        // =================================================
+        // CARGAR USUARIOS
+        // =================================================
+
+        await cargarUsuarios();
+    }
+
+
+    // =====================================================
+    // CARGAR USUARIOS
+    // =====================================================
+
+    async function cargarUsuarios() {
+
+        const tbody =
+            document.getElementById(
+                'usuarios-body'
+            );
+
+
+        tbody.innerHTML = `
+            <tr>
+
+                <td colspan="8"
+                    style="
+                    text-align:center;
+                    padding:25px;">
+
+                    Cargando usuarios...
+
+                </td>
+
+            </tr>
+        `;
+
+
+        try {
+
+            const response =
+                await fetch(
+                    '/api/admin/usuarios',
+                    {
+                        method: 'GET',
+
+                        credentials:
+                            'same-origin'
+                    }
+                );
+
+
+            // =============================================
+            // NO AUTENTICADO
+            // =============================================
+
+            if (response.status === 401) {
+
+                window.location.replace(
+                    's01-login.html'
+                );
+
+                return;
+            }
+
+
+            // =============================================
+            // SIN PERMISOS
+            // =============================================
+
+            if (response.status === 403) {
+
+                throw new Error(
+                    'No tiene permisos para ' +
+                    'consultar usuarios.'
+                );
+            }
+
+
+            const data =
+                await leerJson(
+                    response
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.mensaje
+                    || 'No se pudieron cargar los usuarios.'
+                );
+            }
+
+
+            usuarios =
+                Array.isArray(data)
+                    ? data
+                    : [];
+
+
+            renderUsuarios(
+                usuarios
+            );
+
+
+        } catch (error) {
+
+            tbody.innerHTML = `
+                <tr>
+
+                    <td colspan="8"
+                        style="
+                        text-align:center;
+                        padding:25px;">
+
+                        ${escapeHtml(
+                            error.message
+                        )}
+
+                    </td>
+
+                </tr>
+            `;
+
+
+            mostrarMensaje(
+                error.message,
+                false
+            );
+        }
+    }
+
+
+    // =====================================================
+    // RENDERIZAR USUARIOS
+    // =====================================================
+
+    function renderUsuarios(
+        lista
+    ) {
+
+        const tbody =
+            document.getElementById(
+                'usuarios-body'
+            );
+
+
+        const contador =
+            document.getElementById(
+                'contador'
+            );
+
+
+        contador.textContent =
+            lista.length
+            + ' usuario'
+            + (
+                lista.length === 1
+                    ? ''
+                    : 's'
+            );
+
+
+        if (lista.length === 0) {
+
+            tbody.innerHTML = `
+                <tr>
+
+                    <td colspan="8"
+                        style="
+                        text-align:center;
+                        padding:25px;">
+
+                        No se encontraron usuarios.
+
+                    </td>
+
+                </tr>
+            `;
+
+            return;
+        }
+
+
+        tbody.innerHTML =
+            lista.map(
+                usuario => {
+
+                    const activo =
+                        String(
+                            usuario.estado || ''
+                        )
+                        .trim()
+                        .toLowerCase()
+                        === 'activo';
+
+
+                    const claseEstado =
+                        activo
+                            ? 'estado-activo'
+                            : 'estado-inactivo';
+
+
+                    const textoBoton =
+                        activo
+                            ? 'DESACTIVAR'
+                            : 'ACTIVAR';
+
+
+                    const fecha =
+                        formatearFecha(
+                            usuario.fechaRegistro
+                        );
+
+
+                    return `
+                        <tr>
+
+                            <td>
+                                ${usuario.idUsuario}
+                            </td>
+
+
+                            <td>
+
+                                <strong>
+
+                                    ${escapeHtml(
+                                        usuario.nombres
+                                    )}
+
+                                    ${escapeHtml(
+                                        usuario.apellidos
+                                    )}
+
+                                </strong>
+
+                            </td>
+
+
+                            <td>
+
+                                ${escapeHtml(
+                                    usuario.correo
+                                )}
+
+                            </td>
+
+
+                            <td>
+
+                                ${escapeHtml(
+                                    usuario.telefono || '—'
+                                )}
+
+                            </td>
+
+
+                            <td>
+
+                                ${escapeHtml(
+                                    usuario.rol || '—'
+                                )}
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="
+                                    estado
+                                    ${claseEstado}
+                                ">
+
+                                    ${escapeHtml(
+                                        usuario.estado
+                                    )}
+
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                ${fecha}
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="acciones">
+
+                                    <button
+                                        class="btn-tabla"
+                                        onclick="
+                                        abrirEditar(
+                                            ${usuario.idUsuario}
+                                        )">
+
+                                        EDITAR
+
+                                    </button>
+
+
+                                    <button
+                                        class="
+                                        btn-tabla
+                                        btn-estado"
+                                        onclick="
+                                        cambiarEstado(
+                                            ${usuario.idUsuario},
+                                            '${activo
+                                                ? 'Inactivo'
+                                                : 'Activo'}'
+                                        )">
+
+                                        ${textoBoton}
+
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+                    `;
+
+                }
+            )
+            .join('');
+    }
+
+
+    // =====================================================
+    // FILTRAR USUARIOS
+    // =====================================================
+
+    function filtrarUsuarios() {
+
+        const texto =
+            document.getElementById(
+                'buscar'
+            )
+            .value
+            .trim()
+            .toLowerCase();
+
+
+        if (!texto) {
+
+            renderUsuarios(
+                usuarios
+            );
+
+            return;
+        }
+
+
+        const filtrados =
+            usuarios.filter(
+                usuario => {
+
+                    const contenido = [
+
+                        usuario.nombres,
+                        usuario.apellidos,
+                        usuario.correo,
+                        usuario.telefono,
+                        usuario.rol,
+                        usuario.estado
+
+                    ]
+                    .filter(Boolean)
+                    .join(' ')
+                    .toLowerCase();
+
+
+                    return contenido
+                        .includes(texto);
+                }
+            );
+
+
+        renderUsuarios(
+            filtrados
+        );
+    }
+
+
+    // =====================================================
+    // ABRIR MODAL EDITAR
+    // =====================================================
+
+    function abrirEditar(
+        idUsuario
+    ) {
+
+        const usuario =
+            usuarios.find(
+                item =>
+                    Number(
+                        item.idUsuario
+                    )
+                    ===
+                    Number(
+                        idUsuario
+                    )
+            );
+
+
+        if (!usuario) {
+
+            mostrarMensaje(
+                'Usuario no encontrado.',
+                false
+            );
+
+            return;
+        }
+
+
+        // =============================================
+        // ID
+        // =============================================
+
+        document.getElementById(
+            'editar-id'
+        ).value =
+            usuario.idUsuario;
+
+
+        // =============================================
+        // NOMBRES
+        // =============================================
+
+        document.getElementById(
+            'editar-nombres'
+        ).value =
+            usuario.nombres || '';
+
+
+        // =============================================
+        // APELLIDOS
+        // =============================================
+
+        document.getElementById(
+            'editar-apellidos'
+        ).value =
+            usuario.apellidos || '';
+
+
+        // =============================================
+        // CORREO
+        // =============================================
+
+        document.getElementById(
+            'editar-correo'
+        ).value =
+            usuario.correo || '';
+
+
+        // =============================================
+        // TELÉFONO
+        // =============================================
+
+        document.getElementById(
+            'editar-telefono'
+        ).value =
+            usuario.telefono || '';
+
+
+        // =============================================
+        // ROL
+        // =============================================
+
+        const roles = {
+
+            'cliente': 1,
+
+            'administrador': 2,
+
+            'asesor': 3
+        };
+
+
+        const nombreRol =
+            String(
+                usuario.rol || ''
+            )
+            .trim()
+            .toLowerCase();
+
+
+        document.getElementById(
+            'editar-rol'
+        ).value =
+            roles[nombreRol] || 1;
+
+
+        // =============================================
+        // MOSTRAR MODAL
+        // =============================================
+
+        document.getElementById(
+            'modal'
+        ).classList.add(
+            'visible'
+        );
+    }
+
+
+    // =====================================================
+    // CERRAR MODAL
+    // =====================================================
+
+    function cerrarModal() {
+
+        document.getElementById(
+            'modal'
+        ).classList.remove(
+            'visible'
+        );
+    }
+
+
+    // =====================================================
+    // GUARDAR USUARIO
+    // =====================================================
+
+    async function guardarUsuario() {
+
+        const idUsuario =
+            document.getElementById(
+                'editar-id'
+            ).value;
+
+
+        const nombres =
+            document.getElementById(
+                'editar-nombres'
+            ).value.trim();
+
+
+        const apellidos =
+            document.getElementById(
+                'editar-apellidos'
+            ).value.trim();
+
+
+        const telefono =
+            document.getElementById(
+                'editar-telefono'
+            ).value.trim();
+
+
+        const idRol =
+            Number(
+                document.getElementById(
+                    'editar-rol'
+                ).value
+            );
+
+
+        // =============================================
+        // VALIDACIONES
+        // =============================================
+
+        if (!nombres) {
+
+            alert(
+                'Ingrese los nombres.'
+            );
+
+            return;
+        }
+
+
+        if (!apellidos) {
+
+            alert(
+                'Ingrese los apellidos.'
+            );
+
+            return;
+        }
+
+
+        if (
+            ![1, 2, 3]
+                .includes(idRol)
+        ) {
+
+            alert(
+                'Seleccione un rol válido.'
+            );
+
+            return;
+        }
+
+
+        try {
+
+            // =========================================
+            // 1. ACTUALIZAR DATOS DEL USUARIO
+            // =========================================
+
+            const csrf =
+                await sp_getCsrfToken();
+
+
+            const response =
+                await fetch(
+                    '/api/admin/usuarios/'
+                    + idUsuario,
+                    {
+                        method: 'PUT',
+
+                        credentials:
+                            'same-origin',
+
+                        headers: {
+
+                            'Content-Type':
+                                'application/json',
+
+                            [csrf.headerName]:
+                                csrf.token
+                        },
+
+                        body: JSON.stringify({
+
+                            nombres:
+                                nombres,
+
+                            apellidos:
+                                apellidos,
+
+                            telefono:
+                                telefono
+                        })
+                    }
+                );
+
+
+            const data =
+                await leerJson(
+                    response
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.mensaje
+                    || 'No se pudo actualizar el usuario.'
+                );
+            }
+
+
+            // =========================================
+            // 2. ACTUALIZAR ROL
+            // =========================================
+
+            const csrfRol =
+                await sp_getCsrfToken();
+
+
+            const responseRol =
+                await fetch(
+                    '/api/admin/usuarios/'
+                    + idUsuario
+                    + '/rol',
+                    {
+                        method: 'PUT',
+
+                        credentials:
+                            'same-origin',
+
+                        headers: {
+
+                            'Content-Type':
+                                'application/json',
+
+                            [csrfRol.headerName]:
+                                csrfRol.token
+                        },
+
+                        body: JSON.stringify({
+
+                            idRol:
+                                idRol
+                        })
+                    }
+                );
+
+
+            const dataRol =
+                await leerJson(
+                    responseRol
+                );
+
+
+            if (!responseRol.ok) {
+
+                throw new Error(
+                    dataRol.mensaje
+                    || 'Los datos fueron actualizados, '
+                    + 'pero no se pudo cambiar el rol.'
+                );
+            }
+
+
+            // =========================================
+            // CORRECTO
+            // =========================================
+
+            cerrarModal();
+
+
+            mostrarMensaje(
+                'Usuario y rol actualizados correctamente. '
+                + 'El usuario deberá iniciar sesión nuevamente '
+                + 'para aplicar sus nuevos permisos.',
+                true
+            );
+
+
+            await cargarUsuarios();
+
+
+        } catch (error) {
+
+            mostrarMensaje(
+                error.message,
+                false
+            );
+        }
+    }
+
+
+    // =====================================================
+    // CAMBIAR ESTADO
+    // =====================================================
+
+    async function cambiarEstado(
+        idUsuario,
+        nuevoEstado
+    ) {
+
+        const usuario =
+            usuarios.find(
+                item =>
+                    Number(
+                        item.idUsuario
+                    )
+                    ===
+                    Number(
+                        idUsuario
+                    )
+            );
+
+
+        if (!usuario) {
+            return;
+        }
+
+
+        const accion =
+            nuevoEstado === 'Activo'
+                ? 'activar'
+                : 'desactivar';
+
+
+        const confirmar =
+            window.confirm(
+                '¿Desea '
+                + accion
+                + ' la cuenta de '
+                + usuario.nombres
+                + ' '
+                + usuario.apellidos
+                + '?'
+            );
+
+
+        if (!confirmar) {
+            return;
+        }
+
+
+        try {
+
+            const csrf =
+                await sp_getCsrfToken();
+
+
+            const response =
+                await fetch(
+                    '/api/admin/usuarios/'
+                    + idUsuario
+                    + '/estado',
+                    {
+                        method: 'PUT',
+
+                        credentials:
+                            'same-origin',
+
+                        headers: {
+
+                            'Content-Type':
+                                'application/json',
+
+                            [csrf.headerName]:
+                                csrf.token
+                        },
+
+                        body: JSON.stringify({
+
+                            estado:
+                                nuevoEstado
+                        })
+                    }
+                );
+
+
+            const data =
+                await leerJson(
+                    response
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.mensaje
+                    || 'No se pudo cambiar el estado.'
+                );
+            }
+
+
+            mostrarMensaje(
+                data.mensaje
+                || 'Estado actualizado correctamente.',
+                true
+            );
+
+
+            await cargarUsuarios();
+
+
+        } catch (error) {
+
+            mostrarMensaje(
+                error.message,
+                false
+            );
+        }
+    }
+
+
+    // =====================================================
+    // LEER JSON
+    // =====================================================
+
+    async function leerJson(
+        response
+    ) {
+
+        const texto =
+            await response.text();
+
+
+        if (!texto) {
+            return {};
+        }
+
+
+        try {
+
+            return JSON.parse(
+                texto
+            );
+
+        } catch (error) {
+
+            return {
+                mensaje: texto
+            };
+        }
+    }
+
+
+    // =====================================================
+    // MENSAJES
+    // =====================================================
+
+    function mostrarMensaje(
+        texto,
+        correcto
+    ) {
+
+        const mensaje =
+            document.getElementById(
+                'mensaje'
+            );
+
+
+        mensaje.className =
+            'mensaje-usuarios '
+            + (
+                correcto
+                    ? 'mensaje-ok'
+                    : 'mensaje-error'
+            );
+
+
+        mensaje.textContent =
+            texto;
+
+
+        mensaje.style.display =
+            'block';
+    }
+
+
+    // =====================================================
+    // FORMATEAR FECHA
+    // =====================================================
+
+    function formatearFecha(
+        fecha
+    ) {
+
+        if (!fecha) {
+            return '—';
+        }
+
+
+        const date =
+            new Date(
+                fecha
+            );
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return escapeHtml(
+                fecha
+            );
+        }
+
+
+        return date.toLocaleDateString(
+            'es-PE',
+            {
+                day:
+                    '2-digit',
+
+                month:
+                    '2-digit',
+
+                year:
+                    'numeric'
+            }
+        );
+    }
+
+
+    // =====================================================
+    // ESCAPAR HTML
+    // =====================================================
+
+    function escapeHtml(
+        valor
+    ) {
+
+        return String(
+            valor ?? ''
+        )
+        .replaceAll(
+            '&',
+            '&amp;'
+        )
+        .replaceAll(
+            '<',
+            '&lt;'
+        )
+        .replaceAll(
+            '>',
+            '&gt;'
+        )
+        .replaceAll(
+            '"',
+            '&quot;'
+        )
+        .replaceAll(
+            "'",
+            '&#039;'
+        );
+    }
+
+
+    // =====================================================
+    // VOLVER A ADMINISTRACIÓN
+    // =====================================================
+
+    function volverAdministracion() {
+
+        window.location.href =
+            's14-administracion.html';
+    }
+
+
+    // =====================================================
+    // CERRAR MODAL AL HACER CLIC FUERA
+    // =====================================================
+
+    document.getElementById(
+        'modal'
+    ).addEventListener(
+        'click',
+        function (event) {
+
+            if (
+                event.target === this
+            ) {
+
+                cerrarModal();
+            }
+        }
+    );
+
+</script>
+
+</body>
+</html>

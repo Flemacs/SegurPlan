@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="es">
+
+    <head>
+
+        <meta charset="UTF-8">
+
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0">
+
+        <title>Historial del Sistema | SEGURPLAN</title>
+
+        <link rel="stylesheet"
+              href="../assets/styles.css">
+
+        <style>
+
+            body {
+                background: #f3f6fa;
+                color: #17345f;
+            }
+
+            .historial-container {
+                max-width: 1250px;
+                margin: 0 auto;
+                padding: 30px 25px 60px;
+            }
+
+            .breadcrumb {
+                margin-bottom: 30px;
+                font-size: 15px;
+            }
+
+            .breadcrumb a {
+                color: #17345f;
+                text-decoration: none;
+            }
+
+            .breadcrumb a:hover {
+                text-decoration: underline;
+            }
+
+            .titulo {
+                margin-bottom: 6px;
+                font-size: 30px;
+                color: #17345f;
+            }
+
+            .subtitulo {
+                margin-top: 0;
+                margin-bottom: 30px;
+                color: #596b86;
+            }
+
+            .panel {
+                background: white;
+                border: 1px solid #cbd5e1;
+                border-radius: 6px;
+                box-shadow: 0 2px 5px rgba(0,0,0,.06);
+                padding: 24px;
+            }
+
+            .filtros {
+                display: grid;
+                grid-template-columns: 1.4fr 1fr auto;
+                gap: 15px;
+                align-items: end;
+                margin-bottom: 25px;
+            }
+
+            .campo label {
+                display: block;
+                margin-bottom: 7px;
+                font-weight: 600;
+                color: #17345f;
+            }
+
+            .campo input,
+            .campo select {
+                width: 100%;
+                box-sizing: border-box;
+                padding: 11px 12px;
+                border: 1px solid #cbd5e1;
+                border-radius: 5px;
+                background: white;
+                color: #334155;
+                font-size: 14px;
+            }
+
+            .btn {
+                padding: 11px 20px;
+                border: none;
+                border-radius: 5px;
+                background: #17345f;
+                color: white;
+                font-weight: 600;
+                cursor: pointer;
+            }
+
+            .btn:hover {
+                opacity: .92;
+            }
+
+            .resumen {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 15px;
+                margin-bottom: 15px;
+                color: #64748b;
+                font-size: 14px;
+            }
+
+            .tabla-contenedor {
+                width: 100%;
+                overflow-x: auto;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                min-width: 1050px;
+            }
+
+            th {
+                background: #f1f5f9;
+                color: #17345f;
+                text-align: left;
+                padding: 12px;
+                border-bottom: 2px solid #cbd5e1;
+                font-size: 13px;
+            }
+
+            td {
+                padding: 12px;
+                border-bottom: 1px solid #e2e8f0;
+                vertical-align: top;
+                color: #475569;
+                font-size: 13px;
+            }
+
+            tbody tr:hover {
+                background: #f8fafc;
+            }
+
+            .badge {
+                display: inline-block;
+                padding: 5px 9px;
+                border-radius: 12px;
+                background: #e8eef7;
+                color: #17345f;
+                font-size: 12px;
+                font-weight: 600;
+            }
+
+            .valor {
+                max-width: 220px;
+                white-space: normal;
+                overflow-wrap: anywhere;
+            }
+
+            .usuario-nombre {
+                font-weight: 600;
+                color: #17345f;
+            }
+
+            .usuario-correo {
+                display: block;
+                margin-top: 3px;
+                color: #64748b;
+                font-size: 12px;
+            }
+
+            .vacio {
+                padding: 35px;
+                text-align: center;
+                color: #64748b;
+            }
+
+            .mensaje-error {
+                display: none;
+                margin-bottom: 20px;
+                padding: 12px 15px;
+                background: #fff1f2;
+                border: 1px solid #fecdd3;
+                border-radius: 5px;
+                color: #9f1239;
+            }
+
+            @media (max-width: 800px) {
+
+                .filtros {
+                    grid-template-columns: 1fr;
+                }
+
+                .historial-container {
+                    padding: 20px 15px 40px;
+                }
+            }
+
+        </style>
+
+    <link rel="stylesheet" href="../assets/theme.css">
+<script src="../assets/theme.js"></script>
+</head>
+
+    <body>
+
+        <div class="historial-container">
+
+            <div class="breadcrumb">
+                <a href="s14-administracion.html">
+                    SEGURPLAN › Administración
+                </a>
+                › Historial del sistema
+            </div>
+
+
+            <h1 class="titulo">
+                Historial del sistema
+            </h1>
+
+            <p class="subtitulo">
+                Consulte la trazabilidad de las operaciones realizadas en SEGURPLAN.
+            </p>
+
+
+            <div id="mensaje-error"
+                 class="mensaje-error">
+            </div>
+
+
+            <div class="panel">
+
+                <div class="filtros">
+
+                    <div class="campo">
+
+                        <label for="buscar">
+                            Buscar
+                        </label>
+
+                        <input
+                            id="buscar"
+                            type="text"
+                            autocomplete="off"
+                            placeholder="Usuario, correo, acción, entidad o registro...">
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label for="entidad">
+                            Entidad
+                        </label>
+
+                        <select id="entidad">
+
+                            <option value="">
+                                Todas
+                            </option>
+
+                            <option value="Usuario">
+                                Usuario
+                            </option>
+
+                            <option value="Cotizacion">
+                                Cotización
+                            </option>
+
+                            <option value="Contratacion">
+                                Contratación
+                            </option>
+
+                            <option value="Poliza">
+                                Póliza
+                            </option>
+
+                            <option value="Siniestro">
+                                Siniestro
+                            </option>
+
+                            <option value="Documento">
+                                Documento
+                            </option>
+
+                            <option value="Prevision">
+                                Previsión / AFP
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <button
+                        id="btn-actualizar"
+                        class="btn"
+                        type="button">
+
+                        Actualizar
+
+                    </button>
+
+                </div>
+
+
+                <div class="resumen">
+
+                    <span id="contador">
+                        0 registros
+                    </span>
+
+                    <span>
+                        Solo consulta
+                    </span>
+
+                </div>
+
+
+                <div class="tabla-contenedor">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>ID</th>
+
+                                <th>Fecha y hora</th>
+
+                                <th>Usuario</th>
+
+                                <th>Entidad</th>
+
+                                <th>Registro</th>
+
+                                <th>Acción</th>
+
+                                <th>Valor anterior</th>
+
+                                <th>Valor nuevo</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="tabla-historial">
+
+                            <tr>
+
+                                <td colspan="8"
+                                    class="vacio">
+
+                                    Cargando historial...
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <script src="../assets/app.js"></script>
+
+        <script>
+
+            let historial = [];
+
+
+            document.addEventListener(
+                    'DOMContentLoaded',
+                    iniciar
+                    );
+
+
+            async function iniciar() {
+
+                document.getElementById(
+                        'buscar'
+                        ).value = '';
+
+
+                document.getElementById(
+                        'buscar'
+                        ).addEventListener(
+                        'input',
+                        aplicarFiltros
+                        );
+
+
+                document.getElementById(
+                        'entidad'
+                        ).addEventListener(
+                        'change',
+                        aplicarFiltros
+                        );
+
+
+                document.getElementById(
+                        'btn-actualizar'
+                        ).addEventListener(
+                        'click',
+                        cargarHistorial
+                        );
+
+
+                try {
+
+                    const sesion = await sp_getSession();
+
+                    if (!sesion) {
+
+                        window.location.href =
+                                's01-login.html';
+
+                        return;
+                    }
+
+                    const rol = String(
+                            sesion.rol || ''
+                            )
+                            .trim()
+                            .toLowerCase();
+
+                    if (rol !== 'administrador') {
+
+                        alert(
+                                'No tiene permisos para acceder al historial del sistema.'
+                                );
+
+                        window.location.href =
+                                's14-administracion.html';
+
+                        return;
+                    }
+
+                    await cargarHistorial();
+
+
+                } catch (error) {
+
+                    mostrarError(
+                            error.message
+                            );
+                }
+            }
+
+
+            // =====================================================
+            // CARGAR HISTORIAL
+            // =====================================================
+
+            async function cargarHistorial() {
+
+                ocultarError();
+
+
+                const cuerpoTabla =
+                        document.getElementById(
+                                'tabla-historial'
+                                );
+
+
+                cuerpoTabla.innerHTML = `
+                    <tr>
+                        <td colspan="8"
+                            class="vacio">
+                            Cargando historial...
+                        </td>
+                    </tr>
+                `;
+
+
+                try {
+
+                    const response =
+                            await fetch(
+                                    '/api/admin/historial',
+                                    {
+                                        method: 'GET',
+                                        credentials: 'same-origin'
+                                    }
+                            );
+
+
+                    if (response.status === 401) {
+
+                        window.location.href =
+                                's01-login.html';
+
+                        return;
+                    }
+
+
+                    if (response.status === 403) {
+
+                        throw new Error(
+                                'No tiene permisos para consultar el historial.'
+                                );
+                    }
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                                'No se pudo cargar el historial. HTTP '
+                                + response.status
+                                );
+                    }
+
+
+                    const data =
+                            await response.json();
+
+
+                    historial =
+                            Array.isArray(data)
+                            ? data
+                            : [];
+
+
+                    aplicarFiltros();
+
+
+                } catch (error) {
+
+                    historial = [];
+
+                    renderizar(
+                            []
+                            );
+
+                    mostrarError(
+                            error.message
+                            );
+                }
+            }
+
+
+            // =====================================================
+            // FILTROS
+            // =====================================================
+
+            function aplicarFiltros() {
+
+                const texto =
+                        document.getElementById(
+                                'buscar'
+                                )
+                        .value
+                        .trim()
+                        .toLowerCase();
+
+
+                const entidad =
+                        document.getElementById(
+                                'entidad'
+                                )
+                        .value
+                        .trim()
+                        .toLowerCase();
+
+
+                const filtrados =
+                        historial.filter(
+                                item => {
+
+                                    const coincideEntidad =
+                                            !entidad
+                                            || String(
+                                                    item.entidad || ''
+                                                    )
+                                            .toLowerCase()
+                                            === entidad;
+
+
+                                    const contenido =
+                                            [
+                                                item.idHistorial,
+                                                item.idUsuario,
+                                                item.usuario,
+                                                item.correoUsuario,
+                                                item.entidad,
+                                                item.idRegistro,
+                                                item.accion,
+                                                item.valorAnterior,
+                                                item.valorNuevo
+                                            ]
+                                            .map(
+                                                    valor =>
+                                                String(
+                                                        valor ?? ''
+                                                        )
+                                                        .toLowerCase()
+                                            )
+                                            .join(' ');
+
+
+                                    const coincideTexto =
+                                            !texto
+                                            || contenido.includes(
+                                                    texto
+                                                    );
+
+
+                                    return coincideEntidad
+                                            && coincideTexto;
+                                }
+                        );
+
+
+                renderizar(
+                        filtrados
+                        );
+            }
+
+
+            // =====================================================
+            // RENDERIZAR TABLA
+            // =====================================================
+
+            function renderizar(
+                    registros
+                    ) {
+
+                const tbody =
+                        document.getElementById(
+                                'tabla-historial'
+                                );
+
+
+                const contador =
+                        document.getElementById(
+                                'contador'
+                                );
+
+
+                contador.textContent =
+                        registros.length
+                        + (
+                                registros.length === 1
+                                ? ' registro'
+                                : ' registros'
+                                );
+
+
+                if (registros.length === 0) {
+
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8"
+                                class="vacio">
+                                No existen registros para mostrar.
+                            </td>
+                        </tr>
+                    `;
+
+                    return;
+                }
+
+
+                tbody.innerHTML =
+                        registros
+                        .map(
+                                item => {
+
+                                    return `
+                                <tr>
+
+                                    <td>
+                                        ${escapeHtml(
+                                            item.idHistorial
+                                            )}
+                                    </td>
+
+                                    <td>
+                                        ${escapeHtml(
+                                            formatearFecha(
+                                                    item.fechaHora
+                                                    )
+                                            )}
+                                    </td>
+
+                                    <td>
+
+                                        <span class="usuario-nombre">
+
+                                            ${escapeHtml(
+                                            item.usuario
+                                            || 'Sistema'
+                                            )}
+
+                                        </span>
+
+                                        ${
+                                            item.correoUsuario
+                                            ? `
+                                                <span class="usuario-correo">
+                                                    ${escapeHtml(
+                                                    item.correoUsuario
+                                                    )}
+                                                </span>
+                                              `
+                                            : ''
+                                            }
+
+                                    </td>
+
+                                    <td>
+
+                                        <span class="badge">
+
+                                            ${escapeHtml(
+                                                    item.entidad
+                                                    || '-'
+                                                    )}
+
+                                        </span>
+
+                                    </td>
+
+                                    <td>
+                                        #${escapeHtml(
+                                            item.idRegistro
+                                            ?? '-'
+                                            )}
+                                    </td>
+
+                                    <td>
+                                        ${escapeHtml(
+                                            formatearAccion(
+                                                    item.accion
+                                                    )
+                                            )}
+                                    </td>
+
+                                    <td class="valor">
+                                        ${escapeHtml(
+                                            item.valorAnterior
+                                            ?? '-'
+                                            )}
+                                    </td>
+
+                                    <td class="valor">
+                                        ${escapeHtml(
+                                            item.valorNuevo
+                                            ?? '-'
+                                            )}
+                                    </td>
+
+                                </tr>
+                            `;
+                                }
+                        )
+                        .join('');
+            }
+
+
+            // =====================================================
+            // FECHA
+            // =====================================================
+
+            function formatearFecha(
+                    fecha
+                    ) {
+
+                if (!fecha) {
+
+                    return '-';
+                }
+
+
+                const date =
+                        new Date(fecha);
+
+
+                if (Number.isNaN(
+                        date.getTime()
+                        )) {
+
+                    return fecha;
+                }
+
+
+                return date.toLocaleString(
+                        'es-PE',
+                        {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit'
+                        }
+                );
+            }
+
+
+            // =====================================================
+            // ACCIÓN
+            // =====================================================
+
+            function formatearAccion(
+                    accion
+                    ) {
+
+                if (!accion) {
+
+                    return '-';
+                }
+
+
+                return String(accion)
+                        .replaceAll(
+                                '_',
+                                ' '
+                                );
+            }
+
+
+            // =====================================================
+            // SEGURIDAD HTML
+            // =====================================================
+
+            function escapeHtml(
+                    valor
+                    ) {
+
+                return String(
+                        valor ?? ''
+                        )
+                        .replaceAll(
+                                '&',
+                                '&amp;'
+                                )
+                        .replaceAll(
+                                '<',
+                                '&lt;'
+                                )
+                        .replaceAll(
+                                '>',
+                                '&gt;'
+                                )
+                        .replaceAll(
+                                '"',
+                                '&quot;'
+                                )
+                        .replaceAll(
+                                "'",
+                                '&#039;'
+                                );
+            }
+
+
+            // =====================================================
+            // MENSAJES
+            // =====================================================
+
+            function mostrarError(
+                    mensaje
+                    ) {
+
+                const elemento =
+                        document.getElementById(
+                                'mensaje-error'
+                                );
+
+
+                elemento.textContent =
+                        mensaje;
+
+
+                elemento.style.display =
+                        'block';
+            }
+
+
+            function ocultarError() {
+
+                const elemento =
+                        document.getElementById(
+                                'mensaje-error'
+                                );
+
+
+                elemento.textContent =
+                        '';
+
+
+                elemento.style.display =
+                        'none';
+            }
+
+        </script>
+
+    </body>
+
+</html>

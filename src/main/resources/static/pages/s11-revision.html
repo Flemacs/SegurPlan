@@ -1,88 +1,1184 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>SEGURPLAN — Revisión preliminar</title>
-        <link rel="stylesheet" href="../assets/styles.css" />
-    </head>
-    <body>
-        <header class="site-header">
-            <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
-            <div class="header-right">
-                <span class="user-name">Usuario: María Quispe — Asesor</span>
-                <button class="bell-btn" title="Notificaciones">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                </button>
-                <button class="profile-btn">MI PERFIL</button>
-            </div>
-        </header>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <div class="page-wrap narrow">
-            <nav class="breadcrumb">SEGURPLAN &rsaquo; Siniestros &rsaquo; Revisión #000248</nav>
-            <h1 class="page-title">Revisión preliminar del siniestro</h1>
+    <title>SEGURPLAN — Revisión preliminar</title>
 
-            <div class="status-block info">Siniestro asignado — Revisión pendiente</div>
+    <link rel="stylesheet" href="../assets/styles.css" />
+<link rel="stylesheet" href="../assets/theme.css">
+<script src="../assets/theme.js"></script>
+</head>
 
-            <div class="card">
-                <div class="card-header">
-                    <h2>Siniestro #000248</h2>
-                    <p>Pendiente de revisión</p>
-                </div>
-                <div class="card-body">
-                    <dl class="data-grid">
-                        <dt>Usuario</dt><dd>Juan Pérez</dd>
-                        <dt>Vehículo</dt><dd>Toyota Corolla - ABC123</dd>
-                        <dt>Fecha accidente</dt><dd>25/08/2026</dd>
-                        <dt>Aseguradora asociada</dt><dd>___</dd>
-                    </dl>
+<body>
 
-                    <h3 class="section-title">Documentación recibida</h3>
-                    <ul class="file-list">
-                        <li class="file-item">
-                            <span class="file-icon doc">DOC</span>
-                            <div class="file-info">
-                                <span class="file-name">Datos del vehículo</span>
-                            </div>
-                            <span class="badge badge-green">Completo</span>
-                        </li>
-                        <li class="file-item">
-                            <span class="file-icon doc">DOC</span>
-                            <div class="file-info">
-                                <span class="file-name">Datos del accidente</span>
-                            </div>
-                            <span class="badge badge-green">Completo</span>
-                        </li>
-                        <li class="file-item">
-                            <span class="file-icon vid">MP4</span>
-                            <div class="file-info">
-                                <span class="file-name">Evidencias multimedia</span>
-                            </div>
-                            <span class="badge badge-green">2 archivos</span>
-                        </li>
-                    </ul>
+<header class="site-header">
 
-                    <h3 class="section-title">Estado de la revisión</h3>
-                    <span class="badge badge-green">INFORMACIÓN COMPLETA</span>
-                </div>
-                <div class="card-footer">
-                    <button class="btn btn-primary" onclick="window.location.href = 's12-seguimiento.html'">DERIVAR A ASEGURADORA</button>
-                    <button class="btn btn-outline">SOLICITAR INFORMACIÓN ADICIONAL</button>
-                </div>
-            </div>
+    <div class="logo">
+        SEGURPLAN
+        <span>Plataforma de seguros y AFP</span>
+    </div>
+
+    <div class="header-right">
+
+        <span
+            class="user-name"
+            id="header-user">
+            Usuario
+        </span>
+
+        <button
+            class="bell-btn"
+            title="Notificaciones">
+
+            <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+
+                <path
+                    d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+
+                <path
+                    d="M13.73 21a2 2 0 0 1-3.46 0"/>
+
+            </svg>
+
+        </button>
+
+        <button class="profile-btn">
+            MI PERFIL
+        </button>
+
+    </div>
+
+</header>
+
+
+<div class="page-wrap narrow">
+
+    <nav
+        class="breadcrumb"
+        id="breadcrumb">
+
+        SEGURPLAN &rsaquo;
+        Siniestros &rsaquo;
+        Revisión
+
+    </nav>
+
+
+    <h1 class="page-title">
+        Revisión preliminar del siniestro
+    </h1>
+
+
+    <div
+        class="status-block info"
+        id="estado-superior">
+
+        Cargando información del siniestro...
+
+    </div>
+
+
+    <div class="card">
+
+        <!-- =================================================
+             CABECERA
+             ================================================= -->
+
+        <div class="card-header">
+
+            <h2 id="numero-siniestro">
+                Siniestro
+            </h2>
+
+            <p id="estado-siniestro">
+                Cargando...
+            </p>
+
         </div>
 
-        <footer class="site-footer">
-            <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
-            <nav class="footer-links">
-                <a href="../index.html">Inicio</a>
-                <a href="s01-login.html">Iniciar sesión</a>
-                <a href="s00-registro.html">Registrarse</a>
-            </nav>
-            <div class="footer-meta">
-                <span>© 2026 SEGURPLAN. Todos los derechos reservados.</span>
+
+        <!-- =================================================
+             CUERPO
+             ================================================= -->
+
+        <div class="card-body">
+
+            <dl class="data-grid">
+
+                <dt>Usuario</dt>
+
+                <dd id="dato-usuario">
+                    —
+                </dd>
+
+
+                <dt>Vehículo</dt>
+
+                <dd id="dato-vehiculo">
+                    —
+                </dd>
+
+
+                <dt>Fecha accidente</dt>
+
+                <dd id="dato-fecha">
+                    —
+                </dd>
+
+
+                <dt>Aseguradora asociada</dt>
+
+                <dd id="dato-aseguradora">
+                    —
+                </dd>
+
+
+                <dt>Lugar</dt>
+
+                <dd id="dato-lugar">
+                    —
+                </dd>
+
+            </dl>
+
+
+            <!-- =================================================
+                 DOCUMENTACIÓN
+                 ================================================= -->
+
+            <h3 class="section-title">
+                Documentación recibida
+            </h3>
+
+
+            <div
+                id="documentos-lista"
+                class="file-list">
+
+                <div
+                    style="
+                        padding:16px;
+                        text-align:center;
+                        color:var(--text-muted);
+                    ">
+
+                    Cargando documentación...
+
+                </div>
+
             </div>
-        </footer>
-        <script src="../assets/app.js"></script>
-    </body>
+
+
+            <!-- =================================================
+                 ESTADO DOCUMENTACIÓN
+                 ================================================= -->
+
+            <h3 class="section-title">
+                Estado de la revisión
+            </h3>
+
+
+            <span
+                id="estado-documentacion"
+                class="badge">
+
+                VERIFICANDO...
+
+            </span>
+
+        </div>
+
+
+        <!-- =================================================
+             BOTONES
+             ================================================= -->
+
+        <div class="card-footer">
+
+            <button
+                class="btn btn-primary"
+                id="btn-derivar"
+                onclick="derivarAseguradora()">
+
+                DERIVAR A ASEGURADORA
+
+            </button>
+
+
+            <button
+                class="btn btn-outline"
+                id="btn-solicitar"
+                onclick="solicitarInformacion()">
+
+                SOLICITAR INFORMACIÓN ADICIONAL
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<footer class="site-footer">
+
+    <div class="footer-brand">
+
+        SEGURPLAN
+
+        <span>
+            Plataforma de seguros y AFP
+        </span>
+
+    </div>
+
+
+    <nav class="footer-links">
+
+        <a href="../index.html">
+            Inicio
+        </a>
+
+        <a href="s01-login.html">
+            Iniciar sesión
+        </a>
+
+        <a href="s00-registro.html">
+            Registrarse
+        </a>
+
+    </nav>
+
+
+    <div class="footer-meta">
+
+        <span>
+            © 2026 SEGURPLAN.
+            Todos los derechos reservados.
+        </span>
+
+    </div>
+
+</footer>
+
+
+<script src="../assets/app.js"></script>
+
+
+<script>
+
+/* =========================================================
+   VARIABLES
+   ========================================================= */
+
+let idSiniestroActual = null;
+
+let siniestroActual = null;
+
+let documentosActuales = [];
+
+
+/* =========================================================
+   INICIAR
+   ========================================================= */
+
+document.addEventListener(
+    'DOMContentLoaded',
+    async () => {
+
+        const session =
+            sp_getSession();
+
+
+        if (!session) {
+
+            window.location.href =
+                's01-login.html';
+
+            return;
+        }
+
+
+        /* -----------------------------------------
+           Usuario del header
+           ----------------------------------------- */
+
+        const header =
+            document.getElementById(
+                'header-user'
+            );
+
+
+        if (header) {
+
+            const nombre =
+                (
+                    (session.nombres || '') +
+                    ' ' +
+                    (session.apellidos || '')
+                ).trim();
+
+
+            const rol =
+                session.rol
+                    ? ' — ' + session.rol
+                    : '';
+
+
+            header.textContent =
+                'Usuario: ' +
+                (nombre || session.correo || 'Usuario') +
+                rol;
+        }
+
+
+        /* -----------------------------------------
+           ID del siniestro
+           ----------------------------------------- */
+
+        idSiniestroActual =
+            sessionStorage.getItem(
+                'sp_last_sin'
+            );
+
+
+        if (!idSiniestroActual) {
+
+            mostrarError(
+                'No se encontró el siniestro que debe revisarse.'
+            );
+
+            return;
+        }
+
+
+        await cargarRevision();
+    }
+);
+
+
+/* =========================================================
+   CARGAR REVISIÓN
+   ========================================================= */
+
+async function cargarRevision() {
+
+    try {
+
+        await Promise.all([
+            cargarSiniestro(),
+            cargarDocumentos()
+        ]);
+
+
+        mostrarSiniestro();
+
+        mostrarDocumentos();
+
+        evaluarDocumentacion();
+
+
+    } catch (error) {
+
+        console.error(
+            'Error cargando revisión:',
+            error
+        );
+
+
+        mostrarError(
+            error.message ||
+            'No se pudo cargar la revisión.'
+        );
+    }
+}
+
+
+/* =========================================================
+   CARGAR SINIESTRO
+   ========================================================= */
+
+async function cargarSiniestro() {
+
+    const response =
+    await fetch(
+        `/api/siniestros/asesor/${idSiniestroActual}`,
+        {
+            method: 'GET',
+            credentials: 'same-origin'
+        }
+    );
+
+
+    let resultado = null;
+
+
+    try {
+
+        resultado =
+            await response.json();
+
+    } catch (error) {
+
+        resultado = null;
+    }
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            resultado?.mensaje ||
+            `No se pudo consultar el siniestro. HTTP ${response.status}`
+        );
+    }
+
+
+    siniestroActual =
+        resultado;
+}
+
+
+/* =========================================================
+   CARGAR DOCUMENTOS
+   ========================================================= */
+
+async function cargarDocumentos() {
+
+    const response =
+        await fetch(
+            `/api/documentos/asesor/siniestro/${idSiniestroActual}`,
+            {
+                method: 'GET',
+                credentials: 'same-origin'
+            }
+        );
+
+
+    let resultado = null;
+
+
+    try {
+
+        resultado =
+            await response.json();
+
+    } catch (error) {
+
+        resultado = null;
+    }
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            resultado?.mensaje ||
+            `No se pudieron consultar las evidencias. HTTP ${response.status}`
+        );
+    }
+
+
+    documentosActuales =
+        Array.isArray(resultado)
+            ? resultado
+            : [];
+}
+
+
+/* =========================================================
+   MOSTRAR SINIESTRO
+   ========================================================= */
+
+function mostrarSiniestro() {
+
+    if (!siniestroActual) {
+        return;
+    }
+
+
+    const numero =
+        siniestroActual.numeroSiniestro ||
+        ('#' + idSiniestroActual);
+
+
+    document.getElementById(
+        'numero-siniestro'
+    ).textContent =
+        'Siniestro ' + numero;
+
+
+    document.getElementById(
+        'breadcrumb'
+    ).innerHTML =
+        'SEGURPLAN &rsaquo; ' +
+        'Siniestros &rsaquo; ' +
+        'Revisión ' +
+        escapeHtml(numero);
+
+
+    /* =====================================================
+       ESTADO
+       ===================================================== */
+
+    const estado =
+        siniestroActual.estado ||
+        'Registrado';
+
+
+    document.getElementById(
+        'estado-siniestro'
+    ).textContent =
+        estado;
+
+
+    document.getElementById(
+        'estado-superior'
+    ).textContent =
+        'Siniestro registrado — ' +
+        estado;
+
+
+    /* =====================================================
+       USUARIO
+       ===================================================== */
+
+    let usuario = 'Cliente registrado';
+
+
+    if (siniestroActual.nombreUsuario) {
+
+        usuario =
+            siniestroActual.nombreUsuario;
+
+    } else if (
+        siniestroActual.usuario
+    ) {
+
+        const u =
+            siniestroActual.usuario;
+
+
+        usuario =
+            (
+                (u.nombres || '') +
+                ' ' +
+                (u.apellidos || '')
+            ).trim() ||
+            u.correo ||
+            'Cliente registrado';
+    }
+
+
+    document.getElementById(
+        'dato-usuario'
+    ).textContent =
+        usuario;
+
+
+    /* =====================================================
+       VEHÍCULO
+       ===================================================== */
+
+    const marca =
+        siniestroActual.marca || '';
+
+
+    const modelo =
+        siniestroActual.modelo || '';
+
+
+    const placa =
+        siniestroActual.placa || '';
+
+
+    let vehiculo =
+        [marca, modelo]
+            .filter(Boolean)
+            .join(' ');
+
+
+    if (placa) {
+
+        vehiculo +=
+            (vehiculo ? ' - ' : '') +
+            placa;
+    }
+
+
+    document.getElementById(
+        'dato-vehiculo'
+    ).textContent =
+        vehiculo || '—';
+
+
+    /* =====================================================
+       FECHA
+       ===================================================== */
+
+    document.getElementById(
+        'dato-fecha'
+    ).textContent =
+        formatearFecha(
+            siniestroActual.fechaAccidente
+        );
+
+
+    /* =====================================================
+       ASEGURADORA
+       ===================================================== */
+
+    let aseguradora = '—';
+
+
+    if (
+        siniestroActual.nombreAseguradora
+    ) {
+
+        aseguradora =
+            siniestroActual.nombreAseguradora;
+
+    } else if (
+        siniestroActual.aseguradora
+    ) {
+
+        aseguradora =
+            siniestroActual.aseguradora.nombre ||
+            siniestroActual.aseguradora.nombreAseguradora ||
+            '—';
+
+    } else if (
+        siniestroActual.idAseguradora
+    ) {
+
+        aseguradora =
+            'Aseguradora #' +
+            siniestroActual.idAseguradora;
+    }
+
+
+    document.getElementById(
+        'dato-aseguradora'
+    ).textContent =
+        aseguradora;
+
+
+    /* =====================================================
+       LUGAR
+       ===================================================== */
+
+    document.getElementById(
+        'dato-lugar'
+    ).textContent =
+        siniestroActual.lugar ||
+        '—';
+}
+
+
+/* =========================================================
+   MOSTRAR DOCUMENTOS
+   ========================================================= */
+
+function mostrarDocumentos() {
+
+    const contenedor =
+        document.getElementById(
+            'documentos-lista'
+        );
+
+
+    contenedor.innerHTML = '';
+
+
+    if (
+        documentosActuales.length === 0
+    ) {
+
+        contenedor.innerHTML = `
+            <div
+                class="notice warning"
+                style="margin-top:8px;">
+
+                No se encontraron documentos
+                asociados al siniestro.
+
+            </div>
+        `;
+
+        return;
+    }
+
+
+    documentosActuales.forEach(
+        documento => {
+
+            const fila =
+                document.createElement('div');
+
+            fila.className =
+                'file-item';
+
+
+            const icono =
+                obtenerIconoDocumento(
+                    documento.tipoDocumento
+                );
+
+
+            fila.innerHTML = `
+
+                <span class="file-icon ${icono.clase}">
+                    ${escapeHtml(icono.texto)}
+                </span>
+
+                <div class="file-info">
+
+                    <span class="file-name">
+                        ${escapeHtml(
+                            nombreTipoDocumento(
+                                documento.tipoDocumento
+                            )
+                        )}
+                    </span>
+
+                    <span
+                        style="
+                            display:block;
+                            font-size:11px;
+                            color:var(--text-muted);
+                            margin-top:2px;
+                        ">
+
+                        ${escapeHtml(
+                            documento.nombreArchivo ||
+                            ''
+                        )}
+
+                    </span>
+
+                </div>
+
+                <span class="badge badge-green">
+                    ${escapeHtml(
+                        documento.estado ||
+                        'Cargado'
+                    )}
+                </span>
+            `;
+
+
+            contenedor.appendChild(
+                fila
+            );
+        }
+    );
+}
+
+
+/* =========================================================
+   EVALUAR DOCUMENTACIÓN
+   ========================================================= */
+
+function evaluarDocumentacion() {
+
+    const requeridos = [
+        'DNI',
+        'LICENCIA',
+        'TARJETA_PROPIEDAD',
+        'SOAT'
+    ];
+
+
+    const tipos =
+        documentosActuales.map(
+            documento =>
+                documento.tipoDocumento
+        );
+
+
+    const faltantes =
+        requeridos.filter(
+            requerido =>
+                !tipos.includes(
+                    requerido
+                )
+        );
+
+
+    const badge =
+        document.getElementById(
+            'estado-documentacion'
+        );
+
+
+    const botonDerivar =
+        document.getElementById(
+            'btn-derivar'
+        );
+
+
+    if (faltantes.length === 0) {
+
+        badge.className =
+            'badge badge-green';
+
+        badge.textContent =
+            'INFORMACIÓN COMPLETA';
+
+
+        botonDerivar.disabled =
+            false;
+
+        return;
+    }
+
+
+    badge.className =
+        'badge';
+
+    badge.textContent =
+        'INFORMACIÓN INCOMPLETA';
+
+
+    botonDerivar.disabled =
+        true;
+}
+
+
+/* =========================================================
+   DERIVAR A ASEGURADORA
+   ========================================================= */
+
+async function derivarAseguradora() {
+
+    if (!idSiniestroActual) {
+
+        alert(
+            'No se encontró el siniestro.'
+        );
+
+        return;
+    }
+
+
+    if (!confirm(
+        '¿Desea derivar este siniestro a la aseguradora?'
+    )) {
+
+        return;
+    }
+
+
+    const boton =
+        document.getElementById(
+            'btn-derivar'
+        );
+
+
+    const textoOriginal =
+        boton.textContent;
+
+
+    boton.disabled = true;
+
+    boton.textContent =
+        'DERIVANDO...';
+
+
+    try {
+
+        // ==========================================
+        // TOKEN CSRF
+        // ==========================================
+
+        const csrf =
+            await sp_getCsrfToken();
+
+
+        // ==========================================
+        // PETICIÓN
+        // ==========================================
+
+        const response =
+            await fetch(
+                `/api/siniestros/${idSiniestroActual}/derivar`,
+                {
+                    method: 'PUT',
+
+                    credentials:
+                        'same-origin',
+
+                    headers: {
+
+                        'Content-Type':
+                            'application/json',
+
+                        [csrf.headerName]:
+                            csrf.token
+                    }
+                }
+            );
+
+
+        let resultado = null;
+
+
+        try {
+
+            resultado =
+                await response.json();
+
+        } catch (error) {
+
+            resultado = null;
+        }
+
+
+        // ==========================================
+        // ERROR
+        // ==========================================
+
+        if (!response.ok) {
+
+            throw new Error(
+                resultado?.mensaje ||
+                `Error HTTP ${response.status}`
+            );
+        }
+
+
+        // ==========================================
+        // ÉXITO
+        // ==========================================
+
+        alert(
+            'Siniestro derivado correctamente.\n\n' +
+            'Número: ' +
+            (
+                resultado.numeroSiniestro ||
+                idSiniestroActual
+            )
+        );
+
+
+        sessionStorage.setItem(
+            'sp_last_sin',
+            idSiniestroActual
+        );
+
+
+        window.location.href =
+            's12-seguimiento.html';
+
+
+    } catch (error) {
+
+        console.error(
+            'Error derivando siniestro:',
+            error
+        );
+
+
+        alert(
+            'No se pudo derivar el siniestro.\n\n' +
+            error.message
+        );
+
+
+        boton.disabled = false;
+
+        boton.textContent =
+            textoOriginal;
+    }
+}
+
+/* =========================================================
+   SOLICITAR INFORMACIÓN
+   ========================================================= */
+
+function solicitarInformacion() {
+
+    alert(
+        'La solicitud de información adicional ' +
+        'será registrada en la siguiente integración.'
+    );
+}
+
+
+/* =========================================================
+   NOMBRE DEL TIPO
+   ========================================================= */
+
+function nombreTipoDocumento(tipo) {
+
+    const nombres = {
+
+        DNI:
+            'DNI del titular',
+
+        LICENCIA:
+            'Licencia de conducir',
+
+        TARJETA_PROPIEDAD:
+            'Tarjeta de propiedad',
+
+        SOAT:
+            'SOAT vigente',
+
+        DENUNCIA_POLICIAL:
+            'Denuncia / acta policial',
+
+        FOTO_ACCIDENTE:
+            'Fotografía del accidente',
+
+        VIDEO_ACCIDENTE:
+            'Video del accidente'
+    };
+
+
+    return nombres[tipo] ||
+           tipo ||
+           'Documento';
+}
+
+
+/* =========================================================
+   ICONO
+   ========================================================= */
+
+function obtenerIconoDocumento(tipo) {
+
+    if (
+        tipo === 'VIDEO_ACCIDENTE'
+    ) {
+
+        return {
+            texto: 'VID',
+            clase: 'vid'
+        };
+    }
+
+
+    if (
+        tipo === 'FOTO_ACCIDENTE'
+    ) {
+
+        return {
+            texto: 'IMG',
+            clase: 'img'
+        };
+    }
+
+
+    return {
+        texto: 'DOC',
+        clase: 'doc'
+    };
+}
+
+
+/* =========================================================
+   FECHA
+   ========================================================= */
+
+function formatearFecha(fecha) {
+
+    if (!fecha) {
+        return '—';
+    }
+
+
+    /*
+     * Soporta:
+     *
+     * 2026-09-23
+     * 2026-09-23T23:24:00
+     */
+
+    const soloFecha =
+        String(fecha)
+            .substring(0, 10);
+
+
+    const partes =
+        soloFecha.split('-');
+
+
+    if (partes.length !== 3) {
+        return fecha;
+    }
+
+
+    return (
+        partes[2] +
+        '/' +
+        partes[1] +
+        '/' +
+        partes[0]
+    );
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+function mostrarError(mensaje) {
+
+    const estado =
+        document.getElementById(
+            'estado-superior'
+        );
+
+
+    if (estado) {
+
+        estado.className =
+            'status-block';
+
+        estado.textContent =
+            mensaje;
+    }
+
+
+    const boton =
+        document.getElementById(
+            'btn-derivar'
+        );
+
+
+    if (boton) {
+
+        boton.disabled =
+            true;
+    }
+}
+
+
+/* =========================================================
+   ESCAPAR HTML
+   ========================================================= */
+
+function escapeHtml(valor) {
+
+    return String(valor ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+}
+
+</script>
+
+</body>
 </html>

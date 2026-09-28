@@ -19,4 +19,9 @@ public interface SiniestroRepository
     findByUsuario_IdUsuarioOrderByFechaRegistroDesc(
             Long idUsuario
     );
+
+    List<Siniestro>
+    findByEstadoOrderByFechaRegistroDesc(
+            String estado
+    );
 }

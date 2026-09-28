@@ -1,14 +1,1424 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SEGURPLAN — REP-DG-01 Reporte general</title><link rel="stylesheet" href="../assets/styles.css"><style>
-.report-nav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 24px}.report-nav a{padding:9px 12px;border:1px solid #d7dce5;border-radius:6px;background:#fff;color:#183153;font-size:12px;font-weight:700;text-decoration:none}.report-nav a:hover{background:#eef2f8}.report-code{display:inline-block;padding:5px 9px;border-radius:20px;background:#eef2f8;color:#183153;font-size:12px;font-weight:800;margin-bottom:10px}.report-toolbar{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin:22px 0}.report-toolbar .field{display:flex;flex-direction:column;gap:6px}.report-toolbar label{font-size:12px;font-weight:700}.report-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0 24px}.report-kpi{background:#fff;border:1px solid #dfe3ea;border-radius:8px;padding:18px}.report-kpi strong{display:block;font-size:25px;color:#183153;margin-bottom:5px}.report-kpi span{font-size:11px;color:#687386;text-transform:uppercase;font-weight:700}.chart-panel{height:250px;display:flex;align-items:flex-end;gap:18px;padding:28px 24px 12px;border:1px solid #e1e5eb;border-radius:8px;background:#fafbfc;margin-bottom:24px}.chart-col{flex:1;min-width:40px;text-align:center}.chart-bar{margin:auto;width:min(65px,80%);background:#183153;border-radius:6px 6px 0 0;min-height:22px}.chart-col small{display:block;margin-top:8px;font-size:10px;color:#687386}.report-note{font-size:12px;color:#687386;margin-top:12px}.status-pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#eef2f8;font-weight:700;font-size:11px}@media(max-width:760px){.report-kpis{grid-template-columns:repeat(2,1fr)}.chart-panel{gap:8px}.site-header{height:auto}.header-right{flex-wrap:wrap}}
-</style></head><body>
-<header class="site-header"><div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div><div class="header-right"><span class="user-name" id="header-user">Usuario</span><button class="profile-btn" type="button">MI PERFIL</button><button class="btn-logout" type="button">CERRAR SESIÓN</button></div></header>
-<div class="page-wrap"><nav class="breadcrumb">SEGURPLAN &rsaquo; Reportes &rsaquo; Dirección / Gerencia General &rsaquo; Reporte general</nav><div class="report-nav"><a href="rep-mv-01-cotizaciones-estado.html">Marketing y Ventas</a><a href="rep-la-01-documentos.html">Logística</a><a href="rep-po-01-afp.html">Operaciones</a><a href="rep-dg-01-general.html">Gerencia</a><a href="rep-ot-02-trazabilidad.html">Trazabilidad</a><a href="s14-administracion.html">Administración</a></div><span class="report-code">REP-DG-01</span><h1 class="page-title">Reporte general</h1><p class="page-subtitle">Vista consolidada de cotizaciones, pólizas, siniestros y servicios AFP del período.</p>
-<div class="report-toolbar"><div class="field"><label for="periodo">Período</label><input class="form-control" id="periodo" type="month"></div><button class="btn btn-primary" id="btn-generar" type="button">GENERAR</button><button class="btn btn-secondary" id="btn-exportar" type="button">EXPORTAR CSV</button></div>
-<div class="report-kpis"><div class="report-kpi"><strong>50</strong><span>Cotizaciones</span></div><div class="report-kpi"><strong>20</strong><span>Pólizas</span></div><div class="report-kpi"><strong>31</strong><span>Siniestros</span></div><div class="report-kpi"><strong>35</strong><span>Registros AFP</span></div></div><div class="card"><div class="card-header"><h2>Resumen visual</h2></div><div class="card-body"><div class="chart-panel"><div class="chart-col"><div class="chart-bar" style="height:55px"></div><small>Cotizaciones</small></div><div class="chart-col"><div class="chart-bar" style="height:87px"></div><small>Pólizas</small></div><div class="chart-col"><div class="chart-bar" style="height:119px"></div><small>Siniestros</small></div><div class="chart-col"><div class="chart-bar" style="height:151px"></div><small>Registros AFP</small></div></div><p class="report-note">Vista preliminar. Los valores se reemplazan con la respuesta del endpoint del reporte al conectar el backend.</p></div></div>
-<div class="card" style="margin-top:20px"><div class="card-header"><h2>Detalle del reporte</h2></div><div class="card-body"><div class="table-wrap"><table id="tabla-reporte"><thead><tr><th>Módulo</th><th>Total</th><th>Atendidos / activos</th><th>Resultado</th></tr></thead><tbody><tr><td>Cotizaciones</td><td>50</td><td>38</td><td>22 aceptadas</td></tr><tr><td>Pólizas</td><td>20</td><td>18</td><td>S/ 24,850.00</td></tr><tr><td>Siniestros</td><td>31</td><td>26</td><td>7 aprobados</td></tr><tr><td>AFP</td><td>35</td><td>28</td><td>17 orientaciones</td></tr></tbody></table></div></div></div></div>
-<script src="../assets/app.js"></script><script>
-const sesion=sp_requireAuth('s01-login.html');if(sesion){document.getElementById('header-user').textContent=(sesion.nombres||'Usuario')+' '+(sesion.apellidos||'');}
-document.querySelector('.btn-logout').addEventListener('click',sp_logout);const p=document.getElementById('periodo');const d=new Date();p.value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
-document.getElementById('btn-generar').addEventListener('click',()=>alert('Reporte REP-DG-01: interfaz lista. Conecte el endpoint /api/reportes correspondiente para cargar datos reales.'));
-document.getElementById('btn-exportar').addEventListener('click',()=>{const rows=[...document.querySelectorAll('#tabla-reporte tr')].map(r=>[...r.children].map(c=>'"'+c.innerText.replaceAll('"','""')+'"').join(';')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+rows],{type:'text/csv;charset=utf-8'}));a.download='REP-DG-01_'+p.value+'.csv';a.click();URL.revokeObjectURL(a.href);});
-</script></body></html>
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1">
+
+    <title>
+        SEGURPLAN — REP-DG-01 Reporte general
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="../assets/styles.css">
+
+    <style>
+
+        .report-nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 0 0 24px;
+        }
+
+        .report-nav a {
+            padding: 9px 12px;
+            border: 1px solid #d7dce5;
+            border-radius: 6px;
+            background: #fff;
+            color: #183153;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .report-nav a:hover {
+            background: #eef2f8;
+        }
+
+        .report-code {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #eef2f8;
+            color: #183153;
+            font-size: 12px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .report-toolbar {
+            display: flex;
+            gap: 12px;
+            align-items: end;
+            flex-wrap: wrap;
+            margin: 22px 0;
+        }
+
+        .report-toolbar .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .report-toolbar label {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .report-kpis {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin: 18px 0 24px;
+        }
+
+        .report-kpi {
+            background: #fff;
+            border: 1px solid #dfe3ea;
+            border-radius: 8px;
+            padding: 18px;
+        }
+
+        .report-kpi strong {
+            display: block;
+            font-size: 25px;
+            color: #183153;
+            margin-bottom: 5px;
+        }
+
+        .report-kpi span {
+            font-size: 11px;
+            color: #687386;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .chart-panel {
+            height: 270px;
+            display: flex;
+            align-items: flex-end;
+            gap: 25px;
+            padding: 28px 30px 12px;
+            border: 1px solid #e1e5eb;
+            border-radius: 8px;
+            background: #fafbfc;
+            margin-bottom: 20px;
+        }
+
+        .chart-col {
+            flex: 1;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .chart-value {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 12px;
+            font-weight: 800;
+            color: #183153;
+        }
+
+        .chart-bar {
+            margin: auto;
+            width: min(70px, 80%);
+            background: #183153;
+            border-radius: 6px 6px 0 0;
+            min-height: 0;
+            transition: height .4s ease;
+        }
+
+        .chart-col small {
+            display: block;
+            margin-top: 8px;
+            font-size: 10px;
+            color: #687386;
+        }
+
+        .report-note {
+            font-size: 12px;
+            color: #687386;
+            margin-top: 12px;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        #tabla-reporte {
+            width: 100%;
+        }
+
+        .status-pill {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #eef2f8;
+            color: #183153;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        @media(max-width:760px) {
+
+            .report-kpis {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .chart-panel {
+                gap: 8px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .site-header {
+                height: auto;
+            }
+
+            .header-right {
+                flex-wrap: wrap;
+            }
+        }
+
+    </style>
+
+<link rel="stylesheet" href="../assets/theme.css">
+<script src="../assets/theme.js"></script>
+</head>
+
+
+<body>
+
+
+<!-- ===================================================== -->
+<!-- HEADER -->
+<!-- ===================================================== -->
+
+<header class="site-header">
+
+    <div class="logo">
+
+        SEGURPLAN
+
+        <span>
+            Plataforma de seguros y AFP
+        </span>
+
+    </div>
+
+
+    <div class="header-right">
+
+        <span
+            class="user-name"
+            id="header-user">
+
+            Usuario
+
+        </span>
+
+
+        <button
+            class="profile-btn"
+            type="button">
+
+            MI PERFIL
+
+        </button>
+
+
+        <button
+            class="btn-logout"
+            type="button">
+
+            CERRAR SESIÓN
+
+        </button>
+
+    </div>
+
+</header>
+
+
+
+<!-- ===================================================== -->
+<!-- CONTENIDO -->
+<!-- ===================================================== -->
+
+<div class="page-wrap">
+
+
+    <nav class="breadcrumb">
+
+        SEGURPLAN
+        &rsaquo;
+        Reportes
+        &rsaquo;
+        Dirección / Gerencia General
+        &rsaquo;
+        Reporte general
+
+    </nav>
+
+
+
+    <!-- NAVEGACIÓN -->
+
+    <div class="report-nav">
+
+        <a href="rep-mv-01-cotizaciones-estado.html">
+            Marketing y Ventas
+        </a>
+
+        <a href="rep-la-01-documentos.html">
+            Logística
+        </a>
+
+        <a href="rep-po-01-afp.html">
+            Operaciones
+        </a>
+
+        <a href="rep-dg-01-general.html">
+            Gerencia
+        </a>
+
+        <a href="rep-ot-02-trazabilidad.html">
+            Trazabilidad
+        </a>
+
+        <a href="s14-administracion.html">
+            Administración
+        </a>
+
+    </div>
+
+
+
+    <!-- ================================================= -->
+    <!-- TÍTULO -->
+    <!-- ================================================= -->
+
+    <span class="report-code">
+        REP-DG-01
+    </span>
+
+
+    <h1 class="page-title">
+        Reporte general
+    </h1>
+
+
+    <p class="page-subtitle">
+
+        Vista consolidada de cotizaciones,
+        siniestros y servicios AFP registrados
+        durante el período seleccionado.
+
+    </p>
+
+
+
+    <!-- ================================================= -->
+    <!-- FILTRO -->
+    <!-- ================================================= -->
+
+    <div class="report-toolbar">
+
+
+        <div class="field">
+
+            <label for="periodo">
+                Período
+            </label>
+
+            <input
+                class="form-control"
+                id="periodo"
+                type="month">
+
+        </div>
+
+
+        <button
+            class="btn btn-primary"
+            id="btn-generar"
+            type="button">
+
+            GENERAR
+
+        </button>
+
+
+        <button
+            class="btn btn-secondary"
+            id="btn-exportar"
+            type="button">
+
+            EXPORTAR CSV
+
+        </button>
+
+
+    </div>
+
+
+
+    <!-- ================================================= -->
+    <!-- KPI -->
+    <!-- ================================================= -->
+
+    <div class="report-kpis">
+
+
+        <div class="report-kpi">
+
+            <strong id="kpi-cotizaciones">
+                0
+            </strong>
+
+            <span>
+                Cotizaciones
+            </span>
+
+        </div>
+
+
+        <div class="report-kpi">
+
+            <strong id="kpi-atendidas">
+                0
+            </strong>
+
+            <span>
+                Cotizaciones atendidas
+            </span>
+
+        </div>
+
+
+        <div class="report-kpi">
+
+            <strong id="kpi-siniestros">
+                0
+            </strong>
+
+            <span>
+                Siniestros
+            </span>
+
+        </div>
+
+
+        <div class="report-kpi">
+
+            <strong id="kpi-afp">
+                0
+            </strong>
+
+            <span>
+                Registros AFP
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- ================================================= -->
+    <!-- GRÁFICO -->
+    <!-- ================================================= -->
+
+    <div class="card">
+
+
+        <div class="card-header">
+
+            <h2>
+                Resumen general
+            </h2>
+
+        </div>
+
+
+        <div class="card-body">
+
+
+            <div class="chart-panel">
+
+
+                <!-- COTIZACIONES -->
+
+                <div class="chart-col">
+
+                    <span
+                        class="chart-value"
+                        id="valor-cotizaciones">
+                        0
+                    </span>
+
+                    <div
+                        class="chart-bar"
+                        id="barra-cotizaciones"
+                        style="height:0">
+                    </div>
+
+                    <small>
+                        Cotizaciones
+                    </small>
+
+                </div>
+
+
+
+                <!-- ATENDIDAS -->
+
+                <div class="chart-col">
+
+                    <span
+                        class="chart-value"
+                        id="valor-atendidas">
+                        0
+                    </span>
+
+                    <div
+                        class="chart-bar"
+                        id="barra-atendidas"
+                        style="height:0">
+                    </div>
+
+                    <small>
+                        Atendidas
+                    </small>
+
+                </div>
+
+
+
+                <!-- SINIESTROS -->
+
+                <div class="chart-col">
+
+                    <span
+                        class="chart-value"
+                        id="valor-siniestros">
+                        0
+                    </span>
+
+                    <div
+                        class="chart-bar"
+                        id="barra-siniestros"
+                        style="height:0">
+                    </div>
+
+                    <small>
+                        Siniestros
+                    </small>
+
+                </div>
+
+
+
+                <!-- AFP -->
+
+                <div class="chart-col">
+
+                    <span
+                        class="chart-value"
+                        id="valor-afp">
+                        0
+                    </span>
+
+                    <div
+                        class="chart-bar"
+                        id="barra-afp"
+                        style="height:0">
+                    </div>
+
+                    <small>
+                        AFP
+                    </small>
+
+                </div>
+
+
+            </div>
+
+
+            <p
+                class="report-note"
+                id="nota-periodo">
+
+                Seleccione un período para generar
+                el reporte general.
+
+            </p>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================================================= -->
+    <!-- DETALLE -->
+    <!-- ================================================= -->
+
+    <div
+        class="card"
+        style="margin-top:20px">
+
+
+        <div class="card-header">
+
+            <h2>
+                Detalle del reporte
+            </h2>
+
+        </div>
+
+
+        <div class="card-body">
+
+
+            <div class="table-wrap">
+
+
+                <table id="tabla-reporte">
+
+
+                    <thead>
+
+                    <tr>
+
+                        <th>
+                            Módulo
+                        </th>
+
+                        <th>
+                            Total
+                        </th>
+
+                        <th>
+                            Gestión
+                        </th>
+
+                        <th>
+                            Resultado
+                        </th>
+
+                        <th>
+                            Porcentaje
+                        </th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody id="tabla-body">
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<script src="../assets/app.js"></script>
+
+
+<script>
+
+
+// =========================================================
+// AUTENTICACIÓN
+// =========================================================
+
+const sesion =
+    sp_requireAuth(
+        's01-login.html'
+    );
+
+
+if (sesion) {
+
+    document.getElementById(
+        'header-user'
+    ).textContent =
+
+        (sesion.nombres || 'Usuario')
+        + ' '
+        + (sesion.apellidos || '');
+
+}
+
+
+document.querySelector(
+    '.btn-logout'
+).addEventListener(
+    'click',
+    sp_logout
+);
+
+
+
+// =========================================================
+// PERÍODO ACTUAL
+// =========================================================
+
+const periodo =
+    document.getElementById(
+        'periodo'
+    );
+
+
+const fechaActual =
+    new Date();
+
+
+periodo.value =
+
+    fechaActual.getFullYear()
+    + '-'
+    + String(
+        fechaActual.getMonth() + 1
+    ).padStart(
+        2,
+        '0'
+    );
+
+
+
+// =========================================================
+// PORCENTAJE
+// =========================================================
+
+function porcentaje(
+    valor
+) {
+
+    const numero =
+        Number(
+            valor || 0
+        );
+
+
+    return numero.toFixed(1)
+        + '%';
+
+}
+
+
+
+// =========================================================
+// CARGAR REPORTE
+// =========================================================
+
+async function cargarReporte() {
+
+
+    if (!periodo.value) {
+
+        alert(
+            'Seleccione un período.'
+        );
+
+        return;
+
+    }
+
+
+    const [
+        anio,
+        mes
+    ] =
+        periodo.value.split('-');
+
+
+    try {
+
+
+        const respuesta =
+            await fetch(
+
+                '/api/reportes/general'
+                + '?anio='
+                + anio
+                + '&mes='
+                + mes
+
+            );
+
+
+        const data =
+            await respuesta.json();
+
+
+        if (!respuesta.ok) {
+
+            throw new Error(
+
+                data.mensaje
+                ||
+                'No se pudo generar el reporte general.'
+
+            );
+
+        }
+
+
+        actualizarReporte(
+            data
+        );
+
+
+    } catch (error) {
+
+
+        console.error(
+            'Error REP-DG-01:',
+            error
+        );
+
+
+        alert(
+
+            'No se pudo cargar el reporte general.\n'
+            + error.message
+
+        );
+
+    }
+
+}
+
+
+
+// =========================================================
+// ACTUALIZAR REPORTE
+// =========================================================
+
+function actualizarReporte(
+    data
+) {
+
+
+    // =====================================================
+    // COTIZACIONES
+    // =====================================================
+
+    const totalCotizaciones =
+        Number(
+            data.totalCotizaciones || 0
+        );
+
+
+    const cotizacionesAtendidas =
+        Number(
+            data.cotizacionesAtendidas || 0
+        );
+
+
+    const cotizacionesAdquiridas =
+        Number(
+            data.cotizacionesAdquiridas || 0
+        );
+
+
+    const porcentajeAtendidas =
+        Number(
+            data.porcentajeCotizacionesAtendidas || 0
+        );
+
+
+    const porcentajeAdquiridas =
+        Number(
+            data.porcentajeCotizacionesAdquiridas || 0
+        );
+
+
+
+    // =====================================================
+    // SINIESTROS
+    // =====================================================
+
+    const totalSiniestros =
+        Number(
+            data.totalSiniestros || 0
+        );
+
+
+    const siniestrosRevision =
+        Number(
+            data.siniestrosRevision || 0
+        );
+
+
+    const siniestrosDerivados =
+        Number(
+            data.siniestrosDerivados || 0
+        );
+
+
+    const siniestrosConResultado =
+        Number(
+            data.siniestrosConResultado || 0
+        );
+
+
+    const porcentajeSiniestrosResultado =
+        Number(
+            data.porcentajeSiniestrosConResultado || 0
+        );
+
+
+
+    // =====================================================
+    // AFP
+    // =====================================================
+
+    const totalAFP =
+        Number(
+            data.totalAFP || 0
+        );
+
+
+    const afpSimulaciones =
+        Number(
+            data.afpSimulaciones || 0
+        );
+
+
+    const afpOrientaciones =
+        Number(
+            data.afpOrientaciones || 0
+        );
+
+
+
+    // =====================================================
+    // KPI
+    // =====================================================
+
+    document.getElementById(
+        'kpi-cotizaciones'
+    ).textContent =
+        totalCotizaciones;
+
+
+    document.getElementById(
+        'kpi-atendidas'
+    ).textContent =
+        cotizacionesAtendidas;
+
+
+    document.getElementById(
+        'kpi-siniestros'
+    ).textContent =
+        totalSiniestros;
+
+
+    document.getElementById(
+        'kpi-afp'
+    ).textContent =
+        totalAFP;
+
+
+
+    // =====================================================
+    // VALORES DEL GRÁFICO
+    // =====================================================
+
+    document.getElementById(
+        'valor-cotizaciones'
+    ).textContent =
+        totalCotizaciones;
+
+
+    document.getElementById(
+        'valor-atendidas'
+    ).textContent =
+        cotizacionesAtendidas;
+
+
+    document.getElementById(
+        'valor-siniestros'
+    ).textContent =
+        totalSiniestros;
+
+
+    document.getElementById(
+        'valor-afp'
+    ).textContent =
+        totalAFP;
+
+
+
+    // =====================================================
+    // GRÁFICO
+    // =====================================================
+
+    const maximo =
+        Math.max(
+
+            totalCotizaciones,
+            cotizacionesAtendidas,
+            totalSiniestros,
+            totalAFP,
+            1
+
+        );
+
+
+    actualizarBarra(
+        'barra-cotizaciones',
+        totalCotizaciones,
+        maximo
+    );
+
+
+    actualizarBarra(
+        'barra-atendidas',
+        cotizacionesAtendidas,
+        maximo
+    );
+
+
+    actualizarBarra(
+        'barra-siniestros',
+        totalSiniestros,
+        maximo
+    );
+
+
+    actualizarBarra(
+        'barra-afp',
+        totalAFP,
+        maximo
+    );
+
+
+
+    // =====================================================
+    // TABLA
+    // =====================================================
+
+    const tbody =
+        document.getElementById(
+            'tabla-body'
+        );
+
+
+    tbody.innerHTML =
+        '';
+
+
+    // -----------------------------------------------------
+    // COTIZACIONES
+    // -----------------------------------------------------
+
+    agregarFila(
+
+        tbody,
+
+        'Cotizaciones',
+
+        totalCotizaciones,
+
+        cotizacionesAtendidas
+        + ' atendidas',
+
+        cotizacionesAdquiridas
+        + ' adquiridas',
+
+        porcentaje(
+            porcentajeAdquiridas
+        )
+
+    );
+
+
+
+    // -----------------------------------------------------
+    // SINIESTROS
+    // -----------------------------------------------------
+
+    agregarFila(
+
+        tbody,
+
+        'Siniestros',
+
+        totalSiniestros,
+
+        siniestrosRevision
+        + ' en revisión / '
+        + siniestrosDerivados
+        + ' derivados',
+
+        siniestrosConResultado
+        + ' con resultado',
+
+        porcentaje(
+            porcentajeSiniestrosResultado
+        )
+
+    );
+
+
+
+    // -----------------------------------------------------
+    // AFP
+    // -----------------------------------------------------
+
+    agregarFila(
+
+        tbody,
+
+        'AFP',
+
+        totalAFP,
+
+        afpSimulaciones
+        + ' simulaciones',
+
+        afpOrientaciones
+        + ' orientaciones',
+
+        totalAFP > 0
+
+            ? (
+                (
+                    afpOrientaciones
+                    /
+                    totalAFP
+                )
+                *
+                100
+            ).toFixed(1)
+            + '%'
+
+            : '0.0%'
+
+    );
+
+
+
+    // =====================================================
+    // NOTA
+    // =====================================================
+
+    document.getElementById(
+        'nota-periodo'
+    ).innerHTML =
+
+        'Reporte consolidado correspondiente a '
+
+        + String(
+            data.mes
+        ).padStart(
+            2,
+            '0'
+        )
+
+        + '/'
+
+        + data.anio
+
+        + '. Cotizaciones atendidas: '
+
+        + '<strong>'
+
+        + porcentaje(
+            porcentajeAtendidas
+        )
+
+        + '</strong>'
+
+        + ' | Cotizaciones adquiridas: '
+
+        + '<strong>'
+
+        + porcentaje(
+            porcentajeAdquiridas
+        )
+
+        + '</strong>.';
+
+}
+
+
+
+// =========================================================
+// AGREGAR FILA
+// =========================================================
+
+function agregarFila(
+    tbody,
+    modulo,
+    total,
+    gestion,
+    resultado,
+    porcentajeResultado
+) {
+
+
+    const fila =
+        document.createElement(
+            'tr'
+        );
+
+
+    fila.innerHTML = `
+
+        <td>
+            <strong>
+                ${modulo}
+            </strong>
+        </td>
+
+        <td>
+            ${total}
+        </td>
+
+        <td>
+            ${gestion}
+        </td>
+
+        <td>
+            ${resultado}
+        </td>
+
+        <td>
+
+            <span class="status-pill">
+
+                ${porcentajeResultado}
+
+            </span>
+
+        </td>
+
+    `;
+
+
+    tbody.appendChild(
+        fila
+    );
+
+}
+
+
+
+// =========================================================
+// BARRAS
+// =========================================================
+
+function actualizarBarra(
+    id,
+    valor,
+    maximo
+) {
+
+
+    const barra =
+        document.getElementById(
+            id
+        );
+
+
+    let altura =
+        0;
+
+
+    if (
+        valor > 0
+    ) {
+
+
+        altura =
+            Math.max(
+
+                15,
+
+                (
+                    valor
+                    /
+                    maximo
+                )
+                *
+                180
+
+            );
+
+    }
+
+
+    barra.style.height =
+        altura
+        + 'px';
+
+
+    barra.title =
+        valor;
+
+}
+
+
+
+// =========================================================
+// BOTÓN GENERAR
+// =========================================================
+
+document.getElementById(
+    'btn-generar'
+).addEventListener(
+
+    'click',
+
+    cargarReporte
+
+);
+
+
+
+// =========================================================
+// EXPORTAR CSV
+// =========================================================
+
+document.getElementById(
+    'btn-exportar'
+).addEventListener(
+
+    'click',
+
+    function () {
+
+
+        const filas =
+            [
+                ...document.querySelectorAll(
+                    '#tabla-reporte tr'
+                )
+            ];
+
+
+        const csv =
+            filas.map(
+
+                fila =>
+
+                    [
+                        ...fila.children
+                    ]
+
+                        .map(
+
+                            celda =>
+
+                                '"'
+
+                                + celda
+                                    .innerText
+                                    .trim()
+                                    .replaceAll(
+                                        '"',
+                                        '""'
+                                    )
+
+                                + '"'
+
+                        )
+
+                        .join(';')
+
+            )
+
+                .join('\n');
+
+
+
+        const blob =
+            new Blob(
+
+                [
+                    '\uFEFF'
+                    + csv
+                ],
+
+                {
+                    type:
+                        'text/csv;charset=utf-8'
+                }
+
+            );
+
+
+        const url =
+            URL.createObjectURL(
+                blob
+            );
+
+
+        const enlace =
+            document.createElement(
+                'a'
+            );
+
+
+        enlace.href =
+            url;
+
+
+        enlace.download =
+            'REP-DG-01_'
+            + periodo.value
+            + '.csv';
+
+
+        enlace.click();
+
+
+        URL.revokeObjectURL(
+            url
+        );
+
+    }
+
+);
+
+
+
+// =========================================================
+// CARGA AUTOMÁTICA
+// =========================================================
+
+cargarReporte();
+
+
+</script>
+
+
+</body>
+
+</html>

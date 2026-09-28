@@ -17,10 +17,10 @@
     </parent>
 
     <groupId>com.segurplan</groupId>
-    <artifactId>segurplan</artifactId>
+    <artifactId>segurplan_v2</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
-    <name>segurplan</name>
+    <name>segurplan_v2</name>
     <description>Plataforma de seguros y AFP SEGURPLAN</description>
 
     <properties>

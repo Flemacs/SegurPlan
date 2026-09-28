@@ -1,14 +1,1525 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SEGURPLAN — REP-LA-01 Documentos por tipo y estado</title><link rel="stylesheet" href="../assets/styles.css"><style>
-.report-nav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 24px}.report-nav a{padding:9px 12px;border:1px solid #d7dce5;border-radius:6px;background:#fff;color:#183153;font-size:12px;font-weight:700;text-decoration:none}.report-nav a:hover{background:#eef2f8}.report-code{display:inline-block;padding:5px 9px;border-radius:20px;background:#eef2f8;color:#183153;font-size:12px;font-weight:800;margin-bottom:10px}.report-toolbar{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin:22px 0}.report-toolbar .field{display:flex;flex-direction:column;gap:6px}.report-toolbar label{font-size:12px;font-weight:700}.report-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0 24px}.report-kpi{background:#fff;border:1px solid #dfe3ea;border-radius:8px;padding:18px}.report-kpi strong{display:block;font-size:25px;color:#183153;margin-bottom:5px}.report-kpi span{font-size:11px;color:#687386;text-transform:uppercase;font-weight:700}.chart-panel{height:250px;display:flex;align-items:flex-end;gap:18px;padding:28px 24px 12px;border:1px solid #e1e5eb;border-radius:8px;background:#fafbfc;margin-bottom:24px}.chart-col{flex:1;min-width:40px;text-align:center}.chart-bar{margin:auto;width:min(65px,80%);background:#183153;border-radius:6px 6px 0 0;min-height:22px}.chart-col small{display:block;margin-top:8px;font-size:10px;color:#687386}.report-note{font-size:12px;color:#687386;margin-top:12px}.status-pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#eef2f8;font-weight:700;font-size:11px}@media(max-width:760px){.report-kpis{grid-template-columns:repeat(2,1fr)}.chart-panel{gap:8px}.site-header{height:auto}.header-right{flex-wrap:wrap}}
-</style></head><body>
-<header class="site-header"><div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div><div class="header-right"><span class="user-name" id="header-user">Usuario</span><button class="profile-btn" type="button">MI PERFIL</button><button class="btn-logout" type="button">CERRAR SESIÓN</button></div></header>
-<div class="page-wrap"><nav class="breadcrumb">SEGURPLAN &rsaquo; Reportes &rsaquo; Logística y Almacén &rsaquo; Documentos por tipo y estado</nav><div class="report-nav"><a href="rep-mv-01-cotizaciones-estado.html">Marketing y Ventas</a><a href="rep-la-01-documentos.html">Logística</a><a href="rep-po-01-afp.html">Operaciones</a><a href="rep-dg-01-general.html">Gerencia</a><a href="rep-ot-02-trazabilidad.html">Trazabilidad</a><a href="s14-administracion.html">Administración</a></div><span class="report-code">REP-LA-01</span><h1 class="page-title">Documentos por tipo y estado</h1><p class="page-subtitle">Control documental asociado a contrataciones y siniestros: pendientes, validados, observados y rechazados.</p>
-<div class="report-toolbar"><div class="field"><label for="periodo">Período</label><input class="form-control" id="periodo" type="month"></div><button class="btn btn-primary" id="btn-generar" type="button">GENERAR</button><button class="btn btn-secondary" id="btn-exportar" type="button">EXPORTAR CSV</button></div>
-<div class="report-kpis"><div class="report-kpi"><strong>33</strong><span>Documentos</span></div><div class="report-kpi"><strong>28</strong><span>Validados</span></div><div class="report-kpi"><strong>9</strong><span>Pendientes</span></div><div class="report-kpi"><strong>3</strong><span>Observados</span></div></div><div class="card"><div class="card-header"><h2>Resumen visual</h2></div><div class="card-body"><div class="chart-panel"><div class="chart-col"><div class="chart-bar" style="height:55px"></div><small>Documentos</small></div><div class="chart-col"><div class="chart-bar" style="height:87px"></div><small>Validados</small></div><div class="chart-col"><div class="chart-bar" style="height:119px"></div><small>Pendientes</small></div><div class="chart-col"><div class="chart-bar" style="height:151px"></div><small>Observados</small></div></div><p class="report-note">Vista preliminar. Los valores se reemplazan con la respuesta del endpoint del reporte al conectar el backend.</p></div></div>
-<div class="card" style="margin-top:20px"><div class="card-header"><h2>Detalle del reporte</h2></div><div class="card-body"><div class="table-wrap"><table id="tabla-reporte"><thead><tr><th>Tipo de documento</th><th>Validado</th><th>Pendiente</th><th>Observado</th><th>Rechazado</th></tr></thead><tbody><tr><td>DNI</td><td>12</td><td>2</td><td>1</td><td>0</td></tr><tr><td>Póliza / constancia</td><td>9</td><td>3</td><td>0</td><td>1</td></tr><tr><td>Evidencia de siniestro</td><td>7</td><td>4</td><td>2</td><td>1</td></tr></tbody></table></div><div class="notice" style="margin-top:16px"><strong>Integración pendiente:</strong> Documento e Historial todavía no están implementados como entidades persistentes en el backend actual. Esta pantalla queda lista para conectar cuando se creen sus endpoints.</div></div></div></div>
-<script src="../assets/app.js"></script><script>
-const sesion=sp_requireAuth('s01-login.html');if(sesion){document.getElementById('header-user').textContent=(sesion.nombres||'Usuario')+' '+(sesion.apellidos||'');}
-document.querySelector('.btn-logout').addEventListener('click',sp_logout);const p=document.getElementById('periodo');const d=new Date();p.value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
-document.getElementById('btn-generar').addEventListener('click',()=>alert('Reporte REP-LA-01: interfaz lista. Conecte el endpoint /api/reportes correspondiente para cargar datos reales.'));
-document.getElementById('btn-exportar').addEventListener('click',()=>{const rows=[...document.querySelectorAll('#tabla-reporte tr')].map(r=>[...r.children].map(c=>'"'+c.innerText.replaceAll('"','""')+'"').join(';')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+rows],{type:'text/csv;charset=utf-8'}));a.download='REP-LA-01_'+p.value+'.csv';a.click();URL.revokeObjectURL(a.href);});
-</script></body></html>
+<!DOCTYPE html>
+<html lang="es">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>SEGURPLAN — REP-LA-01 Documentos por tipo y estado</title>
+
+        <link rel="stylesheet" href="../assets/styles.css">
+
+        <style>
+
+            .report-nav {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+                margin: 0 0 24px;
+            }
+
+            .report-nav a {
+                padding: 9px 12px;
+                border: 1px solid #d7dce5;
+                border-radius: 6px;
+                background: #fff;
+                color: #183153;
+                font-size: 12px;
+                font-weight: 700;
+                text-decoration: none;
+            }
+
+            .report-nav a:hover {
+                background: #eef2f8;
+            }
+
+            .report-code {
+                display: inline-block;
+                padding: 5px 9px;
+                border-radius: 20px;
+                background: #eef2f8;
+                color: #183153;
+                font-size: 12px;
+                font-weight: 800;
+                margin-bottom: 10px;
+            }
+
+            .report-toolbar {
+                display: flex;
+                gap: 12px;
+                align-items: end;
+                flex-wrap: wrap;
+                margin: 22px 0;
+            }
+
+            .report-toolbar .field {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .report-toolbar label {
+                font-size: 12px;
+                font-weight: 700;
+            }
+
+            .report-kpis {
+                display: grid;
+                grid-template-columns: repeat(5, minmax(0, 1fr));
+                gap: 14px;
+                margin: 18px 0 24px;
+            }
+
+            .report-kpi {
+                background: #fff;
+                border: 1px solid #dfe3ea;
+                border-radius: 8px;
+                padding: 18px;
+            }
+
+            .report-kpi strong {
+                display: block;
+                font-size: 25px;
+                color: #183153;
+                margin-bottom: 5px;
+            }
+
+            .report-kpi span {
+                font-size: 11px;
+                color: #687386;
+                text-transform: uppercase;
+                font-weight: 700;
+            }
+
+            .chart-panel {
+                height: 270px;
+                display: flex;
+                align-items: flex-end;
+                gap: 18px;
+                padding: 28px 24px 12px;
+                border: 1px solid #e1e5eb;
+                border-radius: 8px;
+                background: #fafbfc;
+                margin-bottom: 20px;
+            }
+
+            .chart-col {
+                flex: 1;
+                min-width: 40px;
+                text-align: center;
+            }
+
+            .chart-value {
+                display: block;
+                margin-bottom: 6px;
+                font-size: 12px;
+                font-weight: 800;
+                color: #183153;
+            }
+
+            .chart-bar {
+                margin: auto;
+                width: min(65px, 80%);
+                background: #183153;
+                border-radius: 6px 6px 0 0;
+                min-height: 0;
+                transition: height .4s ease;
+            }
+
+            .chart-col small {
+                display: block;
+                margin-top: 8px;
+                font-size: 10px;
+                color: #687386;
+            }
+
+            .report-note {
+                font-size: 12px;
+                color: #687386;
+                margin-top: 12px;
+            }
+
+            .status-pill {
+                display: inline-block;
+                padding: 4px 8px;
+                border-radius: 20px;
+                background: #eef2f8;
+                color: #183153;
+                font-weight: 700;
+                font-size: 11px;
+            }
+
+            .section-title {
+                margin: 0 0 15px;
+                font-size: 15px;
+                color: #183153;
+            }
+
+            .table-wrap {
+                overflow-x: auto;
+            }
+
+            #tabla-reporte,
+            #tabla-tipos {
+                width: 100%;
+            }
+
+            .empty-row {
+                text-align: center;
+                padding: 25px !important;
+                color: #687386;
+            }
+
+            @media(max-width:900px) {
+
+                .report-kpis {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+
+            }
+
+            @media(max-width:760px) {
+
+                .chart-panel {
+                    gap: 7px;
+                    padding-left: 8px;
+                    padding-right: 8px;
+                }
+
+                .site-header {
+                    height: auto;
+                }
+
+                .header-right {
+                    flex-wrap: wrap;
+                }
+
+            }
+
+        </style>
+
+    <link rel="stylesheet" href="../assets/theme.css">
+<script src="../assets/theme.js"></script>
+</head>
+
+
+    <body>
+
+
+        <!-- ====================================================== -->
+        <!-- HEADER -->
+        <!-- ====================================================== -->
+
+        <header class="site-header">
+
+            <div class="logo">
+
+                SEGURPLAN
+
+                <span>
+                    Plataforma de seguros y AFP
+                </span>
+
+            </div>
+
+
+            <div class="header-right">
+
+                <span
+                    class="user-name"
+                    id="header-user">
+
+                    Usuario
+
+                </span>
+
+                <button
+                    class="profile-btn"
+                    type="button">
+
+                    MI PERFIL
+
+                </button>
+
+                <button
+                    class="btn-logout"
+                    type="button">
+
+                    CERRAR SESIÓN
+
+                </button>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- ====================================================== -->
+        <!-- CONTENIDO -->
+        <!-- ====================================================== -->
+
+        <div class="page-wrap">
+
+
+            <nav class="breadcrumb">
+
+                SEGURPLAN
+                &rsaquo;
+                Reportes
+                &rsaquo;
+                Logística y Almacén
+                &rsaquo;
+                Documentos por tipo y estado
+
+            </nav>
+
+
+
+            <!-- NAVEGACIÓN -->
+
+            <div class="report-nav">
+
+                <a href="rep-mv-01-cotizaciones-estado.html">
+                    Marketing y Ventas
+                </a>
+
+                <a href="rep-la-01-documentos.html">
+                    Logística
+                </a>
+
+                <a href="rep-po-01-afp.html">
+                    Operaciones
+                </a>
+
+                <a href="rep-dg-01-general.html">
+                    Gerencia
+                </a>
+
+                <a href="rep-ot-02-trazabilidad.html">
+                    Trazabilidad
+                </a>
+
+                <a href="s14-administracion.html">
+                    Administración
+                </a>
+
+            </div>
+
+
+
+            <!-- ================================================== -->
+            <!-- TÍTULO -->
+            <!-- ================================================== -->
+
+            <span class="report-code">
+                REP-LA-01
+            </span>
+
+            <h1 class="page-title">
+                Documentos por tipo y estado
+            </h1>
+
+            <p class="page-subtitle">
+
+                Control documental asociado a contrataciones
+                y siniestros: pendientes, validados,
+                observados y rechazados.
+
+            </p>
+
+
+
+            <!-- ================================================== -->
+            <!-- FILTRO -->
+            <!-- ================================================== -->
+
+            <div class="report-toolbar">
+
+                <div class="field">
+
+                    <label for="periodo">
+                        Período
+                    </label>
+
+                    <input
+                        class="form-control"
+                        id="periodo"
+                        type="month">
+
+                </div>
+
+
+                <button
+                    class="btn btn-primary"
+                    id="btn-generar"
+                    type="button">
+
+                    GENERAR
+
+                </button>
+
+
+                <button
+                    class="btn btn-secondary"
+                    id="btn-exportar"
+                    type="button">
+
+                    EXPORTAR CSV
+
+                </button>
+
+            </div>
+
+
+
+            <!-- ================================================== -->
+            <!-- KPI -->
+            <!-- ================================================== -->
+
+            <div class="report-kpis">
+
+
+                <div class="report-kpi">
+
+                    <strong id="kpi-total">
+                        0
+                    </strong>
+
+                    <span>
+                        Documentos
+                    </span>
+
+                </div>
+
+
+                <div class="report-kpi">
+
+                    <strong id="kpi-validados">
+                        0
+                    </strong>
+
+                    <span>
+                        Validados
+                    </span>
+
+                </div>
+
+
+                <div class="report-kpi">
+
+                    <strong id="kpi-pendientes">
+                        0
+                    </strong>
+
+                    <span>
+                        Pendientes
+                    </span>
+
+                </div>
+
+
+                <div class="report-kpi">
+
+                    <strong id="kpi-observados">
+                        0
+                    </strong>
+
+                    <span>
+                        Observados
+                    </span>
+
+                </div>
+
+
+                <div class="report-kpi">
+
+                    <strong id="kpi-rechazados">
+                        0
+                    </strong>
+
+                    <span>
+                        Rechazados
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- ================================================== -->
+            <!-- GRÁFICO -->
+            <!-- ================================================== -->
+
+            <div class="card">
+
+
+                <div class="card-header">
+
+                    <h2>
+                        Resumen por estado
+                    </h2>
+
+                </div>
+
+
+                <div class="card-body">
+
+
+                    <div class="chart-panel">
+
+
+                        <div class="chart-col">
+
+                            <span
+                                class="chart-value"
+                                id="valor-total">
+                                0
+                            </span>
+
+                            <div
+                                class="chart-bar"
+                                id="barra-total"
+                                style="height:0">
+                            </div>
+
+                            <small>
+                                Documentos
+                            </small>
+
+                        </div>
+
+
+
+                        <div class="chart-col">
+
+                            <span
+                                class="chart-value"
+                                id="valor-validados">
+                                0
+                            </span>
+
+                            <div
+                                class="chart-bar"
+                                id="barra-validados"
+                                style="height:0">
+                            </div>
+
+                            <small>
+                                Validados
+                            </small>
+
+                        </div>
+
+
+
+                        <div class="chart-col">
+
+                            <span
+                                class="chart-value"
+                                id="valor-pendientes">
+                                0
+                            </span>
+
+                            <div
+                                class="chart-bar"
+                                id="barra-pendientes"
+                                style="height:0">
+                            </div>
+
+                            <small>
+                                Pendientes
+                            </small>
+
+                        </div>
+
+
+
+                        <div class="chart-col">
+
+                            <span
+                                class="chart-value"
+                                id="valor-observados">
+                                0
+                            </span>
+
+                            <div
+                                class="chart-bar"
+                                id="barra-observados"
+                                style="height:0">
+                            </div>
+
+                            <small>
+                                Observados
+                            </small>
+
+                        </div>
+
+
+
+                        <div class="chart-col">
+
+                            <span
+                                class="chart-value"
+                                id="valor-rechazados">
+                                0
+                            </span>
+
+                            <div
+                                class="chart-bar"
+                                id="barra-rechazados"
+                                style="height:0">
+                            </div>
+
+                            <small>
+                                Rechazados
+                            </small>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <p
+                        class="report-note"
+                        id="nota-periodo">
+
+                        Seleccione un período para consultar
+                        los documentos registrados.
+
+                    </p>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================================================== -->
+            <!-- RESUMEN POR TIPO -->
+            <!-- ================================================== -->
+
+            <div
+                class="card"
+                style="margin-top:20px">
+
+
+                <div class="card-header">
+
+                    <h2>
+                        Documentos por tipo
+                    </h2>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="table-wrap">
+
+                        <table id="tabla-tipos">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Tipo de documento
+                                    </th>
+
+                                    <th>
+                                        Cantidad
+                                    </th>
+
+                                    <th>
+                                        Participación
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody id="tabla-tipos-body">
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================================================== -->
+            <!-- DETALLE -->
+            <!-- ================================================== -->
+
+            <div
+                class="card"
+                style="margin-top:20px">
+
+
+                <div class="card-header">
+
+                    <h2>
+                        Detalle de documentos
+                    </h2>
+
+                </div>
+
+
+                <div class="card-body">
+
+
+                    <div class="table-wrap">
+
+
+                        <table id="tabla-reporte">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        ID
+                                    </th>
+
+                                    <th>
+                                        Tipo
+                                    </th>
+
+                                    <th>
+                                        Archivo
+                                    </th>
+
+                                    <th>
+                                        Versión
+                                    </th>
+
+                                    <th>
+                                        Fecha de carga
+                                    </th>
+
+                                    <th>
+                                        Estado
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody id="tabla-body">
+                            </tbody>
+
+                        </table>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- ====================================================== -->
+        <!-- JAVASCRIPT -->
+        <!-- ====================================================== -->
+
+        <script src="../assets/app.js"></script>
+
+
+        <script>
+
+
+        // =========================================================
+        // AUTENTICACIÓN
+        // =========================================================
+
+            const sesion =
+                    sp_requireAuth(
+                            's01-login.html'
+                            );
+
+
+            if (sesion) {
+
+                document.getElementById(
+                        'header-user'
+                        ).textContent =
+                        (sesion.nombres || 'Usuario')
+                        + ' '
+                        + (sesion.apellidos || '');
+
+            }
+
+
+            document.querySelector(
+                    '.btn-logout'
+                    ).addEventListener(
+                    'click',
+                    sp_logout
+                    );
+
+
+
+        // =========================================================
+        // PERÍODO
+        // =========================================================
+
+            const periodo =
+                    document.getElementById(
+                            'periodo'
+                            );
+
+
+            const fechaActual =
+                    new Date();
+
+
+            periodo.value =
+                    fechaActual.getFullYear()
+                    + '-'
+                    + String(
+                            fechaActual.getMonth() + 1
+                            ).padStart(
+                    2,
+                    '0'
+                    );
+
+
+
+        // =========================================================
+        // FORMATEAR FECHA
+        // =========================================================
+
+            function formatearFecha(
+                    fecha
+                    ) {
+
+                if (!fecha) {
+                    return '-';
+                }
+
+
+                const texto =
+                        String(fecha);
+
+
+                const fechaParte =
+                        texto.split('T')[0];
+
+
+                const partes =
+                        fechaParte.split('-');
+
+
+                if (
+                        partes.length === 3
+                        ) {
+
+                    return (
+                            partes[2]
+                            + '/'
+                            + partes[1]
+                            + '/'
+                            + partes[0]
+                            );
+
+                }
+
+
+                return texto;
+
+            }
+
+
+
+        // =========================================================
+        // CARGAR REPORTE
+        // =========================================================
+
+            async function cargarReporte() {
+
+
+                if (!periodo.value) {
+
+                    alert(
+                            'Seleccione un período.'
+                            );
+
+                    return;
+
+                }
+
+
+                const [
+                    anio,
+                    mes
+                ] =
+                        periodo.value.split('-');
+
+
+                try {
+
+
+                    const respuesta =
+                            await fetch(
+                                    '/api/reportes/logistica/documentos'
+                                    + '?anio='
+                                    + anio
+                                    + '&mes='
+                                    + mes
+
+                                    );
+
+
+                    const data =
+                            await respuesta.json();
+
+
+                    if (!respuesta.ok) {
+
+                        throw new Error(
+                                data.mensaje
+                                ||
+                                'No se pudo generar el reporte.'
+
+                                );
+
+                    }
+
+
+                    actualizarReporte(
+                            data
+                            );
+
+
+                } catch (error) {
+
+
+                    console.error(
+                            'Error REP-LA-01:',
+                            error
+                            );
+
+
+                    alert(
+                            'No se pudo cargar el reporte.\n'
+                            + error.message
+
+                            );
+
+                }
+
+            }
+
+
+
+        // =========================================================
+        // ACTUALIZAR REPORTE
+        // =========================================================
+
+            function actualizarReporte(
+                    data
+                    ) {
+
+
+                const total =
+                        Number(
+                                data.total || 0
+                                );
+
+
+                const validados =
+                        Number(
+                                data.validados || 0
+                                );
+
+
+                const pendientes =
+                        Number(
+                                data.pendientes || 0
+                                );
+
+
+                const observados =
+                        Number(
+                                data.observados || 0
+                                );
+
+
+                const rechazados =
+                        Number(
+                                data.rechazados || 0
+                                );
+
+
+                const porTipo =
+                        data.porTipo || {};
+
+
+                const documentos =
+                        Array.isArray(
+                                data.documentos
+                                )
+                        ? data.documentos
+                        : [];
+
+
+
+                // =====================================================
+                // KPI
+                // =====================================================
+
+                document.getElementById(
+                        'kpi-total'
+                        ).textContent =
+                        total;
+
+
+                document.getElementById(
+                        'kpi-validados'
+                        ).textContent =
+                        validados;
+
+
+                document.getElementById(
+                        'kpi-pendientes'
+                        ).textContent =
+                        pendientes;
+
+
+                document.getElementById(
+                        'kpi-observados'
+                        ).textContent =
+                        observados;
+
+
+                document.getElementById(
+                        'kpi-rechazados'
+                        ).textContent =
+                        rechazados;
+
+
+
+                // =====================================================
+                // VALORES GRÁFICO
+                // =====================================================
+
+                document.getElementById(
+                        'valor-total'
+                        ).textContent =
+                        total;
+
+
+                document.getElementById(
+                        'valor-validados'
+                        ).textContent =
+                        validados;
+
+
+                document.getElementById(
+                        'valor-pendientes'
+                        ).textContent =
+                        pendientes;
+
+
+                document.getElementById(
+                        'valor-observados'
+                        ).textContent =
+                        observados;
+
+
+                document.getElementById(
+                        'valor-rechazados'
+                        ).textContent =
+                        rechazados;
+
+
+
+                // =====================================================
+                // BARRAS
+                // =====================================================
+
+                const maximo =
+                        Math.max(
+                                total,
+                                validados,
+                                pendientes,
+                                observados,
+                                rechazados,
+                                1
+                                );
+
+
+                actualizarBarra(
+                        'barra-total',
+                        total,
+                        maximo
+                        );
+
+
+                actualizarBarra(
+                        'barra-validados',
+                        validados,
+                        maximo
+                        );
+
+
+                actualizarBarra(
+                        'barra-pendientes',
+                        pendientes,
+                        maximo
+                        );
+
+
+                actualizarBarra(
+                        'barra-observados',
+                        observados,
+                        maximo
+                        );
+
+
+                actualizarBarra(
+                        'barra-rechazados',
+                        rechazados,
+                        maximo
+                        );
+
+
+
+                // =====================================================
+                // TABLA POR TIPO
+                // =====================================================
+
+                const tbodyTipos =
+                        document.getElementById(
+                                'tabla-tipos-body'
+                                );
+
+
+                tbodyTipos.innerHTML =
+                        '';
+
+
+                const tipos =
+                        Object.entries(
+                                porTipo
+                                );
+
+
+                if (
+                        tipos.length === 0
+                        ) {
+
+
+                    const fila =
+                            document.createElement(
+                                    'tr'
+                                    );
+
+
+                    fila.innerHTML = `
+
+                    <td
+                        colspan="3"
+                        class="empty-row">
+
+                        No existen documentos
+                        para el período seleccionado.
+
+                    </td>
+
+                `;
+
+
+                    tbodyTipos.appendChild(
+                            fila
+                            );
+
+
+                } else {
+
+
+                    tipos.forEach(
+                            ([tipo, cantidad]) => {
+
+
+                        const porcentaje =
+                                total > 0
+
+                                ? (
+                                        Number(cantidad)
+                                        /
+                                    total
+                                        ) * 100
+
+                                : 0;
+
+
+                        const fila =
+                                document.createElement(
+                                        'tr'
+                                        );
+
+
+                        fila.innerHTML = `
+
+                            <td>
+                                <strong>
+                                    ${tipo}
+                                </strong>
+                            </td>
+
+                            <td>
+                                ${cantidad}
+                            </td>
+
+                            <td>
+                                ${porcentaje.toFixed(2)}%
+                            </td>
+
+                        `;
+
+
+                        tbodyTipos.appendChild(
+                                fila
+                                );
+
+                    }
+                    );
+
+                }
+
+
+
+                // =====================================================
+                // DETALLE DE DOCUMENTOS
+                // =====================================================
+
+                const tbody =
+                        document.getElementById(
+                                'tabla-body'
+                                );
+
+
+                tbody.innerHTML =
+                        '';
+
+
+                if (
+                        documentos.length === 0
+                        ) {
+
+
+                    const fila =
+                            document.createElement(
+                                    'tr'
+                                    );
+
+
+                    fila.innerHTML = `
+
+                    <td
+                        colspan="6"
+                        class="empty-row">
+
+                        No existen documentos
+                        registrados para este período.
+
+                    </td>
+
+                `;
+
+
+                    tbody.appendChild(
+                            fila
+                            );
+
+
+                } else {
+
+
+                    documentos.forEach(
+                            documento => {
+
+
+                                const fila =
+                                        document.createElement(
+                                                'tr'
+                                                );
+
+
+                                fila.innerHTML = `
+
+                            <td>
+                                ${documento.idDocumento ?? '-'}
+                            </td>
+
+                            <td>
+                                ${documento.tipoDocumento || '-'}
+                            </td>
+
+                            <td>
+                                ${documento.nombreArchivo || '-'}
+                            </td>
+
+                            <td>
+                                ${documento.version ?? '-'}
+                            </td>
+
+                            <td>
+                                ${formatearFecha(
+                                        documento.fechaCarga
+                                        )}
+                            </td>
+
+                            <td>
+
+                                <span class="status-pill">
+
+                                    ${documento.estado || '-'}
+
+                                </span>
+
+                            </td>
+
+                        `;
+
+
+                                tbody.appendChild(
+                                        fila
+                                        );
+
+                            }
+                    );
+
+                }
+
+
+
+                // =====================================================
+                // NOTA
+                // =====================================================
+
+                document.getElementById(
+                        'nota-periodo'
+                        ).innerHTML =
+                        'Datos obtenidos de PostgreSQL para '
+
+                        + String(
+                                data.mes
+                                ).padStart(
+                        2,
+                        '0'
+                        )
+
+                        + '/'
+
+                        + data.anio
+
+                        + '. Total de documentos: '
+
+                        + '<strong>'
+
+                        + total
+
+                        + '</strong>.';
+
+            }
+
+
+
+        // =========================================================
+        // BARRAS
+        // =========================================================
+
+            function actualizarBarra(
+                    id,
+                    valor,
+                    maximo
+                    ) {
+
+
+                const barra =
+                        document.getElementById(
+                                id
+                                );
+
+
+                let altura =
+                        0;
+
+
+                if (
+                        valor > 0
+                        ) {
+
+
+                    altura =
+                            Math.max(
+                                    15,
+                                    (
+                                            valor
+                                            /
+                            maximo
+                                            )
+                                    *
+                                    180
+
+                                    );
+
+                }
+
+
+                barra.style.height =
+                        altura
+                        + 'px';
+
+
+                barra.title =
+                        valor
+                        + ' documento(s)';
+
+            }
+
+
+
+        // =========================================================
+        // GENERAR
+        // =========================================================
+
+            document.getElementById(
+                    'btn-generar'
+                    ).addEventListener(
+                    'click',
+                    cargarReporte
+
+                    );
+
+
+
+        // =========================================================
+        // EXPORTAR CSV
+        // =========================================================
+
+            document.getElementById(
+                    'btn-exportar'
+                    ).addEventListener(
+                    'click',
+                    function () {
+
+
+                        const filas =
+                                [
+                                    ...document.querySelectorAll(
+                                            '#tabla-reporte tr'
+                                            )
+                                ];
+
+
+                        const csv =
+                                filas.map(
+                                        fila =>
+                                    [
+                                        ...fila.children
+                                    ]
+
+                                            .map(
+                                                    celda =>
+                                                '"'
+
+                                                        + celda
+                                                        .innerText
+                                                        .trim()
+                                                        .replaceAll(
+                                                                '"',
+                                                                '""'
+                                                                )
+
+                                                        + '"'
+
+                                            )
+
+                                            .join(';')
+
+                                )
+
+                                .join('\n');
+
+
+
+                        const blob =
+                                new Blob(
+                                        [
+                                            '\uFEFF'
+                                                    + csv
+                                        ],
+                                        {
+                                            type:
+                                                    'text/csv;charset=utf-8'
+                                        }
+
+                                );
+
+
+                        const url =
+                                URL.createObjectURL(
+                                        blob
+                                        );
+
+
+                        const enlace =
+                                document.createElement(
+                                        'a'
+                                        );
+
+
+                        enlace.href =
+                                url;
+
+
+                        enlace.download =
+                                'REP-LA-01_'
+                                + periodo.value
+                                + '.csv';
+
+
+                        enlace.click();
+
+
+                        URL.revokeObjectURL(
+                                url
+                                );
+
+                    }
+
+            );
+
+
+
+        // =========================================================
+        // CARGA AUTOMÁTICA
+        // =========================================================
+
+            cargarReporte();
+
+
+        </script>
+
+
+    </body>
+
+</html>

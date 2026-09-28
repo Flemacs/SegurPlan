@@ -184,6 +184,7 @@ async function sp_logout() {
         sessionStorage.removeItem('sp_last_quote');
         sessionStorage.removeItem('sp_last_contratacion');
         sessionStorage.removeItem('sp_admin_quote');
+        sessionStorage.removeItem('sp_last_sin');   
 
         // Volver al login.
         window.location.replace('/pages/s01-login.html');

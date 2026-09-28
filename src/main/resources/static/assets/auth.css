@@ -1,0 +1,109 @@
+/* ═══════════════════════════════════════════════════════
+   SEGURPLAN — auth.css  (Login y Registro)
+   Solo presentación. Se carga después de styles.css y theme.css.
+═══════════════════════════════════════════════════════ */
+body.auth-page{background:
+  radial-gradient(900px 500px at 8% -10%,rgba(15,108,191,.16),transparent 60%),
+  radial-gradient(700px 420px at 100% 0%,rgba(112,72,194,.12),transparent 60%),
+  radial-gradient(700px 500px at 90% 105%,rgba(14,143,163,.13),transparent 60%),
+  radial-gradient(600px 400px at 0% 100%,rgba(217,114,11,.09),transparent 60%),#f0f4f8}
+
+/* contenedor de dos columnas */
+body.auth-page .page-wrap.center-content{max-width:1040px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);
+  align-items:stretch;padding:40px 24px;margin:0 auto;gap:0}
+
+/* panel de marca */
+.auth-brand{position:relative;overflow:hidden;color:#fff;padding:44px 40px;border-radius:18px 0 0 18px;
+  background:linear-gradient(155deg,#122a4a 0%,#1c3f6e 55%,#0f6cbf 130%);display:flex;flex-direction:column;justify-content:space-between;gap:28px;
+  box-shadow:0 18px 40px -22px rgba(18,42,74,.7)}
+.auth-brand::before,.auth-brand::after{content:"";position:absolute;border-radius:50%;pointer-events:none}
+.auth-brand::before{width:320px;height:320px;right:-110px;top:-110px;background:radial-gradient(circle,rgba(255,255,255,.14),transparent 70%)}
+.auth-brand::after{width:260px;height:260px;left:-90px;bottom:-100px;background:radial-gradient(circle,rgba(242,177,52,.22),transparent 70%)}
+.auth-brand>*{position:relative;z-index:1}
+.auth-brand .ab-logo{font-size:22px;font-weight:700;letter-spacing:.14em}
+.auth-brand .ab-logo span{display:block;font-size:11px;font-weight:300;letter-spacing:.05em;opacity:.7;margin-top:2px}
+.auth-brand h2{font-size:28px;line-height:1.2;font-weight:700;letter-spacing:-.01em;margin:6px 0 8px}
+.auth-brand h2 em{font-style:normal;color:#f2b134}
+.auth-brand .ab-lead{font-size:14px;line-height:1.55;opacity:.82;max-width:34ch}
+.auth-feats{list-style:none;display:grid;gap:12px;margin:0;padding:0}
+.auth-feats li{display:flex;align-items:center;gap:12px;font-size:13.5px;font-weight:600;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;
+  transition:transform .2s ease,background .2s ease}
+.auth-feats li:hover{transform:translateX(4px);background:rgba(255,255,255,.12)}
+.auth-feats small{display:block;font-weight:400;opacity:.72;font-size:12px;margin-top:1px}
+.auth-feats .af-ico{flex:none;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.auth-feats .af-ico .sp-ico{width:19px;height:19px}
+.af-blue{background:rgba(66,165,245,.25);color:#9bd0ff}
+.af-green{background:rgba(86,185,122,.25);color:#9be3b6}
+.af-orange{background:rgba(242,160,74,.25);color:#ffcf9b}
+.af-purple{background:rgba(160,124,224,.28);color:#d5c2fb}
+
+/* tarjeta del formulario */
+body.auth-page .login-card{max-width:none;border-radius:0 18px 18px 0;border:1px solid var(--border);border-left:none;
+  box-shadow:0 18px 40px -22px rgba(18,42,74,.45);display:flex;flex-direction:column;position:relative}
+body.auth-page .login-card::before{content:"";height:5px;background:linear-gradient(90deg,#0f6cbf,#0e8fa3,#1f8a4c,#d9720b,#7048c2)}
+body.auth-page .login-header{background:#fff;color:var(--primary);text-align:left;padding:28px 36px 0}
+body.auth-page .login-header .logo{display:none;color:var(--primary);margin-bottom:14px}
+body.auth-page .login-header p{font-size:24px;font-weight:700;color:var(--primary-dark);opacity:1;margin:0;letter-spacing:-.01em}
+body.auth-page .login-header p::after{display:block;margin-top:6px;font-size:13px;font-weight:400;color:var(--text-sub);letter-spacing:0}
+body.auth-login .login-header p::after{content:"Accede a tus cotizaciones, pólizas y siniestros."}
+body.auth-register .login-header p::after{content:"Solo te tomará unos minutos."}
+body.auth-page .login-body{padding:22px 36px 30px;flex:1}
+
+/* campos con icono (solo CSS, por id) */
+body.auth-page .form-control{height:44px;border-radius:10px;padding:0 12px 0 42px;border:1.5px solid #d3dbe6;background-color:#fbfcfe;
+  background-repeat:no-repeat;background-position:13px center;background-size:18px;transition:border-color .15s,box-shadow .15s,background-color .15s}
+body.auth-page .form-control:hover{border-color:#aebccd}
+body.auth-page .form-control:focus{background-color:#fff;border-color:var(--accent);box-shadow:0 0 0 4px rgba(15,108,191,.14)}
+body.auth-page select.form-control{padding-left:12px;background-position:right 12px center;background-size:auto}
+body.auth-page input[type=date].form-control{padding-left:12px}
+#email,#correo,#correo2{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%236b7f99%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Crect x=%222%22 y=%224%22 width=%2220%22 height=%2216%22 rx=%222%22/%3E%3Cpolyline points=%2222 6 12 13 2 6%22/%3E%3C/svg%3E")}
+#password,#pass1,#pass2{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%236b7f99%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Crect x=%223%22 y=%2211%22 width=%2218%22 height=%2211%22 rx=%222%22/%3E%3Cpath d=%22M7 11V7a5 5 0 0 1 10 0v4%22/%3E%3C/svg%3E")}
+#nombres,#apellidos{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%236b7f99%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2%22/%3E%3Ccircle cx=%2212%22 cy=%227%22 r=%224%22/%3E%3C/svg%3E")}
+#dni{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%236b7f99%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Crect x=%222%22 y=%225%22 width=%2220%22 height=%2214%22 rx=%222%22/%3E%3Ccircle cx=%228%22 cy=%2211%22 r=%222%22/%3E%3Cpath d=%22M5 16c.5-1.5 5.5-1.5 6 0%22/%3E%3Cline x1=%2214%22 y1=%2210%22 x2=%2219%22 y2=%2210%22/%3E%3Cline x1=%2214%22 y1=%2214%22 x2=%2218%22 y2=%2214%22/%3E%3C/svg%3E")}
+#telefono{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%236b7f99%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Crect x=%226%22 y=%222%22 width=%2212%22 height=%2220%22 rx=%222%22/%3E%3Cline x1=%2211%22 y1=%2218%22 x2=%2213%22 y2=%2218%22/%3E%3C/svg%3E")}
+body.auth-page .form-group label{color:#3b4a5e;font-weight:700}
+body.auth-page .btn-primary{background:linear-gradient(135deg,#1c3f6e,#0f6cbf);height:46px;justify-content:center;border-radius:10px;
+  box-shadow:0 8px 18px -10px rgba(15,108,191,.9);transition:transform .15s,box-shadow .2s,filter .2s}
+body.auth-page .btn-primary:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 12px 22px -10px rgba(15,108,191,.9)}
+body.auth-page .btn-outline{height:46px;border-radius:10px;justify-content:center}
+body.auth-page .notice{border-radius:10px}
+
+/* registro: pasos */
+body.auth-register .step-indicator{margin-bottom:26px}
+body.auth-register .step-dot{width:38px;height:38px;font-size:14px;border-width:2px;transition:all .25s ease}
+body.auth-register .step-dot.active{background:linear-gradient(135deg,#1c3f6e,#0f6cbf);border-color:#0f6cbf;box-shadow:0 0 0 5px rgba(15,108,191,.16)}
+body.auth-register .step-dot.done{font-size:0;background:#e6f4ea;border-color:#1f8a4c;position:relative}
+body.auth-register .step-dot.done::after{content:"";position:absolute;inset:0;margin:auto;width:18px;height:18px;background:#1f8a4c;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpolyline points=%2220 6 9 17 4 12%22/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23000%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpolyline points=%2220 6 9 17 4 12%22/%3E%3C/svg%3E") center/contain no-repeat}
+body.auth-register .step-line{height:3px;border-radius:3px;max-width:none;margin:0 6px}
+body.auth-register .step-line.done{background:linear-gradient(90deg,#1f8a4c,#0f6cbf)}
+body.auth-register #paso1>p:first-child,body.auth-register #paso2>p:first-child,body.auth-register #paso3>p:first-child{
+  font-size:12px!important;letter-spacing:.08em!important;padding:8px 12px;border-radius:8px;border-left:4px solid var(--sc);
+  background:var(--sb);color:var(--sd)!important;margin-bottom:16px!important}
+body.auth-register #paso1{--sc:#0f6cbf;--sb:#e3f0ff;--sd:#0a4f8f}
+body.auth-register #paso2{--sc:#1f8a4c;--sb:#e6f4ea;--sd:#166a3a}
+body.auth-register #paso3{--sc:#7048c2;--sb:#efe9fb;--sd:#5a35a3}
+body.auth-register #paso1,body.auth-register #paso2,body.auth-register #paso3{animation:auth-in .3s ease both}
+body.auth-register .strength-bar{height:6px;border-radius:6px}
+body.auth-register .strength-fill{border-radius:6px}
+body.auth-register .terms-check{background:#f6f8fb;border:1px solid #e1e6ee;border-radius:10px;padding:12px}
+body.auth-register .success-icon{width:76px;height:76px;box-shadow:0 0 0 8px rgba(31,138,76,.12);animation:auth-pop .5s ease both}
+@keyframes auth-in{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
+@keyframes auth-pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+
+/* responsive */
+@media(max-width:900px){
+  body.auth-page .page-wrap.center-content{grid-template-columns:1fr;max-width:520px;padding:24px 16px}
+  .auth-brand{border-radius:18px 18px 0 0;padding:22px 24px;gap:0}
+  .auth-brand .ab-lead,.auth-feats,.auth-brand h2{display:none}
+  .auth-brand .ab-logo{font-size:19px}
+  body.auth-page .login-card{border-radius:0 0 18px 18px;border-left:1px solid var(--border);border-top:none}
+  body.auth-page .login-card::before{height:4px}
+  body.auth-page .login-header,body.auth-page .login-body{padding-left:22px;padding-right:22px}
+}
+@media(max-width:560px){
+  body.auth-register .form-row{grid-template-columns:1fr}
+  body.auth-page .login-header p{font-size:21px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

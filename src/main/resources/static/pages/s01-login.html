@@ -5,9 +5,27 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>SEGURPLAN — Iniciar sesión</title>
         <link rel="stylesheet" href="../assets/styles.css" />
+    <link rel="stylesheet" href="../assets/theme.css" />
+        <link rel="stylesheet" href="../assets/auth.css" />
     </head>
-    <body>
+    <body class="auth-page auth-login">
         <div class="page-wrap center-content">
+            <aside class="auth-brand" aria-hidden="false">
+                <div>
+                    <div class="ab-logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+                </div>
+                <div>
+                    <h2>Tus seguros y tu futuro previsional, <em>en un solo lugar</em></h2>
+                    <p class="ab-lead">Cotiza, simula tu pensión AFP y da seguimiento a tus siniestros desde una sola plataforma.</p>
+                </div>
+                <ul class="auth-feats">
+                    <li><span class="af-ico af-blue"><i class="sp-ico" data-icon="calculator"></i></span><span>Cotiza tu seguro<small>Solicita y compara propuestas</small></span></li>
+                    <li><span class="af-ico af-green"><i class="sp-ico" data-icon="trending"></i></span><span>Simula tu pensión AFP<small>Proyecta tu futuro previsional</small></span></li>
+                    <li><span class="af-ico af-orange"><i class="sp-ico" data-icon="alert"></i></span><span>Registra y sigue siniestros<small>Con seguimiento de cada etapa</small></span></li>
+                    <li><span class="af-ico af-purple"><i class="sp-ico" data-icon="shield-lock"></i></span><span>Gestiona tus pólizas<small>Toda tu información en un panel</small></span></li>
+                </ul>
+            </aside>
+            
             <div class="login-card">
                 <div class="login-header">
                     <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
@@ -44,36 +62,125 @@
         </footer>
         <script src="../assets/app.js"></script>
         <script>
-                  async function iniciarSesion() {
-                      const email = document.getElementById('email').value.trim();
-                      const password = document.getElementById('password').value;
-                      const errEl = document.getElementById('login-error');
-                      if (!email || !password) {
-                          errEl.textContent = 'Ingrese su correo y contraseña.';
-                          errEl.style.display = 'block';
-                          return;
-                      }
-                      const result = await sp_login(email, password);
-                      if (!result.ok) {
-                          errEl.textContent = result.error;
-                          errEl.style.display = 'block';
-                          return;
-                      }
+    async function iniciarSesion() {
 
-                      if (result.usuario.rol === 'Administrador') {
+        const email =
+                document.getElementById('email')
+                        .value
+                        .trim();
 
-                          window.location.href = 's14-administracion.html';
+        const password =
+                document.getElementById('password')
+                        .value;
 
-                      } else {
+        const errEl =
+                document.getElementById('login-error');
 
-                          window.location.href = 's02-panel-usuario.html';
+        // Limpiar mensaje anterior
+        errEl.textContent = '';
+        errEl.style.display = 'none';
 
-                      }
-                  }
-                  document.addEventListener('keydown', e => {
-                      if (e.key === 'Enter')
-                          iniciarSesion();
-                  });
-        </script>
+        // ==============================================
+        // VALIDAR CAMPOS
+        // ==============================================
+
+        if (!email || !password) {
+
+            errEl.textContent =
+                    'Ingrese su correo y contraseña.';
+
+            errEl.style.display =
+                    'block';
+
+            return;
+        }
+
+        // ==============================================
+        // LOGIN
+        // ==============================================
+
+        const result =
+                await sp_login(
+                        email,
+                        password
+                );
+
+        if (!result.ok) {
+
+            errEl.textContent =
+                    result.error;
+
+            errEl.style.display =
+                    'block';
+
+            return;
+        }
+
+        // ==============================================
+        // OBTENER ROL
+        // ==============================================
+
+        const rol =
+                String(
+                        result.usuario.rol || ''
+                )
+                .trim()
+                .toLowerCase();
+
+        // ==============================================
+        // REDIRECCIÓN SEGÚN ROL
+        // ==============================================
+
+        if (rol === 'administrador') {
+
+            window.location.href =
+                    's14-administracion.html';
+
+            return;
+        }
+
+        if (rol === 'asesor') {
+
+            window.location.href =
+                    's13-panel-asesor.html';
+
+            return;
+        }
+
+        if (rol === 'cliente') {
+
+            window.location.href =
+                    's02-panel-usuario.html';
+
+            return;
+        }
+
+        // ==============================================
+        // ROL NO RECONOCIDO
+        // ==============================================
+
+        errEl.textContent =
+                'El usuario no tiene un rol válido.';
+
+        errEl.style.display =
+                'block';
+    }
+
+
+    // ==================================================
+    // INICIAR SESIÓN CON ENTER
+    // ==================================================
+
+    document.addEventListener(
+            'keydown',
+            function (event) {
+
+                if (event.key === 'Enter') {
+
+                    iniciarSesion();
+                }
+            }
+    );
+</script>
     </body>
 </html>

@@ -23,16 +23,19 @@ public class SiniestroService {
     private final SiniestroRepository siniestroRepository;
     private final UsuarioRepository usuarioRepository;
     private final AseguradoraRepository aseguradoraRepository;
+    private final HistorialService historialService;
 
     public SiniestroService(
-            SiniestroRepository siniestroRepository,
-            UsuarioRepository usuarioRepository,
-            AseguradoraRepository aseguradoraRepository) {
+        SiniestroRepository siniestroRepository,
+        UsuarioRepository usuarioRepository,
+        AseguradoraRepository aseguradoraRepository,
+        HistorialService historialService) {
 
-        this.siniestroRepository = siniestroRepository;
-        this.usuarioRepository = usuarioRepository;
-        this.aseguradoraRepository = aseguradoraRepository;
-    }
+    this.siniestroRepository = siniestroRepository;
+    this.usuarioRepository = usuarioRepository;
+    this.aseguradoraRepository = aseguradoraRepository;
+    this.historialService = historialService;
+}
 
     // =====================================================
     // REGISTRAR SINIESTRO
@@ -155,12 +158,36 @@ public class SiniestroService {
         );
 
         // -------------------------------------------------
-        // 5. Guardar en PostgreSQL
-        // -------------------------------------------------
+// 5. Guardar en PostgreSQL
+// -------------------------------------------------
 
-        return siniestroRepository.save(
-                siniestro
-        );
+Siniestro guardado =
+        siniestroRepository.save(siniestro);
+
+// -------------------------------------------------
+// 6. Registrar historial / trazabilidad
+// -------------------------------------------------
+
+historialService.registrar(
+        usuario.getIdUsuario(),
+        "SINIESTRO",
+        guardado.getIdSiniestro(),
+        "CREAR",
+        null,
+        "Siniestro "
+                + guardado.getNumeroSiniestro()
+                + " registrado"
+                + " | Estado: "
+                + guardado.getEstado()
+                + " | Aseguradora: "
+                + aseguradora.getNombre()
+);
+
+// -------------------------------------------------
+// 7. Retornar siniestro
+// -------------------------------------------------
+
+return guardado;
     }
 
     // =====================================================
@@ -215,6 +242,21 @@ public class SiniestroService {
 
         return siniestro;
     }
+    // =====================================================
+// OBTENER SINIESTRO PARA REVISIÓN INTERNA
+// ASESOR / ADMINISTRADOR
+// =====================================================
+
+public Siniestro obtenerParaRevision(Long idSiniestro) {
+
+    return siniestroRepository
+            .findById(idSiniestro)
+            .orElseThrow(() ->
+                    new IllegalArgumentException(
+                            "El siniestro indicado no existe."
+                    )
+            );
+}
 
     // =====================================================
     // VALIDACIONES
@@ -374,4 +416,91 @@ public class SiniestroService {
                 : valor.trim()
                         .toUpperCase();
     }
+    // =====================================================
+// DERIVAR SINIESTRO A ASEGURADORA
+// =====================================================
+
+public Siniestro derivarAseguradora(
+        String correo,
+        Long idSiniestro) {
+
+    // Usuario autenticado
+    Usuario usuario = usuarioRepository
+            .findByCorreo(correo)
+            .orElseThrow(() ->
+                    new IllegalArgumentException(
+                            "No se encontró el usuario autenticado."
+                    )
+            );
+
+    // Buscar siniestro
+    Siniestro siniestro = siniestroRepository
+            .findById(idSiniestro)
+            .orElseThrow(() ->
+                    new IllegalArgumentException(
+                            "El siniestro indicado no existe."
+                    )
+            );
+
+    // Verificar que tenga aseguradora
+    if (siniestro.getAseguradora() == null) {
+
+        throw new IllegalArgumentException(
+                "El siniestro no tiene una aseguradora asociada."
+        );
+    }
+
+    // Evitar volver a derivarlo
+    if ("Derivado".equalsIgnoreCase(
+            siniestro.getEstado())) {
+
+        return siniestro;
+    }
+
+    // Solo un siniestro registrado/en revisión puede derivarse
+    String estadoActual =
+            siniestro.getEstado();
+
+    if (estadoActual == null ||
+            !(
+                estadoActual.equalsIgnoreCase("Registrado")
+                ||
+                estadoActual.equalsIgnoreCase("En revisión")
+            )) {
+
+        throw new IllegalArgumentException(
+                "El siniestro no puede ser derivado desde el estado actual: "
+                + estadoActual
+        );
+    }
+
+    /*
+     * En esta etapa usamos el usuario autenticado para
+     * confirmar que la operación proviene de una sesión válida.
+     *
+     * La autorización por rol se realizará además en SecurityConfig.
+     */
+    if (usuario.getIdUsuario() == null) {
+
+        throw new IllegalArgumentException(
+                "Usuario autenticado inválido."
+        );
+    }
+
+    // Actualizar estado
+    siniestro.setEstado("Derivado");
+
+    return siniestroRepository.save(siniestro);
+}
+// =====================================================
+// LISTAR SINIESTROS PENDIENTES PARA ASESOR
+// =====================================================
+
+public List<Siniestro> listarPendientesAsesor() {
+
+    return siniestroRepository
+            .findByEstadoOrderByFechaRegistroDesc(
+                    "Registrado"
+            );
+}
 }

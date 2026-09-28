@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        SEGURPLAN — Roles y permisos
+    </title>
+
+    <link rel="stylesheet"
+          href="../assets/styles.css">
+
+    <style>
+
+        .roles-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(280px, 1fr));
+            gap: 18px;
+        }
+
+        .rol-card {
+            border: 1px solid #d7deea;
+            border-radius: 6px;
+            background: white;
+            overflow: hidden;
+        }
+
+        .rol-header {
+            background: #2f4a7a;
+            color: white;
+            padding: 18px 20px;
+        }
+
+        .rol-header h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .rol-header p {
+            margin: 5px 0 0;
+            font-size: 12px;
+            opacity: .85;
+        }
+
+        .rol-body {
+            padding: 20px;
+        }
+
+        .rol-info {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 18px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .rol-dato {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .rol-dato strong {
+            display: block;
+            color: #17376b;
+            font-size: 18px;
+            margin-top: 3px;
+        }
+
+        .permisos-titulo {
+            color: #17376b;
+            font-size: 14px;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .permisos-lista {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .permisos-lista li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eef2f7;
+            font-size: 13px;
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .permiso-check {
+            color: #17652c;
+            font-weight: bold;
+        }
+
+        .nota-seguridad {
+            margin-top: 20px;
+            padding: 14px 16px;
+            background: #f7f9fc;
+            border-left: 4px solid #2f4a7a;
+            color: #475569;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .mensaje-error {
+            padding: 13px 15px;
+            background: #fdeaea;
+            color: #9f1d1d;
+            margin-bottom: 16px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .roles-toolbar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 18px;
+        }
+
+    </style>
+
+<link rel="stylesheet" href="../assets/theme.css">
+<script src="../assets/theme.js"></script>
+</head>
+
+<body>
+
+<header class="site-header">
+
+    <div class="logo">
+
+        SEGURPLAN
+
+        <span>
+            Plataforma de seguros y AFP
+        </span>
+
+    </div>
+
+    <div class="header-right">
+
+        <span class="user-name"
+              id="usuario-header">
+
+            Usuario: Administrador
+
+        </span>
+
+        <button class="bell-btn"
+                title="Notificaciones">
+
+            <svg width="20"
+                 height="20"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="2">
+
+                <path
+                    d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+
+                <path
+                    d="M13.73 21a2 2 0 0 1-3.46 0"/>
+
+            </svg>
+
+        </button>
+
+        <button class="profile-btn">
+            MI PERFIL
+        </button>
+
+    </div>
+
+</header>
+
+
+<div class="page-wrap">
+
+    <nav class="breadcrumb">
+
+        SEGURPLAN
+        &rsaquo;
+        Administración
+        &rsaquo;
+        Roles y permisos
+
+    </nav>
+
+
+    <h1 class="page-title">
+        Roles y permisos
+    </h1>
+
+
+    <p style="
+       margin-top:-8px;
+       margin-bottom:25px;
+       color:var(--text-sub);">
+
+        Consulte los roles del sistema y las
+        funciones autorizadas para cada tipo
+        de usuario.
+
+    </p>
+
+
+    <div id="mensaje-error"
+         class="mensaje-error">
+    </div>
+
+
+    <div class="roles-toolbar">
+
+        <button
+            class="btn btn-outline"
+            onclick="volverAdministracion()">
+
+            VOLVER A ADMINISTRACIÓN
+
+        </button>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div>
+
+                <h2>
+                    Control de acceso
+                </h2>
+
+                <p id="contador">
+                    Cargando roles...
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div id="roles-grid"
+                 class="roles-grid">
+
+                <p>
+                    Cargando roles y permisos...
+                </p>
+
+            </div>
+
+
+            <div class="nota-seguridad">
+
+                <strong>
+                    
+                </strong>
+
+             
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<footer class="site-footer">
+
+    <div class="footer-brand">
+
+        SEGURPLAN
+
+        <span>
+            Plataforma de seguros y AFP
+        </span>
+
+    </div>
+
+    <nav class="footer-links">
+
+        <a href="../index.html">
+            Inicio
+        </a>
+
+    </nav>
+
+    <div class="footer-meta">
+
+        <span>
+            © 2026 SEGURPLAN.
+            Todos los derechos reservados.
+        </span>
+
+    </div>
+
+</footer>
+
+
+<script src="../assets/app.js"></script>
+
+<script>
+
+    document.addEventListener(
+        'DOMContentLoaded',
+        iniciarPagina
+    );
+
+
+    // =====================================================
+    // INICIAR
+    // =====================================================
+
+    async function iniciarPagina() {
+
+        const session =
+            sp_getSession();
+
+        if (!session) {
+
+            window.location.replace(
+                's01-login.html'
+            );
+
+            return;
+        }
+
+
+        const rol =
+            String(session.rol || '')
+                .trim()
+                .toLowerCase();
+
+
+        if (rol !== 'administrador') {
+
+            alert(
+                'Esta sección es exclusiva ' +
+                'para administradores.'
+            );
+
+            window.location.replace(
+                's02-panel-usuario.html'
+            );
+
+            return;
+        }
+
+
+        document.getElementById(
+            'usuario-header'
+        ).textContent =
+            'Usuario: '
+            + (session.nombres || '')
+            + ' '
+            + (session.apellidos || '')
+            + ' — Administrador';
+
+
+        await cargarRoles();
+    }
+
+
+    // =====================================================
+    // CARGAR ROLES
+    // =====================================================
+
+    async function cargarRoles() {
+
+        const grid =
+            document.getElementById(
+                'roles-grid'
+            );
+
+        const contador =
+            document.getElementById(
+                'contador'
+            );
+
+        try {
+
+            const response =
+                await fetch(
+                    '/api/admin/roles',
+                    {
+                        method: 'GET',
+                        credentials:
+                            'same-origin'
+                    }
+                );
+
+
+            if (response.status === 401) {
+
+                window.location.replace(
+                    's01-login.html'
+                );
+
+                return;
+            }
+
+
+            if (response.status === 403) {
+
+                throw new Error(
+                    'No tiene permisos para ' +
+                    'consultar los roles.'
+                );
+            }
+
+
+            const data =
+                await leerJson(
+                    response
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.mensaje
+                    || 'No se pudieron cargar los roles.'
+                );
+            }
+
+
+            const roles =
+                Array.isArray(data)
+                    ? data
+                    : [];
+
+
+            contador.textContent =
+                roles.length
+                + (
+                    roles.length === 1
+                        ? ' rol registrado'
+                        : ' roles registrados'
+                );
+
+
+            renderRoles(
+                roles
+            );
+
+
+        } catch (error) {
+
+            grid.innerHTML = `
+                <p>
+                    No fue posible cargar
+                    los roles.
+                </p>
+            `;
+
+            mostrarError(
+                error.message
+            );
+        }
+    }
+
+
+    // =====================================================
+    // RENDERIZAR
+    // =====================================================
+
+    function renderRoles(
+        roles
+    ) {
+
+        const grid =
+            document.getElementById(
+                'roles-grid'
+            );
+
+
+        if (roles.length === 0) {
+
+            grid.innerHTML = `
+                <p>
+                    No existen roles registrados.
+                </p>
+            `;
+
+            return;
+        }
+
+
+        grid.innerHTML =
+            roles.map(rol => {
+
+                const permisos =
+                    Array.isArray(
+                        rol.permisos
+                    )
+                        ? rol.permisos
+                        : [];
+
+
+                const permisosHtml =
+                    permisos.length > 0
+
+                        ? permisos
+                            .map(
+                                permiso => `
+                                    <li>
+                                        <span
+                                            class="permiso-check">
+                                            ✓
+                                        </span>
+
+                                        <span>
+                                            ${escapeHtml(
+                                                permiso
+                                            )}
+                                        </span>
+                                    </li>
+                                `
+                            )
+                            .join('')
+
+                        : `
+                            <li>
+                                No existen permisos
+                                definidos.
+                            </li>
+                        `;
+
+
+                return `
+                    <div class="rol-card">
+
+                        <div class="rol-header">
+
+                            <h2>
+                                ${escapeHtml(
+                                    rol.nombre
+                                )}
+                            </h2>
+
+                            <p>
+                                ${escapeHtml(
+                                    rol.descripcion
+                                    || 'Rol del sistema'
+                                )}
+                            </p>
+
+                        </div>
+
+                        <div class="rol-body">
+
+                            <div class="rol-info">
+
+                                <div class="rol-dato">
+
+                                    ID DEL ROL
+
+                                    <strong>
+                                        ${rol.idRol}
+                                    </strong>
+
+                                </div>
+
+                                <div class="rol-dato">
+
+                                    USUARIOS
+
+                                    <strong>
+                                        ${rol.cantidadUsuarios}
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="permisos-titulo">
+                                PERMISOS Y FUNCIONES
+                            </div>
+
+
+                            <ul class="permisos-lista">
+
+                                ${permisosHtml}
+
+                            </ul>
+
+                        </div>
+
+                    </div>
+                `;
+
+            })
+            .join('');
+    }
+
+
+    // =====================================================
+    // LEER JSON
+    // =====================================================
+
+    async function leerJson(
+        response
+    ) {
+
+        const texto =
+            await response.text();
+
+
+        if (!texto) {
+            return {};
+        }
+
+
+        try {
+
+            return JSON.parse(
+                texto
+            );
+
+        } catch (error) {
+
+            return {
+                mensaje: texto
+            };
+        }
+    }
+
+
+    // =====================================================
+    // ERROR
+    // =====================================================
+
+    function mostrarError(
+        texto
+    ) {
+
+        const elemento =
+            document.getElementById(
+                'mensaje-error'
+            );
+
+        elemento.textContent =
+            texto;
+
+        elemento.style.display =
+            'block';
+    }
+
+
+    // =====================================================
+    // ESCAPAR HTML
+    // =====================================================
+
+    function escapeHtml(
+        valor
+    ) {
+
+        return String(
+            valor ?? ''
+        )
+        .replaceAll(
+            '&',
+            '&amp;'
+        )
+        .replaceAll(
+            '<',
+            '&lt;'
+        )
+        .replaceAll(
+            '>',
+            '&gt;'
+        )
+        .replaceAll(
+            '"',
+            '&quot;'
+        )
+        .replaceAll(
+            "'",
+            '&#039;'
+        );
+    }
+
+
+    // =====================================================
+    // VOLVER
+    // =====================================================
+
+    function volverAdministracion() {
+
+        window.location.href =
+            's14-administracion.html';
+    }
+
+</script>
+
+</body>
+</html>

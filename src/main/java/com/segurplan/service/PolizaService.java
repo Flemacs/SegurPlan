@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.segurplan.service;
 
 import com.segurplan.dto.PolizaRequest;
@@ -10,77 +6,142 @@ import com.segurplan.model.Contratacion;
 import com.segurplan.model.Poliza;
 import com.segurplan.repository.ContratacionRepository;
 import com.segurplan.repository.PolizaRepository;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigDecimal;
 import java.util.List;
 
 @Service
 public class PolizaService {
+
     private final PolizaRepository polizaRepository;
     private final ContratacionRepository contratacionRepository;
 
-    public PolizaService(PolizaRepository polizaRepository,
-                         ContratacionRepository contratacionRepository) {
+    // Servicio para registrar la trazabilidad
+    private final HistorialService historialService;
+
+    public PolizaService(
+            PolizaRepository polizaRepository,
+            ContratacionRepository contratacionRepository,
+            HistorialService historialService) {
+
         this.polizaRepository = polizaRepository;
         this.contratacionRepository = contratacionRepository;
+        this.historialService = historialService;
     }
 
+    // =========================================================
+    // GENERAR PÓLIZA
+    // =========================================================
     @Transactional
     public Poliza generar(PolizaRequest request) {
+
         if (request.getIdContratacion() == null) {
-            throw new IllegalArgumentException("Seleccione una contratación.");
+            throw new IllegalArgumentException(
+                    "Seleccione una contratación."
+            );
         }
 
         Contratacion contratacion = contratacionRepository
                 .findById(request.getIdContratacion())
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Contratación no encontrada."));
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Contratación no encontrada."
+                        )
+                );
 
+        // -----------------------------------------------------
+        // VALIDAR COTIZACIÓN
+        // -----------------------------------------------------
         if (!"Aceptada".equals(
-                contratacion.getCotizacion().getEstado())) {
+                contratacion
+                        .getCotizacion()
+                        .getEstado())) {
+
             throw new IllegalArgumentException(
-                    "La cotización todavía no está aceptada.");
+                    "La cotización todavía no está aceptada."
+            );
         }
 
+        // -----------------------------------------------------
+        // VALIDAR CONDICIONES
+        // -----------------------------------------------------
         if (!Boolean.TRUE.equals(
                 contratacion.getCondicionesAceptadas())) {
+
             throw new IllegalArgumentException(
-                    "El cliente no ha aceptado las condiciones.");
+                    "El cliente no ha aceptado las condiciones."
+            );
         }
 
-        if (polizaRepository.findByContratacion_IdContratacion(
-                contratacion.getIdContratacion()).isPresent()) {
+        // -----------------------------------------------------
+        // VALIDAR QUE NO EXISTA OTRA PÓLIZA
+        // -----------------------------------------------------
+        if (polizaRepository
+                .findByContratacion_IdContratacion(
+                        contratacion.getIdContratacion())
+                .isPresent()) {
+
             throw new IllegalArgumentException(
-                    "Esta contratación ya tiene una póliza.");
+                    "Esta contratación ya tiene una póliza."
+            );
         }
 
-        if (request.getFechaInicio() == null ||
-            request.getFechaFin() == null ||
-            request.getFechaFin().isBefore(request.getFechaInicio())) {
+        // -----------------------------------------------------
+        // VALIDAR FECHAS
+        // -----------------------------------------------------
+        if (request.getFechaInicio() == null
+                || request.getFechaFin() == null
+                || request.getFechaFin()
+                        .isBefore(request.getFechaInicio())) {
+
             throw new IllegalArgumentException(
-                    "La fecha de fin debe ser posterior al inicio.");
+                    "La fecha de fin debe ser posterior al inicio."
+            );
         }
 
-        if (request.getPrima() == null ||
-            request.getPrima().compareTo(BigDecimal.ZERO) <= 0) {
+        // -----------------------------------------------------
+        // VALIDAR PRIMA
+        // -----------------------------------------------------
+        if (request.getPrima() == null
+                || request.getPrima()
+                        .compareTo(BigDecimal.ZERO) <= 0) {
+
             throw new IllegalArgumentException(
-                    "Ingrese una prima mayor que cero.");
+                    "Ingrese una prima mayor que cero."
+            );
         }
 
-        if (request.getCobertura() == null ||
-            request.getCobertura().isBlank()) {
+        // -----------------------------------------------------
+        // VALIDAR COBERTURA
+        // -----------------------------------------------------
+        if (request.getCobertura() == null
+                || request.getCobertura().isBlank()) {
+
             throw new IllegalArgumentException(
-                    "La cobertura es obligatoria.");
+                    "La cobertura es obligatoria."
+            );
         }
 
-        if (request.getDeducible() != null &&
-            request.getDeducible().compareTo(BigDecimal.ZERO) < 0) {
+        // -----------------------------------------------------
+        // VALIDAR DEDUCIBLE
+        // -----------------------------------------------------
+        if (request.getDeducible() != null
+                && request.getDeducible()
+                        .compareTo(BigDecimal.ZERO) < 0) {
+
             throw new IllegalArgumentException(
-                    "El deducible no puede ser negativo.");
+                    "El deducible no puede ser negativo."
+            );
         }
 
+        // =====================================================
+        // CREAR PÓLIZA
+        // =====================================================
         Poliza poliza = new Poliza();
+
         poliza.setContratacion(contratacion);
         poliza.setFechaInicio(request.getFechaInicio());
         poliza.setFechaFin(request.getFechaFin());
@@ -90,41 +151,100 @@ public class PolizaService {
         poliza.setCondiciones(request.getCondiciones());
         poliza.setEstado("Recibida");
 
-        // Número temporal único hasta obtener el ID de PostgreSQL.
+        // Número temporal hasta obtener el ID generado
+        // por PostgreSQL.
         poliza.setNumeroPoliza(
-                "TMP-" + java.util.UUID.randomUUID());
+                "TMP-" + java.util.UUID.randomUUID()
+        );
 
+        // Guardamos para obtener idPoliza
         poliza = polizaRepository.saveAndFlush(poliza);
 
+        // =====================================================
+        // GENERAR NÚMERO DEFINITIVO
+        // =====================================================
         poliza.setNumeroPoliza(
-                "POL-" + String.format("%08d", poliza.getIdPoliza()));
-
-        return polizaRepository.save(poliza);
-    }
-    
-@Transactional(readOnly = true)
-public List<PolizaResumenDTO> listarPorUsuario(Long idUsuario) {
-
-    if (idUsuario == null || idUsuario <= 0) {
-        throw new IllegalArgumentException(
-                "El identificador del usuario no es válido."
+                "POL-" +
+                String.format(
+                        "%08d",
+                        poliza.getIdPoliza()
+                )
         );
+
+        poliza = polizaRepository.save(poliza);
+
+        // =====================================================
+        // REGISTRAR HISTORIAL / TRAZABILIDAD
+        // =====================================================
+
+        Long idUsuario = null;
+
+        /*
+         * La póliza pertenece a una contratación,
+         * la contratación pertenece a una cotización,
+         * y la cotización pertenece a un usuario.
+         */
+        if (contratacion.getCotizacion() != null
+                && contratacion
+                        .getCotizacion()
+                        .getUsuario() != null) {
+
+            idUsuario = contratacion
+                    .getCotizacion()
+                    .getUsuario()
+                    .getIdUsuario();
+        }
+
+        historialService.registrar(
+                idUsuario,
+                "POLIZA",
+                poliza.getIdPoliza(),
+                "CREAR",
+                null,
+                "Póliza "
+                        + poliza.getNumeroPoliza()
+                        + " generada"
+                        + " | Estado: "
+                        + poliza.getEstado()
+                        + " | Prima: S/ "
+                        + poliza.getPrima()
+        );
+
+        return poliza;
     }
 
-    return polizaRepository.findByUsuario(idUsuario)
-            .stream()
-            .map(p -> new PolizaResumenDTO(
-                    p.getIdPoliza(),
-                    p.getNumeroPoliza(),
-                    p.getContratacion().getIdContratacion(),
-                    p.getFechaInicio(),
-                    p.getFechaFin(),
-                    p.getPrima(),
-                    p.getCobertura(),
-                    p.getDeducible(),
-                    p.getCondiciones(),
-                    p.getEstado()
-            ))
-            .toList();
-}
+    // =========================================================
+    // LISTAR PÓLIZAS POR USUARIO
+    // =========================================================
+    @Transactional(readOnly = true)
+    public List<PolizaResumenDTO> listarPorUsuario(
+            Long idUsuario) {
+
+        if (idUsuario == null || idUsuario <= 0) {
+
+            throw new IllegalArgumentException(
+                    "El identificador del usuario no es válido."
+            );
+        }
+
+        return polizaRepository
+                .findByUsuario(idUsuario)
+                .stream()
+                .map(p ->
+                        new PolizaResumenDTO(
+                                p.getIdPoliza(),
+                                p.getNumeroPoliza(),
+                                p.getContratacion()
+                                        .getIdContratacion(),
+                                p.getFechaInicio(),
+                                p.getFechaFin(),
+                                p.getPrima(),
+                                p.getCobertura(),
+                                p.getDeducible(),
+                                p.getCondiciones(),
+                                p.getEstado()
+                        )
+                )
+                .toList();
+    }
 }

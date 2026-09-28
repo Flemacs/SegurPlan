@@ -219,4 +219,312 @@ public class SiniestroController {
 
         return item;
     }
+    // =====================================================
+// DERIVAR SINIESTRO A ASEGURADORA
+// =====================================================
+
+@PutMapping("/{idSiniestro}/derivar")
+public ResponseEntity<?> derivarAseguradora(
+        @PathVariable Long idSiniestro,
+        Principal principal) {
+
+    if (principal == null) {
+
+        return ResponseEntity
+                .status(401)
+                .body(Map.of(
+                        "mensaje",
+                        "Debe iniciar sesión."
+                ));
+    }
+
+    try {
+
+        Siniestro siniestro =
+                siniestroService.derivarAseguradora(
+                        principal.getName(),
+                        idSiniestro
+                );
+
+        return ResponseEntity.ok(
+                Map.of(
+                        "mensaje",
+                        "Siniestro derivado correctamente a la aseguradora.",
+                        "idSiniestro",
+                        siniestro.getIdSiniestro(),
+                        "numeroSiniestro",
+                        siniestro.getNumeroSiniestro(),
+                        "estado",
+                        siniestro.getEstado()
+                )
+        );
+
+    } catch (IllegalArgumentException e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(Map.of(
+                        "mensaje",
+                        e.getMessage()
+                ));
+
+    } catch (Exception e) {
+
+        e.printStackTrace();
+
+        return ResponseEntity
+                .internalServerError()
+                .body(Map.of(
+                        "mensaje",
+                        "No se pudo derivar el siniestro."
+                ));
+    }
+}
+// =====================================================
+// SINIESTROS PENDIENTES - ASESOR
+// =====================================================
+
+@GetMapping("/asesor/pendientes")
+public ResponseEntity<?> listarPendientesAsesor(
+        Principal principal) {
+
+    if (principal == null) {
+
+        return ResponseEntity
+                .status(401)
+                .body(Map.of(
+                        "mensaje",
+                        "Debe iniciar sesión."
+                ));
+    }
+
+    try {
+
+        List<Map<String, Object>> resultado =
+                siniestroService
+                        .listarPendientesAsesor()
+                        .stream()
+                        .map(this::convertirSiniestroAsesor)
+                        .toList();
+
+        return ResponseEntity.ok(resultado);
+
+    } catch (Exception e) {
+
+        e.printStackTrace();
+
+        return ResponseEntity
+                .internalServerError()
+                .body(Map.of(
+                        "mensaje",
+                        "No se pudieron consultar los siniestros pendientes."
+                ));
+    }
+}
+
+
+// =====================================================
+// CONVERTIR SINIESTRO PARA PANEL DEL ASESOR
+// =====================================================
+
+private Map<String, Object> convertirSiniestroAsesor(
+        Siniestro siniestro) {
+
+    Map<String, Object> dto =
+            new LinkedHashMap<>();
+
+    // =====================================================
+    // SINIESTRO
+    // =====================================================
+
+    dto.put(
+            "idSiniestro",
+            siniestro.getIdSiniestro()
+    );
+
+    dto.put(
+            "numeroSiniestro",
+            siniestro.getNumeroSiniestro()
+    );
+
+    dto.put(
+            "fechaAccidente",
+            siniestro.getFechaAccidente()
+    );
+
+    dto.put(
+            "fechaRegistro",
+            siniestro.getFechaRegistro()
+    );
+
+    dto.put(
+            "estado",
+            siniestro.getEstado()
+    );
+
+    // =====================================================
+    // VEHÍCULO
+    // =====================================================
+
+    dto.put(
+            "placa",
+            siniestro.getPlaca()
+    );
+
+    dto.put(
+            "marca",
+            siniestro.getMarca()
+    );
+
+    dto.put(
+            "modelo",
+            siniestro.getModelo()
+    );
+
+    dto.put(
+            "anio",
+            siniestro.getAnio()
+    );
+
+    // =====================================================
+    // ACCIDENTE
+    // =====================================================
+
+    dto.put(
+            "lugar",
+            siniestro.getLugar()
+    );
+
+    dto.put(
+            "descripcion",
+            siniestro.getDescripcion()
+    );
+
+    dto.put(
+            "resultadoEvaluacion",
+            siniestro.getResultadoEvaluacion()
+    );
+
+    dto.put(
+            "observaciones",
+            siniestro.getObservaciones()
+    );
+
+    // =====================================================
+    // USUARIO
+    // =====================================================
+
+    if (siniestro.getUsuario() != null) {
+
+        dto.put(
+                "idUsuario",
+                siniestro.getUsuario()
+                        .getIdUsuario()
+        );
+
+        String nombres =
+                siniestro.getUsuario()
+                        .getNombres() != null
+                ? siniestro.getUsuario()
+                        .getNombres()
+                : "";
+
+        String apellidos =
+                siniestro.getUsuario()
+                        .getApellidos() != null
+                ? siniestro.getUsuario()
+                        .getApellidos()
+                : "";
+
+        String nombreCompleto =
+                (nombres + " " + apellidos)
+                        .trim();
+
+        dto.put(
+                "nombreUsuario",
+                nombreCompleto
+        );
+
+        dto.put(
+                "correoUsuario",
+                siniestro.getUsuario()
+                        .getCorreo()
+        );
+    }
+
+    // =====================================================
+    // ASEGURADORA
+    // =====================================================
+
+    if (siniestro.getAseguradora() != null) {
+
+        dto.put(
+                "idAseguradora",
+                siniestro.getAseguradora()
+                        .getIdAseguradora()
+        );
+
+        dto.put(
+                "nombreAseguradora",
+                siniestro.getAseguradora()
+                        .getNombre()
+        );
+    }
+
+    return dto;
+}
+// =====================================================
+// CONSULTAR SINIESTRO PARA REVISIÓN INTERNA
+// =====================================================
+
+@GetMapping("/asesor/{idSiniestro}")
+public ResponseEntity<?> obtenerParaRevision(
+        @PathVariable Long idSiniestro,
+        Principal principal) {
+
+    if (principal == null) {
+
+        return ResponseEntity
+                .status(401)
+                .body(Map.of(
+                        "mensaje",
+                        "Debe iniciar sesión."
+                ));
+    }
+
+    try {
+
+        Siniestro siniestro =
+                siniestroService
+                        .obtenerParaRevision(
+                                idSiniestro
+                        );
+
+        return ResponseEntity.ok(
+                convertirSiniestroAsesor(
+                        siniestro
+                )
+        );
+
+    } catch (IllegalArgumentException e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(Map.of(
+                        "mensaje",
+                        e.getMessage()
+                ));
+
+    } catch (Exception e) {
+
+        e.printStackTrace();
+
+        return ResponseEntity
+                .internalServerError()
+                .body(Map.of(
+                        "mensaje",
+                        "No se pudo consultar el siniestro."
+                ));
+    }
+}
 }

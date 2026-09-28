@@ -16,7 +16,6 @@ public class Documento {
     // =====================================================
     // USUARIO
     // =====================================================
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
@@ -26,7 +25,6 @@ public class Documento {
     // Puede ser NULL cuando el documento pertenece
     // a un siniestro.
     // =====================================================
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_contratacion")
     private Contratacion contratacion;
@@ -34,7 +32,6 @@ public class Documento {
     // =====================================================
     // SINIESTRO
     // =====================================================
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_siniestro")
     private Siniestro siniestro;
@@ -42,7 +39,6 @@ public class Documento {
     // =====================================================
     // DATOS DEL DOCUMENTO
     // =====================================================
-
     @Column(name = "tipo_documento", nullable = false)
     private String tipoDocumento;
 
@@ -64,7 +60,6 @@ public class Documento {
     // =====================================================
     // VALORES AUTOMÁTICOS
     // =====================================================
-
     @PrePersist
     public void prePersist() {
 
@@ -77,14 +72,13 @@ public class Documento {
         }
 
         if (estado == null || estado.isBlank()) {
-            estado = "Cargado";
+            estado = "Pendiente";
         }
     }
 
     // =====================================================
     // GETTERS Y SETTERS
     // =====================================================
-
     public Long getIdDocumento() {
         return idDocumento;
     }

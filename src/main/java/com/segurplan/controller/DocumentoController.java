@@ -262,4 +262,59 @@ public class DocumentoController {
 
         return dto;
     }
+    // =====================================================
+// EVIDENCIAS PARA REVISIÓN DEL ASESOR
+// =====================================================
+
+@GetMapping("/asesor/siniestro/{idSiniestro}")
+public ResponseEntity<?> listarParaRevision(
+        @PathVariable Long idSiniestro,
+        Principal principal) {
+
+    if (principal == null) {
+
+        return ResponseEntity
+                .status(401)
+                .body(Map.of(
+                        "mensaje",
+                        "Debe iniciar sesión."
+                ));
+    }
+
+    try {
+
+        List<Map<String, Object>> documentos =
+                documentoService
+                        .listarParaRevision(
+                                idSiniestro
+                        )
+                        .stream()
+                        .map(this::convertirDocumento)
+                        .toList();
+
+        return ResponseEntity.ok(
+                documentos
+        );
+
+    } catch (IllegalArgumentException e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(Map.of(
+                        "mensaje",
+                        e.getMessage()
+                ));
+
+    } catch (Exception e) {
+
+        e.printStackTrace();
+
+        return ResponseEntity
+                .internalServerError()
+                .body(Map.of(
+                        "mensaje",
+                        "No se pudieron consultar las evidencias."
+                ));
+    }
+}
 }

@@ -1,14 +1,1434 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SEGURPLAN — REP-PO-03 Siniestros por aseguradora</title><link rel="stylesheet" href="../assets/styles.css"><style>
-.report-nav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 24px}.report-nav a{padding:9px 12px;border:1px solid #d7dce5;border-radius:6px;background:#fff;color:#183153;font-size:12px;font-weight:700;text-decoration:none}.report-nav a:hover{background:#eef2f8}.report-code{display:inline-block;padding:5px 9px;border-radius:20px;background:#eef2f8;color:#183153;font-size:12px;font-weight:800;margin-bottom:10px}.report-toolbar{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin:22px 0}.report-toolbar .field{display:flex;flex-direction:column;gap:6px}.report-toolbar label{font-size:12px;font-weight:700}.report-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0 24px}.report-kpi{background:#fff;border:1px solid #dfe3ea;border-radius:8px;padding:18px}.report-kpi strong{display:block;font-size:25px;color:#183153;margin-bottom:5px}.report-kpi span{font-size:11px;color:#687386;text-transform:uppercase;font-weight:700}.chart-panel{height:250px;display:flex;align-items:flex-end;gap:18px;padding:28px 24px 12px;border:1px solid #e1e5eb;border-radius:8px;background:#fafbfc;margin-bottom:24px}.chart-col{flex:1;min-width:40px;text-align:center}.chart-bar{margin:auto;width:min(65px,80%);background:#183153;border-radius:6px 6px 0 0;min-height:22px}.chart-col small{display:block;margin-top:8px;font-size:10px;color:#687386}.report-note{font-size:12px;color:#687386;margin-top:12px}.status-pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#eef2f8;font-weight:700;font-size:11px}@media(max-width:760px){.report-kpis{grid-template-columns:repeat(2,1fr)}.chart-panel{gap:8px}.site-header{height:auto}.header-right{flex-wrap:wrap}}
-</style></head><body>
-<header class="site-header"><div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div><div class="header-right"><span class="user-name" id="header-user">Usuario</span><button class="profile-btn" type="button">MI PERFIL</button><button class="btn-logout" type="button">CERRAR SESIÓN</button></div></header>
-<div class="page-wrap"><nav class="breadcrumb">SEGURPLAN &rsaquo; Reportes &rsaquo; Producción y Operaciones &rsaquo; Siniestros por aseguradora</nav><div class="report-nav"><a href="rep-mv-01-cotizaciones-estado.html">Marketing y Ventas</a><a href="rep-la-01-documentos.html">Logística</a><a href="rep-po-01-afp.html">Operaciones</a><a href="rep-dg-01-general.html">Gerencia</a><a href="rep-ot-02-trazabilidad.html">Trazabilidad</a><a href="s14-administracion.html">Administración</a></div><span class="report-code">REP-PO-03</span><h1 class="page-title">Siniestros por aseguradora</h1><p class="page-subtitle">Compara los resultados de evaluación de siniestros por compañía aseguradora.</p>
-<div class="report-toolbar"><div class="field"><label for="periodo">Período</label><input class="form-control" id="periodo" type="month"></div><button class="btn btn-primary" id="btn-generar" type="button">GENERAR</button><button class="btn btn-secondary" id="btn-exportar" type="button">EXPORTAR CSV</button></div>
-<div class="report-kpis"><div class="report-kpi"><strong>26</strong><span>Siniestros</span></div><div class="report-kpi"><strong>16</strong><span>Aprobados</span></div><div class="report-kpi"><strong>4</strong><span>Rechazados</span></div><div class="report-kpi"><strong>6</strong><span>Observados</span></div></div><div class="card"><div class="card-header"><h2>Resumen visual</h2></div><div class="card-body"><div class="chart-panel"><div class="chart-col"><div class="chart-bar" style="height:55px"></div><small>Siniestros</small></div><div class="chart-col"><div class="chart-bar" style="height:87px"></div><small>Aprobados</small></div><div class="chart-col"><div class="chart-bar" style="height:119px"></div><small>Rechazados</small></div><div class="chart-col"><div class="chart-bar" style="height:151px"></div><small>Observados</small></div></div><p class="report-note">Vista preliminar. Los valores se reemplazan con la respuesta del endpoint del reporte al conectar el backend.</p></div></div>
-<div class="card" style="margin-top:20px"><div class="card-header"><h2>Detalle del reporte</h2></div><div class="card-body"><div class="table-wrap"><table id="tabla-reporte"><thead><tr><th>Aseguradora</th><th>Aprobados</th><th>Rechazados</th><th>Observados</th><th>Total</th></tr></thead><tbody><tr><td>Rímac Seguros</td><td>5</td><td>1</td><td>2</td><td>8</td></tr><tr><td>Pacífico Seguros</td><td>4</td><td>1</td><td>1</td><td>6</td></tr><tr><td>La Positiva</td><td>3</td><td>2</td><td>1</td><td>6</td></tr><tr><td>Mapfre Perú</td><td>4</td><td>0</td><td>2</td><td>6</td></tr></tbody></table></div></div></div></div>
-<script src="../assets/app.js"></script><script>
-const sesion=sp_requireAuth('s01-login.html');if(sesion){document.getElementById('header-user').textContent=(sesion.nombres||'Usuario')+' '+(sesion.apellidos||'');}
-document.querySelector('.btn-logout').addEventListener('click',sp_logout);const p=document.getElementById('periodo');const d=new Date();p.value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
-document.getElementById('btn-generar').addEventListener('click',()=>alert('Reporte REP-PO-03: interfaz lista. Conecte el endpoint /api/reportes correspondiente para cargar datos reales.'));
-document.getElementById('btn-exportar').addEventListener('click',()=>{const rows=[...document.querySelectorAll('#tabla-reporte tr')].map(r=>[...r.children].map(c=>'"'+c.innerText.replaceAll('"','""')+'"').join(';')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+rows],{type:'text/csv;charset=utf-8'}));a.download='REP-PO-03_'+p.value+'.csv';a.click();URL.revokeObjectURL(a.href);});
-</script></body></html>
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1">
+
+    <title>
+        SEGURPLAN — REP-PO-03 Siniestros por aseguradora
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="../assets/styles.css">
+
+    <style>
+
+        .report-nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 0 0 24px;
+        }
+
+        .report-nav a {
+            padding: 9px 12px;
+            border: 1px solid #d7dce5;
+            border-radius: 6px;
+            background: #fff;
+            color: #183153;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .report-nav a:hover {
+            background: #eef2f8;
+        }
+
+        .report-code {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #eef2f8;
+            color: #183153;
+            font-size: 12px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .report-toolbar {
+            display: flex;
+            gap: 12px;
+            align-items: end;
+            flex-wrap: wrap;
+            margin: 22px 0;
+        }
+
+        .report-toolbar .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .report-toolbar label {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .report-kpis {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin: 18px 0 14px;
+        }
+
+        .report-kpis-secondary {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin: 0 0 24px;
+        }
+
+        .report-kpi {
+            background: #fff;
+            border: 1px solid #dfe3ea;
+            border-radius: 8px;
+            padding: 18px;
+        }
+
+        .report-kpi strong {
+            display: block;
+            font-size: 25px;
+            color: #183153;
+            margin-bottom: 5px;
+        }
+
+        .report-kpi span {
+            font-size: 11px;
+            color: #687386;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .chart-panel {
+            height: 270px;
+            display: flex;
+            align-items: flex-end;
+            gap: 25px;
+            padding: 28px 30px 12px;
+            border: 1px solid #e1e5eb;
+            border-radius: 8px;
+            background: #fafbfc;
+            margin-bottom: 20px;
+        }
+
+        .chart-col {
+            flex: 1;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .chart-value {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 12px;
+            font-weight: 800;
+            color: #183153;
+        }
+
+        .chart-bar {
+            margin: auto;
+            width: min(70px, 80%);
+            background: #183153;
+            border-radius: 6px 6px 0 0;
+            min-height: 0;
+            transition: height .4s ease;
+        }
+
+        .chart-col small {
+            display: block;
+            margin-top: 8px;
+            font-size: 10px;
+            color: #687386;
+        }
+
+        .report-note {
+            font-size: 12px;
+            color: #687386;
+            margin-top: 12px;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        #tabla-reporte {
+            width: 100%;
+        }
+
+        .empty-row {
+            text-align: center;
+            padding: 25px !important;
+            color: #687386;
+        }
+
+        @media(max-width:760px) {
+
+            .report-kpis,
+            .report-kpis-secondary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .chart-panel {
+                gap: 8px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .site-header {
+                height: auto;
+            }
+
+            .header-right {
+                flex-wrap: wrap;
+            }
+        }
+
+    </style>
+
+<link rel="stylesheet" href="../assets/theme.css">
+<script src="../assets/theme.js"></script>
+</head>
+
+
+<body>
+
+
+<!-- ====================================================== -->
+<!-- HEADER -->
+<!-- ====================================================== -->
+
+<header class="site-header">
+
+    <div class="logo">
+
+        SEGURPLAN
+
+        <span>
+            Plataforma de seguros y AFP
+        </span>
+
+    </div>
+
+
+    <div class="header-right">
+
+        <span
+            class="user-name"
+            id="header-user">
+
+            Usuario
+
+        </span>
+
+
+        <button
+            class="profile-btn"
+            type="button">
+
+            MI PERFIL
+
+        </button>
+
+
+        <button
+            class="btn-logout"
+            type="button">
+
+            CERRAR SESIÓN
+
+        </button>
+
+    </div>
+
+</header>
+
+
+
+<!-- ====================================================== -->
+<!-- CONTENIDO -->
+<!-- ====================================================== -->
+
+<div class="page-wrap">
+
+
+    <nav class="breadcrumb">
+
+        SEGURPLAN
+        &rsaquo;
+        Reportes
+        &rsaquo;
+        Producción y Operaciones
+        &rsaquo;
+        Siniestros por aseguradora
+
+    </nav>
+
+
+
+    <!-- NAVEGACIÓN -->
+
+    <div class="report-nav">
+
+        <a href="rep-mv-01-cotizaciones-estado.html">
+            Marketing y Ventas
+        </a>
+
+        <a href="rep-la-01-documentos.html">
+            Logística
+        </a>
+
+        <a href="rep-po-01-afp.html">
+            Operaciones
+        </a>
+
+        <a href="rep-dg-01-general.html">
+            Gerencia
+        </a>
+
+        <a href="rep-ot-02-trazabilidad.html">
+            Trazabilidad
+        </a>
+
+        <a href="s14-administracion.html">
+            Administración
+        </a>
+
+    </div>
+
+
+
+    <!-- ================================================== -->
+    <!-- TÍTULO -->
+    <!-- ================================================== -->
+
+    <span class="report-code">
+        REP-PO-03
+    </span>
+
+
+    <h1 class="page-title">
+        Siniestros por aseguradora
+    </h1>
+
+
+    <p class="page-subtitle">
+
+        Compara los siniestros registrados
+        y sus resultados de evaluación
+        por compañía aseguradora.
+
+    </p>
+
+
+
+    <!-- ================================================== -->
+    <!-- FILTRO -->
+    <!-- ================================================== -->
+
+    <div class="report-toolbar">
+
+
+        <div class="field">
+
+            <label for="periodo">
+                Período
+            </label>
+
+            <input
+                class="form-control"
+                id="periodo"
+                type="month">
+
+        </div>
+
+
+        <button
+            class="btn btn-primary"
+            id="btn-generar"
+            type="button">
+
+            GENERAR
+
+        </button>
+
+
+        <button
+            class="btn btn-secondary"
+            id="btn-exportar"
+            type="button">
+
+            EXPORTAR CSV
+
+        </button>
+
+
+    </div>
+
+
+
+    <!-- ================================================== -->
+    <!-- KPI PRINCIPALES -->
+    <!-- ================================================== -->
+
+    <div class="report-kpis">
+
+
+        <div class="report-kpi">
+
+            <strong id="kpi-total">
+                0
+            </strong>
+
+            <span>
+                Siniestros
+            </span>
+
+        </div>
+
+
+        <div class="report-kpi">
+
+            <strong id="kpi-aseguradoras">
+                0
+            </strong>
+
+            <span>
+                Aseguradoras
+            </span>
+
+        </div>
+
+
+        <div class="report-kpi">
+
+            <strong id="kpi-aprobados">
+                0
+            </strong>
+
+            <span>
+                Aprobados
+            </span>
+
+        </div>
+
+
+        <div class="report-kpi">
+
+            <strong id="kpi-rechazados">
+                0
+            </strong>
+
+            <span>
+                Rechazados
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- KPI SECUNDARIOS -->
+
+    <div class="report-kpis-secondary">
+
+
+        <div class="report-kpi">
+
+            <strong id="kpi-observados">
+                0
+            </strong>
+
+            <span>
+                Observados
+            </span>
+
+        </div>
+
+
+        <div class="report-kpi">
+
+            <strong id="kpi-resultado">
+                0
+            </strong>
+
+            <span>
+                Con resultado
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- ================================================== -->
+    <!-- GRÁFICO -->
+    <!-- ================================================== -->
+
+    <div class="card">
+
+
+        <div class="card-header">
+
+            <h2>
+                Resumen de resultados
+            </h2>
+
+        </div>
+
+
+        <div class="card-body">
+
+
+            <div class="chart-panel">
+
+
+                <div class="chart-col">
+
+                    <span
+                        class="chart-value"
+                        id="valor-total">
+                        0
+                    </span>
+
+                    <div
+                        class="chart-bar"
+                        id="barra-total"
+                        style="height:0">
+                    </div>
+
+                    <small>
+                        Siniestros
+                    </small>
+
+                </div>
+
+
+
+                <div class="chart-col">
+
+                    <span
+                        class="chart-value"
+                        id="valor-aprobados">
+                        0
+                    </span>
+
+                    <div
+                        class="chart-bar"
+                        id="barra-aprobados"
+                        style="height:0">
+                    </div>
+
+                    <small>
+                        Aprobados
+                    </small>
+
+                </div>
+
+
+
+                <div class="chart-col">
+
+                    <span
+                        class="chart-value"
+                        id="valor-rechazados">
+                        0
+                    </span>
+
+                    <div
+                        class="chart-bar"
+                        id="barra-rechazados"
+                        style="height:0">
+                    </div>
+
+                    <small>
+                        Rechazados
+                    </small>
+
+                </div>
+
+
+
+                <div class="chart-col">
+
+                    <span
+                        class="chart-value"
+                        id="valor-observados">
+                        0
+                    </span>
+
+                    <div
+                        class="chart-bar"
+                        id="barra-observados"
+                        style="height:0">
+                    </div>
+
+                    <small>
+                        Observados
+                    </small>
+
+                </div>
+
+
+
+                <div class="chart-col">
+
+                    <span
+                        class="chart-value"
+                        id="valor-resultado">
+                        0
+                    </span>
+
+                    <div
+                        class="chart-bar"
+                        id="barra-resultado"
+                        style="height:0">
+                    </div>
+
+                    <small>
+                        Con resultado
+                    </small>
+
+                </div>
+
+
+            </div>
+
+
+            <p
+                class="report-note"
+                id="nota-periodo">
+
+                Seleccione un período para
+                consultar los siniestros.
+
+            </p>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================================================== -->
+    <!-- TABLA -->
+    <!-- ================================================== -->
+
+    <div
+        class="card"
+        style="margin-top:20px">
+
+
+        <div class="card-header">
+
+            <h2>
+                Siniestros por aseguradora
+            </h2>
+
+        </div>
+
+
+        <div class="card-body">
+
+
+            <div class="table-wrap">
+
+
+                <table id="tabla-reporte">
+
+
+                    <thead>
+
+                    <tr>
+
+                        <th>
+                            Aseguradora
+                        </th>
+
+                        <th>
+                            Total
+                        </th>
+
+                        <th>
+                            Aprobados
+                        </th>
+
+                        <th>
+                            Rechazados
+                        </th>
+
+                        <th>
+                            Observados
+                        </th>
+
+                        <th>
+                            Con resultado
+                        </th>
+
+                        <th>
+                            % del total
+                        </th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody id="tabla-body">
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<script src="../assets/app.js"></script>
+
+
+<script>
+
+
+// =========================================================
+// AUTENTICACIÓN
+// =========================================================
+
+const sesion =
+    sp_requireAuth(
+        's01-login.html'
+    );
+
+
+if (sesion) {
+
+    document.getElementById(
+        'header-user'
+    ).textContent =
+
+        (sesion.nombres || 'Usuario')
+        + ' '
+        + (sesion.apellidos || '');
+
+}
+
+
+document.querySelector(
+    '.btn-logout'
+).addEventListener(
+    'click',
+    sp_logout
+);
+
+
+
+// =========================================================
+// PERÍODO
+// =========================================================
+
+const periodo =
+    document.getElementById(
+        'periodo'
+    );
+
+
+const fechaActual =
+    new Date();
+
+
+periodo.value =
+
+    fechaActual.getFullYear()
+    + '-'
+    + String(
+        fechaActual.getMonth() + 1
+    ).padStart(
+        2,
+        '0'
+    );
+
+
+
+// =========================================================
+// PORCENTAJE
+// =========================================================
+
+function calcularPorcentaje(
+    cantidad,
+    total
+) {
+
+    if (total <= 0) {
+
+        return '0.0%';
+
+    }
+
+
+    return (
+
+        (
+            Number(cantidad)
+            /
+            Number(total)
+        )
+        *
+        100
+
+    ).toFixed(1)
+        + '%';
+
+}
+
+
+
+// =========================================================
+// CARGAR REPORTE
+// =========================================================
+
+async function cargarReporte() {
+
+
+    if (!periodo.value) {
+
+        alert(
+            'Seleccione un período.'
+        );
+
+        return;
+
+    }
+
+
+    const [
+        anio,
+        mes
+    ] =
+        periodo.value.split('-');
+
+
+    try {
+
+
+        const respuesta =
+            await fetch(
+
+                '/api/reportes/operaciones/siniestros-aseguradora'
+                + '?anio='
+                + anio
+                + '&mes='
+                + mes
+
+            );
+
+
+        const data =
+            await respuesta.json();
+
+
+        if (!respuesta.ok) {
+
+            throw new Error(
+
+                data.mensaje
+                ||
+                'No se pudo generar el reporte.'
+
+            );
+
+        }
+
+
+        actualizarReporte(
+            data
+        );
+
+
+    } catch (error) {
+
+
+        console.error(
+            'Error REP-PO-03:',
+            error
+        );
+
+
+        alert(
+
+            'No se pudo cargar el reporte.\n'
+            + error.message
+
+        );
+
+    }
+
+}
+
+
+
+// =========================================================
+// ACTUALIZAR REPORTE
+// =========================================================
+
+function actualizarReporte(
+    data
+) {
+
+
+    const total =
+        Number(
+            data.totalSiniestros || 0
+        );
+
+
+    const totalAseguradoras =
+        Number(
+            data.totalAseguradoras || 0
+        );
+
+
+    const aprobados =
+        Number(
+            data.aprobados || 0
+        );
+
+
+    const rechazados =
+        Number(
+            data.rechazados || 0
+        );
+
+
+    const observados =
+        Number(
+            data.observados || 0
+        );
+
+
+    const conResultado =
+        Number(
+            data.conResultado || 0
+        );
+
+
+    const aseguradoras =
+        Array.isArray(
+            data.aseguradoras
+        )
+            ? data.aseguradoras
+            : [];
+
+
+
+    // =====================================================
+    // KPI
+    // =====================================================
+
+    document.getElementById(
+        'kpi-total'
+    ).textContent =
+        total;
+
+
+    document.getElementById(
+        'kpi-aseguradoras'
+    ).textContent =
+        totalAseguradoras;
+
+
+    document.getElementById(
+        'kpi-aprobados'
+    ).textContent =
+        aprobados;
+
+
+    document.getElementById(
+        'kpi-rechazados'
+    ).textContent =
+        rechazados;
+
+
+    document.getElementById(
+        'kpi-observados'
+    ).textContent =
+        observados;
+
+
+    document.getElementById(
+        'kpi-resultado'
+    ).textContent =
+        conResultado;
+
+
+
+    // =====================================================
+    // VALORES GRÁFICO
+    // =====================================================
+
+    document.getElementById(
+        'valor-total'
+    ).textContent =
+        total;
+
+
+    document.getElementById(
+        'valor-aprobados'
+    ).textContent =
+        aprobados;
+
+
+    document.getElementById(
+        'valor-rechazados'
+    ).textContent =
+        rechazados;
+
+
+    document.getElementById(
+        'valor-observados'
+    ).textContent =
+        observados;
+
+
+    document.getElementById(
+        'valor-resultado'
+    ).textContent =
+        conResultado;
+
+
+
+    // =====================================================
+    // BARRAS
+    // =====================================================
+
+    const maximo =
+        Math.max(
+            total,
+            aprobados,
+            rechazados,
+            observados,
+            conResultado,
+            1
+        );
+
+
+    actualizarBarra(
+        'barra-total',
+        total,
+        maximo
+    );
+
+
+    actualizarBarra(
+        'barra-aprobados',
+        aprobados,
+        maximo
+    );
+
+
+    actualizarBarra(
+        'barra-rechazados',
+        rechazados,
+        maximo
+    );
+
+
+    actualizarBarra(
+        'barra-observados',
+        observados,
+        maximo
+    );
+
+
+    actualizarBarra(
+        'barra-resultado',
+        conResultado,
+        maximo
+    );
+
+
+
+    // =====================================================
+    // TABLA
+    // =====================================================
+
+    const tbody =
+        document.getElementById(
+            'tabla-body'
+        );
+
+
+    tbody.innerHTML =
+        '';
+
+
+    if (
+        aseguradoras.length === 0
+    ) {
+
+
+        const fila =
+            document.createElement(
+                'tr'
+            );
+
+
+        fila.innerHTML = `
+
+            <td
+                colspan="7"
+                class="empty-row">
+
+                No existen siniestros
+                para el período seleccionado.
+
+            </td>
+
+        `;
+
+
+        tbody.appendChild(
+            fila
+        );
+
+
+    } else {
+
+
+        aseguradoras.forEach(
+            aseguradora => {
+
+
+                const cantidad =
+                    Number(
+                        aseguradora.total || 0
+                    );
+
+
+                const fila =
+                    document.createElement(
+                        'tr'
+                    );
+
+
+                fila.innerHTML = `
+
+                    <td>
+
+                        <strong>
+
+                            ${aseguradora.aseguradora || 'Sin aseguradora'}
+
+                        </strong>
+
+                    </td>
+
+
+                    <td>
+                        ${cantidad}
+                    </td>
+
+
+                    <td>
+                        ${Number(
+                            aseguradora.aprobados || 0
+                        )}
+                    </td>
+
+
+                    <td>
+                        ${Number(
+                            aseguradora.rechazados || 0
+                        )}
+                    </td>
+
+
+                    <td>
+                        ${Number(
+                            aseguradora.observados || 0
+                        )}
+                    </td>
+
+
+                    <td>
+                        ${Number(
+                            aseguradora.conResultado || 0
+                        )}
+                    </td>
+
+
+                    <td>
+
+                        ${calcularPorcentaje(
+                            cantidad,
+                            total
+                        )}
+
+                    </td>
+
+                `;
+
+
+                tbody.appendChild(
+                    fila
+                );
+
+            }
+        );
+
+    }
+
+
+
+    // =====================================================
+    // NOTA
+    // =====================================================
+
+    document.getElementById(
+        'nota-periodo'
+    ).innerHTML =
+
+        'Datos obtenidos de PostgreSQL para '
+
+        + String(
+            data.mes
+        ).padStart(
+            2,
+            '0'
+        )
+
+        + '/'
+
+        + data.anio
+
+        + '. Se encontraron '
+
+        + '<strong>'
+
+        + total
+
+        + '</strong> siniestro(s) en '
+
+        + '<strong>'
+
+        + totalAseguradoras
+
+        + '</strong> aseguradora(s).';
+
+}
+
+
+
+// =========================================================
+// BARRAS
+// =========================================================
+
+function actualizarBarra(
+    id,
+    valor,
+    maximo
+) {
+
+
+    const barra =
+        document.getElementById(
+            id
+        );
+
+
+    let altura =
+        0;
+
+
+    if (
+        valor > 0
+    ) {
+
+
+        altura =
+            Math.max(
+
+                15,
+
+                (
+                    valor
+                    /
+                    maximo
+                )
+                *
+                180
+
+            );
+
+    }
+
+
+    barra.style.height =
+        altura
+        + 'px';
+
+
+    barra.title =
+        valor
+        + ' siniestro(s)';
+
+}
+
+
+
+// =========================================================
+// GENERAR
+// =========================================================
+
+document.getElementById(
+    'btn-generar'
+).addEventListener(
+
+    'click',
+
+    cargarReporte
+
+);
+
+
+
+// =========================================================
+// EXPORTAR CSV
+// =========================================================
+
+document.getElementById(
+    'btn-exportar'
+).addEventListener(
+
+    'click',
+
+    function () {
+
+
+        const filas =
+            [
+                ...document.querySelectorAll(
+                    '#tabla-reporte tr'
+                )
+            ];
+
+
+        const csv =
+            filas.map(
+
+                fila =>
+
+                    [
+                        ...fila.children
+                    ]
+
+                        .map(
+
+                            celda =>
+
+                                '"'
+
+                                + celda
+                                    .innerText
+                                    .trim()
+                                    .replaceAll(
+                                        '"',
+                                        '""'
+                                    )
+
+                                + '"'
+
+                        )
+
+                        .join(';')
+
+            )
+
+                .join('\n');
+
+
+
+        const blob =
+            new Blob(
+
+                [
+                    '\uFEFF'
+                    + csv
+                ],
+
+                {
+                    type:
+                        'text/csv;charset=utf-8'
+                }
+
+            );
+
+
+        const url =
+            URL.createObjectURL(
+                blob
+            );
+
+
+        const enlace =
+            document.createElement(
+                'a'
+            );
+
+
+        enlace.href =
+            url;
+
+
+        enlace.download =
+            'REP-PO-03_'
+            + periodo.value
+            + '.csv';
+
+
+        enlace.click();
+
+
+        URL.revokeObjectURL(
+            url
+        );
+
+    }
+
+);
+
+
+
+// =========================================================
+// CARGA AUTOMÁTICA
+// =========================================================
+
+cargarReporte();
+
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,10 +1,7 @@
 package com.segurplan.controller;
-
 import com.segurplan.service.ReporteService;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Map;
 
 @RestController
@@ -182,6 +179,151 @@ public ResponseEntity<?> carteraPolizas(
 
         return ResponseEntity.ok(
                 reporteService.generarCarteraPolizas(
+                        anio,
+                        mes
+                )
+        );
+
+    } catch (IllegalArgumentException e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(
+                        Map.of(
+                                "mensaje",
+                                e.getMessage()
+                        )
+                );
+    }
+}
+// =========================================================
+// REP-LA-01 - DOCUMENTOS POR TIPO Y ESTADO
+// =========================================================
+@GetMapping("/logistica/documentos")
+public ResponseEntity<?> documentosPorTipoEstado(
+        @RequestParam Integer anio,
+        @RequestParam Integer mes) {
+
+    try {
+
+        return ResponseEntity.ok(
+                reporteService.generarDocumentosPorTipoEstado(
+                        anio,
+                        mes
+                )
+        );
+
+    } catch (IllegalArgumentException e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(
+                        Map.of(
+                                "mensaje",
+                                e.getMessage()
+                        )
+                );
+    }
+}
+// =========================================================
+// REP-PO-01 - REPORTE AFP
+// =========================================================
+@GetMapping("/operaciones/afp")
+public ResponseEntity<?> reporteAfpPorPeriodo(
+        @RequestParam Integer anio,
+        @RequestParam Integer mes) {
+
+    try {
+
+        return ResponseEntity.ok(
+                reporteService.generarReporteAfp(
+                        anio,
+                        mes
+                )
+        );
+
+    } catch (IllegalArgumentException e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(
+                        Map.of(
+                                "mensaje",
+                                e.getMessage()
+                        )
+                );
+    }
+}
+// =========================================================
+// REP-PO-03 - SINIESTROS POR ASEGURADORA
+// =========================================================
+@GetMapping("/operaciones/siniestros-aseguradora")
+public ResponseEntity<?> siniestrosPorAseguradora(
+        @RequestParam Integer anio,
+        @RequestParam Integer mes) {
+
+    try {
+
+        return ResponseEntity.ok(
+                reporteService.generarSiniestrosPorAseguradora(
+                        anio,
+                        mes
+                )
+        );
+
+    } catch (IllegalArgumentException e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(
+                        Map.of(
+                                "mensaje",
+                                e.getMessage()
+                        )
+                );
+    }
+}
+// =========================================================
+// REP-DG-02 - INDICADORES GERENCIALES
+// =========================================================
+@GetMapping("/gerencia/indicadores")
+public ResponseEntity<?> indicadoresGerenciales(
+        @RequestParam Integer anio,
+        @RequestParam Integer mes) {
+
+    try {
+
+        return ResponseEntity.ok(
+                reporteService.generarIndicadoresGerenciales(
+                        anio,
+                        mes
+                )
+        );
+
+    } catch (IllegalArgumentException e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(
+                        Map.of(
+                                "mensaje",
+                                e.getMessage()
+                        )
+                );
+    }
+}
+// =========================================================
+// REP-OT-02 - HISTORIAL Y TRAZABILIDAD
+// =========================================================
+@GetMapping("/trazabilidad")
+public ResponseEntity<?> trazabilidad(
+        @RequestParam Integer anio,
+        @RequestParam Integer mes) {
+
+    try {
+
+        return ResponseEntity.ok(
+                reporteService.generarTrazabilidad(
                         anio,
                         mes
                 )

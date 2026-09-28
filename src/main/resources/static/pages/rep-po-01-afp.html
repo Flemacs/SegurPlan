@@ -1,14 +1,1509 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SEGURPLAN — REP-PO-01 Reporte AFP</title><link rel="stylesheet" href="../assets/styles.css"><style>
-.report-nav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 24px}.report-nav a{padding:9px 12px;border:1px solid #d7dce5;border-radius:6px;background:#fff;color:#183153;font-size:12px;font-weight:700;text-decoration:none}.report-nav a:hover{background:#eef2f8}.report-code{display:inline-block;padding:5px 9px;border-radius:20px;background:#eef2f8;color:#183153;font-size:12px;font-weight:800;margin-bottom:10px}.report-toolbar{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin:22px 0}.report-toolbar .field{display:flex;flex-direction:column;gap:6px}.report-toolbar label{font-size:12px;font-weight:700}.report-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0 24px}.report-kpi{background:#fff;border:1px solid #dfe3ea;border-radius:8px;padding:18px}.report-kpi strong{display:block;font-size:25px;color:#183153;margin-bottom:5px}.report-kpi span{font-size:11px;color:#687386;text-transform:uppercase;font-weight:700}.chart-panel{height:250px;display:flex;align-items:flex-end;gap:18px;padding:28px 24px 12px;border:1px solid #e1e5eb;border-radius:8px;background:#fafbfc;margin-bottom:24px}.chart-col{flex:1;min-width:40px;text-align:center}.chart-bar{margin:auto;width:min(65px,80%);background:#183153;border-radius:6px 6px 0 0;min-height:22px}.chart-col small{display:block;margin-top:8px;font-size:10px;color:#687386}.report-note{font-size:12px;color:#687386;margin-top:12px}.status-pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#eef2f8;font-weight:700;font-size:11px}@media(max-width:760px){.report-kpis{grid-template-columns:repeat(2,1fr)}.chart-panel{gap:8px}.site-header{height:auto}.header-right{flex-wrap:wrap}}
-</style></head><body>
-<header class="site-header"><div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div><div class="header-right"><span class="user-name" id="header-user">Usuario</span><button class="profile-btn" type="button">MI PERFIL</button><button class="btn-logout" type="button">CERRAR SESIÓN</button></div></header>
-<div class="page-wrap"><nav class="breadcrumb">SEGURPLAN &rsaquo; Reportes &rsaquo; Producción y Operaciones &rsaquo; Reporte AFP</nav><div class="report-nav"><a href="rep-mv-01-cotizaciones-estado.html">Marketing y Ventas</a><a href="rep-la-01-documentos.html">Logística</a><a href="rep-po-01-afp.html">Operaciones</a><a href="rep-dg-01-general.html">Gerencia</a><a href="rep-ot-02-trazabilidad.html">Trazabilidad</a><a href="s14-administracion.html">Administración</a></div><span class="report-code">REP-PO-01</span><h1 class="page-title">Reporte AFP</h1><p class="page-subtitle">Resume perfiles previsionales, simulaciones realizadas y orientaciones brindadas.</p>
-<div class="report-toolbar"><div class="field"><label for="periodo">Período</label><input class="form-control" id="periodo" type="month"></div><button class="btn btn-primary" id="btn-generar" type="button">GENERAR</button><button class="btn btn-secondary" id="btn-exportar" type="button">EXPORTAR CSV</button></div>
-<div class="report-kpis"><div class="report-kpi"><strong>35</strong><span>Registros AFP</span></div><div class="report-kpi"><strong>28</strong><span>Simulaciones</span></div><div class="report-kpi"><strong>17</strong><span>Orientaciones</span></div><div class="report-kpi"><strong>14</strong><span>Cerradas</span></div></div><div class="card"><div class="card-header"><h2>Resumen visual</h2></div><div class="card-body"><div class="chart-panel"><div class="chart-col"><div class="chart-bar" style="height:55px"></div><small>Registros AFP</small></div><div class="chart-col"><div class="chart-bar" style="height:87px"></div><small>Simulaciones</small></div><div class="chart-col"><div class="chart-bar" style="height:119px"></div><small>Orientaciones</small></div><div class="chart-col"><div class="chart-bar" style="height:151px"></div><small>Cerradas</small></div></div><p class="report-note">Vista preliminar. Los valores se reemplazan con la respuesta del endpoint del reporte al conectar el backend.</p></div></div>
-<div class="card" style="margin-top:20px"><div class="card-header"><h2>Detalle del reporte</h2></div><div class="card-body"><div class="table-wrap"><table id="tabla-reporte"><thead><tr><th>Indicador</th><th>Cantidad</th><th>Participación</th></tr></thead><tbody><tr><td>Perfiles registrados</td><td>35</td><td>100%</td></tr><tr><td>Simulaciones</td><td>28</td><td>80%</td></tr><tr><td>Orientaciones</td><td>17</td><td>49%</td></tr><tr><td>Casos cerrados</td><td>14</td><td>40%</td></tr></tbody></table></div></div></div></div>
-<script src="../assets/app.js"></script><script>
-const sesion=sp_requireAuth('s01-login.html');if(sesion){document.getElementById('header-user').textContent=(sesion.nombres||'Usuario')+' '+(sesion.apellidos||'');}
-document.querySelector('.btn-logout').addEventListener('click',sp_logout);const p=document.getElementById('periodo');const d=new Date();p.value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
-document.getElementById('btn-generar').addEventListener('click',()=>alert('Reporte REP-PO-01: interfaz lista. Conecte el endpoint /api/reportes correspondiente para cargar datos reales.'));
-document.getElementById('btn-exportar').addEventListener('click',()=>{const rows=[...document.querySelectorAll('#tabla-reporte tr')].map(r=>[...r.children].map(c=>'"'+c.innerText.replaceAll('"','""')+'"').join(';')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+rows],{type:'text/csv;charset=utf-8'}));a.download='REP-PO-01_'+p.value+'.csv';a.click();URL.revokeObjectURL(a.href);});
-</script></body></html>
+<!DOCTYPE html>
+<html lang="es">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>SEGURPLAN — REP-PO-01 Reporte AFP</title>
+
+        <link rel="stylesheet" href="../assets/styles.css">
+
+        <style>
+
+            .report-nav {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+                margin: 0 0 24px;
+            }
+
+            .report-nav a {
+                padding: 9px 12px;
+                border: 1px solid #d7dce5;
+                border-radius: 6px;
+                background: #fff;
+                color: #183153;
+                font-size: 12px;
+                font-weight: 700;
+                text-decoration: none;
+            }
+
+            .report-nav a:hover {
+                background: #eef2f8;
+            }
+
+            .report-code {
+                display: inline-block;
+                padding: 5px 9px;
+                border-radius: 20px;
+                background: #eef2f8;
+                color: #183153;
+                font-size: 12px;
+                font-weight: 800;
+                margin-bottom: 10px;
+            }
+
+            .report-toolbar {
+                display: flex;
+                gap: 12px;
+                align-items: end;
+                flex-wrap: wrap;
+                margin: 22px 0;
+            }
+
+            .report-toolbar .field {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .report-toolbar label {
+                font-size: 12px;
+                font-weight: 700;
+            }
+
+            .report-kpis {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 14px;
+                margin: 18px 0 24px;
+            }
+
+            .report-kpi {
+                background: #fff;
+                border: 1px solid #dfe3ea;
+                border-radius: 8px;
+                padding: 18px;
+            }
+
+            .report-kpi strong {
+                display: block;
+                font-size: 25px;
+                color: #183153;
+                margin-bottom: 5px;
+            }
+
+            .report-kpi span {
+                font-size: 11px;
+                color: #687386;
+                text-transform: uppercase;
+                font-weight: 700;
+            }
+
+            .secondary-kpis {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 14px;
+                margin-bottom: 24px;
+            }
+
+            .secondary-kpi {
+                background: #fafbfc;
+                border: 1px solid #dfe3ea;
+                border-radius: 8px;
+                padding: 16px;
+            }
+
+            .secondary-kpi strong {
+                display: block;
+                color: #183153;
+                font-size: 20px;
+                margin-bottom: 5px;
+            }
+
+            .secondary-kpi span {
+                font-size: 11px;
+                color: #687386;
+                font-weight: 700;
+                text-transform: uppercase;
+            }
+
+            .chart-panel {
+                height: 270px;
+                display: flex;
+                align-items: flex-end;
+                gap: 25px;
+                padding: 28px 30px 12px;
+                border: 1px solid #e1e5eb;
+                border-radius: 8px;
+                background: #fafbfc;
+                margin-bottom: 20px;
+            }
+
+            .chart-col {
+                flex: 1;
+                min-width: 40px;
+                text-align: center;
+            }
+
+            .chart-value {
+                display: block;
+                margin-bottom: 6px;
+                font-size: 12px;
+                font-weight: 800;
+                color: #183153;
+            }
+
+            .chart-bar {
+                margin: auto;
+                width: min(70px, 80%);
+                background: #183153;
+                border-radius: 6px 6px 0 0;
+                min-height: 0;
+                transition: height .4s ease;
+            }
+
+            .chart-col small {
+                display: block;
+                margin-top: 8px;
+                font-size: 10px;
+                color: #687386;
+            }
+
+            .report-note {
+                font-size: 12px;
+                color: #687386;
+                margin-top: 12px;
+            }
+
+            .status-pill {
+                display: inline-block;
+                padding: 5px 9px;
+                border-radius: 20px;
+                background: #eef2f8;
+                color: #183153;
+                font-weight: 700;
+                font-size: 11px;
+            }
+
+            .money {
+                font-weight: 700;
+                color: #183153;
+                white-space: nowrap;
+            }
+
+            .table-wrap {
+                overflow-x: auto;
+            }
+
+            #tabla-reporte {
+                width: 100%;
+            }
+
+            .empty-row {
+                text-align: center;
+                padding: 25px !important;
+                color: #687386;
+            }
+
+            @media(max-width:900px) {
+
+                .report-kpis {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+
+                .secondary-kpis {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            @media(max-width:760px) {
+
+                .chart-panel {
+                    gap: 8px;
+                    padding-left: 10px;
+                    padding-right: 10px;
+                }
+
+                .site-header {
+                    height: auto;
+                }
+
+                .header-right {
+                    flex-wrap: wrap;
+                }
+            }
+
+        </style>
+
+    <link rel="stylesheet" href="../assets/theme.css">
+<script src="../assets/theme.js"></script>
+</head>
+
+
+    <body>
+
+
+        <!-- ====================================================== -->
+        <!-- HEADER -->
+        <!-- ====================================================== -->
+
+        <header class="site-header">
+
+            <div class="logo">
+
+                SEGURPLAN
+
+                <span>
+                    Plataforma de seguros y AFP
+                </span>
+
+            </div>
+
+
+            <div class="header-right">
+
+                <span
+                    class="user-name"
+                    id="header-user">
+
+                    Usuario
+
+                </span>
+
+
+                <button
+                    class="profile-btn"
+                    type="button">
+
+                    MI PERFIL
+
+                </button>
+
+
+                <button
+                    class="btn-logout"
+                    type="button">
+
+                    CERRAR SESIÓN
+
+                </button>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- ====================================================== -->
+        <!-- CONTENIDO -->
+        <!-- ====================================================== -->
+
+        <div class="page-wrap">
+
+
+            <nav class="breadcrumb">
+
+                SEGURPLAN
+                &rsaquo;
+                Reportes
+                &rsaquo;
+                Producción y Operaciones
+                &rsaquo;
+                Reporte AFP
+
+            </nav>
+
+
+
+            <!-- NAVEGACIÓN -->
+
+            <div class="report-nav">
+
+                <a href="rep-mv-01-cotizaciones-estado.html">
+                    Marketing y Ventas
+                </a>
+
+                <a href="rep-la-01-documentos.html">
+                    Logística
+                </a>
+
+                <a href="rep-po-01-afp.html">
+                    Operaciones
+                </a>
+
+                <a href="rep-dg-01-general.html">
+                    Gerencia
+                </a>
+
+                <a href="rep-ot-02-trazabilidad.html">
+                    Trazabilidad
+                </a>
+
+                <a href="s14-administracion.html">
+                    Administración
+                </a>
+
+            </div>
+
+
+
+            <!-- ================================================== -->
+            <!-- TÍTULO -->
+            <!-- ================================================== -->
+
+            <span class="report-code">
+                REP-PO-01
+            </span>
+
+
+            <h1 class="page-title">
+                Reporte AFP
+            </h1>
+
+
+            <p class="page-subtitle">
+
+                Resume simulaciones previsionales,
+                usuarios atendidos, orientaciones
+                solicitadas y pensiones estimadas.
+
+            </p>
+
+
+
+            <!-- ================================================== -->
+            <!-- FILTRO -->
+            <!-- ================================================== -->
+
+            <div class="report-toolbar">
+
+
+                <div class="field">
+
+                    <label for="periodo">
+                        Período
+                    </label>
+
+                    <input
+                        class="form-control"
+                        id="periodo"
+                        type="month">
+
+                </div>
+
+
+                <button
+                    class="btn btn-primary"
+                    id="btn-generar"
+                    type="button">
+
+                    GENERAR
+
+                </button>
+
+
+                <button
+                    class="btn btn-secondary"
+                    id="btn-exportar"
+                    type="button">
+
+                    EXPORTAR CSV
+
+                </button>
+
+
+            </div>
+
+
+
+            <!-- ================================================== -->
+            <!-- KPI PRINCIPALES -->
+            <!-- ================================================== -->
+
+            <div class="report-kpis">
+
+
+                <div class="report-kpi">
+
+                    <strong id="kpi-simulaciones">
+                        0
+                    </strong>
+
+                    <span>
+                        Simulaciones AFP
+                    </span>
+
+                </div>
+
+
+                <div class="report-kpi">
+
+                    <strong id="kpi-usuarios">
+                        0
+                    </strong>
+
+                    <span>
+                        Usuarios
+                    </span>
+
+                </div>
+
+
+                <div class="report-kpi">
+
+                    <strong id="kpi-solicitadas">
+                        0
+                    </strong>
+
+                    <span>
+                        Orientaciones solicitadas
+                    </span>
+
+                </div>
+
+
+                <div class="report-kpi">
+
+                    <strong id="kpi-respondidas">
+                        0
+                    </strong>
+
+                    <span>
+                        Orientaciones respondidas
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- ================================================== -->
+            <!-- INDICADORES ADICIONALES -->
+            <!-- ================================================== -->
+
+            <div class="secondary-kpis">
+
+
+                <div class="secondary-kpi">
+
+                    <strong id="kpi-pendientes">
+                        0
+                    </strong>
+
+                    <span>
+                        Orientaciones pendientes
+                    </span>
+
+                </div>
+
+
+                <div class="secondary-kpi">
+
+                    <strong id="kpi-pension">
+                        S/ 0.00
+                    </strong>
+
+                    <span>
+                        Pensión estimada promedio
+                    </span>
+
+                </div>
+
+
+                <div class="secondary-kpi">
+
+                    <strong id="kpi-ingreso">
+                        S/ 0.00
+                    </strong>
+
+                    <span>
+                        Ingreso mensual promedio
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- ================================================== -->
+            <!-- GRÁFICO -->
+            <!-- ================================================== -->
+
+            <div class="card">
+
+
+                <div class="card-header">
+
+                    <h2>
+                        Resumen visual
+                    </h2>
+
+                </div>
+
+
+                <div class="card-body">
+
+
+                    <div class="chart-panel">
+
+
+                        <div class="chart-col">
+
+                            <span
+                                class="chart-value"
+                                id="valor-simulaciones">
+                                0
+                            </span>
+
+                            <div
+                                class="chart-bar"
+                                id="barra-simulaciones"
+                                style="height:0">
+                            </div>
+
+                            <small>
+                                Simulaciones
+                            </small>
+
+                        </div>
+
+
+
+                        <div class="chart-col">
+
+                            <span
+                                class="chart-value"
+                                id="valor-usuarios">
+                                0
+                            </span>
+
+                            <div
+                                class="chart-bar"
+                                id="barra-usuarios"
+                                style="height:0">
+                            </div>
+
+                            <small>
+                                Usuarios
+                            </small>
+
+                        </div>
+
+
+
+                        <div class="chart-col">
+
+                            <span
+                                class="chart-value"
+                                id="valor-solicitadas">
+                                0
+                            </span>
+
+                            <div
+                                class="chart-bar"
+                                id="barra-solicitadas"
+                                style="height:0">
+                            </div>
+
+                            <small>
+                                Solicitadas
+                            </small>
+
+                        </div>
+
+
+
+                        <div class="chart-col">
+
+                            <span
+                                class="chart-value"
+                                id="valor-respondidas">
+                                0
+                            </span>
+
+                            <div
+                                class="chart-bar"
+                                id="barra-respondidas"
+                                style="height:0">
+                            </div>
+
+                            <small>
+                                Respondidas
+                            </small>
+
+                        </div>
+
+
+
+                        <div class="chart-col">
+
+                            <span
+                                class="chart-value"
+                                id="valor-pendientes">
+                                0
+                            </span>
+
+                            <div
+                                class="chart-bar"
+                                id="barra-pendientes"
+                                style="height:0">
+                            </div>
+
+                            <small>
+                                Pendientes
+                            </small>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <p
+                        class="report-note"
+                        id="nota-periodo">
+
+                        Seleccione un período para consultar
+                        las operaciones AFP.
+
+                    </p>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================================================== -->
+            <!-- DETALLE -->
+            <!-- ================================================== -->
+
+            <div
+                class="card"
+                style="margin-top:20px">
+
+
+                <div class="card-header">
+
+                    <h2>
+                        Detalle de simulaciones AFP
+                    </h2>
+
+                </div>
+
+
+                <div class="card-body">
+
+
+                    <div class="table-wrap">
+
+
+                        <table id="tabla-reporte">
+
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        ID
+                                    </th>
+
+                                    <th>
+                                        Usuario
+                                    </th>
+
+                                    <th>
+                                        Fecha
+                                    </th>
+
+                                    <th>
+                                        Edad
+                                    </th>
+
+                                    <th>
+                                        Ingreso mensual
+                                    </th>
+
+                                    <th>
+                                        Años aporte
+                                    </th>
+
+                                    <th>
+                                        Pensión estimada
+                                    </th>
+
+                                    <th>
+                                        Estado
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody id="tabla-body">
+                            </tbody>
+
+
+                        </table>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- ====================================================== -->
+        <!-- JAVASCRIPT -->
+        <!-- ====================================================== -->
+
+        <script src="../assets/app.js"></script>
+
+
+        <script>
+
+
+        // =========================================================
+        // AUTENTICACIÓN
+        // =========================================================
+
+            const sesion =
+                    sp_requireAuth(
+                            's01-login.html'
+                            );
+
+
+            if (sesion) {
+
+                document.getElementById(
+                        'header-user'
+                        ).textContent =
+                        (sesion.nombres || 'Usuario')
+                        + ' '
+                        + (sesion.apellidos || '');
+
+            }
+
+
+            document.querySelector(
+                    '.btn-logout'
+                    ).addEventListener(
+                    'click',
+                    sp_logout
+                    );
+
+
+
+        // =========================================================
+        // PERÍODO
+        // =========================================================
+
+            const periodo =
+                    document.getElementById(
+                            'periodo'
+                            );
+
+
+            const fechaActual =
+                    new Date();
+
+
+            periodo.value =
+                    fechaActual.getFullYear()
+                    + '-'
+                    + String(
+                            fechaActual.getMonth() + 1
+                            ).padStart(
+                    2,
+                    '0'
+                    );
+
+
+
+        // =========================================================
+        // MONEDA
+        // =========================================================
+
+            function formatearMoneda(
+                    valor
+                    ) {
+
+                return new Intl.NumberFormat(
+                        'es-PE',
+                        {
+                            style: 'currency',
+                            currency: 'PEN',
+                            minimumFractionDigits: 2
+                        }
+                ).format(
+                        Number(valor || 0)
+                        );
+
+            }
+
+
+
+        // =========================================================
+        // FECHA
+        // =========================================================
+
+            function formatearFecha(
+                    fecha
+                    ) {
+
+                if (!fecha) {
+                    return '-';
+                }
+
+
+                const parteFecha =
+                        String(fecha)
+                        .split('T')[0];
+
+
+                const partes =
+                        parteFecha.split('-');
+
+
+                if (
+                        partes.length === 3
+                        ) {
+
+                    return (
+                            partes[2]
+                            + '/'
+                            + partes[1]
+                            + '/'
+                            + partes[0]
+                            );
+
+                }
+
+
+                return fecha;
+
+            }
+
+
+
+        // =========================================================
+        // CARGAR REPORTE
+        // =========================================================
+
+            async function cargarReporte() {
+
+
+                if (!periodo.value) {
+
+                    alert(
+                            'Seleccione un período.'
+                            );
+
+                    return;
+
+                }
+
+
+                const [
+                    anio,
+                    mes
+                ] =
+                        periodo.value.split('-');
+
+
+                try {
+
+
+                    const respuesta =
+                            await fetch(
+                                    '/api/reportes/operaciones/afp'
+                                    + '?anio='
+                                    + anio
+                                    + '&mes='
+                                    + mes
+
+                                    );
+
+
+                    const data =
+                            await respuesta.json();
+
+
+                    if (!respuesta.ok) {
+
+                        throw new Error(
+                                data.mensaje
+                                ||
+                                'No se pudo generar el reporte AFP.'
+
+                                );
+
+                    }
+
+
+                    actualizarReporte(
+                            data
+                            );
+
+
+                } catch (error) {
+
+
+                    console.error(
+                            'Error REP-PO-01:',
+                            error
+                            );
+
+
+                    alert(
+                            'No se pudo cargar el reporte AFP.\n'
+                            + error.message
+
+                            );
+
+                }
+
+            }
+
+
+
+        // =========================================================
+        // ACTUALIZAR REPORTE
+        // =========================================================
+
+            function actualizarReporte(
+                    data
+                    ) {
+
+
+                const simulaciones =
+                        Number(
+                                data.totalSimulaciones || 0
+                                );
+
+
+                const usuarios =
+                        Number(
+                                data.usuarios || 0
+                                );
+
+
+                const solicitadas =
+                        Number(
+                                data.orientacionesSolicitadas || 0
+                                );
+
+
+                const respondidas =
+                        Number(
+                                data.orientacionesRespondidas || 0
+                                );
+
+
+                const pendientes =
+                        Number(
+                                data.orientacionesPendientes || 0
+                                );
+
+
+                const pensionPromedio =
+                        Number(
+                                data.pensionPromedio || 0
+                                );
+
+
+                const ingresoPromedio =
+                        Number(
+                                data.ingresoPromedio || 0
+                                );
+
+
+                const registros =
+                        Array.isArray(
+                                data.simulaciones
+                                )
+                        ? data.simulaciones
+                        : [];
+
+
+
+                // =====================================================
+                // KPI
+                // =====================================================
+
+                document.getElementById(
+                        'kpi-simulaciones'
+                        ).textContent =
+                        simulaciones;
+
+
+                document.getElementById(
+                        'kpi-usuarios'
+                        ).textContent =
+                        usuarios;
+
+
+                document.getElementById(
+                        'kpi-solicitadas'
+                        ).textContent =
+                        solicitadas;
+
+
+                document.getElementById(
+                        'kpi-respondidas'
+                        ).textContent =
+                        respondidas;
+
+
+                document.getElementById(
+                        'kpi-pendientes'
+                        ).textContent =
+                        pendientes;
+
+
+                document.getElementById(
+                        'kpi-pension'
+                        ).textContent =
+                        formatearMoneda(
+                                pensionPromedio
+                                );
+
+
+                document.getElementById(
+                        'kpi-ingreso'
+                        ).textContent =
+                        formatearMoneda(
+                                ingresoPromedio
+                                );
+
+
+
+                // =====================================================
+                // VALORES DEL GRÁFICO
+                // =====================================================
+
+                document.getElementById(
+                        'valor-simulaciones'
+                        ).textContent =
+                        simulaciones;
+
+
+                document.getElementById(
+                        'valor-usuarios'
+                        ).textContent =
+                        usuarios;
+
+
+                document.getElementById(
+                        'valor-solicitadas'
+                        ).textContent =
+                        solicitadas;
+
+
+                document.getElementById(
+                        'valor-respondidas'
+                        ).textContent =
+                        respondidas;
+
+
+                document.getElementById(
+                        'valor-pendientes'
+                        ).textContent =
+                        pendientes;
+
+
+
+                // =====================================================
+                // GRÁFICO
+                // =====================================================
+
+                const maximo =
+                        Math.max(
+                                simulaciones,
+                                usuarios,
+                                solicitadas,
+                                respondidas,
+                                pendientes,
+                                1
+
+                                );
+
+
+                actualizarBarra(
+                        'barra-simulaciones',
+                        simulaciones,
+                        maximo
+                        );
+
+
+                actualizarBarra(
+                        'barra-usuarios',
+                        usuarios,
+                        maximo
+                        );
+
+
+                actualizarBarra(
+                        'barra-solicitadas',
+                        solicitadas,
+                        maximo
+                        );
+
+
+                actualizarBarra(
+                        'barra-respondidas',
+                        respondidas,
+                        maximo
+                        );
+
+
+                actualizarBarra(
+                        'barra-pendientes',
+                        pendientes,
+                        maximo
+                        );
+
+
+
+                // =====================================================
+                // TABLA
+                // =====================================================
+
+                const tbody =
+                        document.getElementById(
+                                'tabla-body'
+                                );
+
+
+                tbody.innerHTML =
+                        '';
+
+
+                if (
+                        registros.length === 0
+                        ) {
+
+
+                    const fila =
+                            document.createElement(
+                                    'tr'
+                                    );
+
+
+                    fila.innerHTML = `
+
+                    <td
+                        colspan="8"
+                        class="empty-row">
+
+                        No existen registros AFP
+                        para el período seleccionado.
+
+                    </td>
+
+                `;
+
+
+                    tbody.appendChild(
+                            fila
+                            );
+
+
+                } else {
+
+
+                    registros.forEach(
+                            registro => {
+
+
+                                const fila =
+                                        document.createElement(
+                                                'tr'
+                                                );
+
+
+                                fila.innerHTML = `
+
+                            <td>
+                                ${registro.idPrevision ?? '-'}
+                            </td>
+
+                            <td>
+                                ${registro.usuario || '-'}
+                            </td>
+
+                            <td>
+                                ${formatearFecha(
+                                        registro.fechaRegistro
+                                        )}
+                            </td>
+
+                            <td>
+                                ${registro.edad ?? '-'}
+                            </td>
+
+                            <td class="money">
+                                ${formatearMoneda(
+                                        registro.ingresoMensual
+                                        )}
+                            </td>
+
+                            <td>
+                                ${registro.aniosAporte ?? '-'}
+                            </td>
+
+                            <td class="money">
+                                ${formatearMoneda(
+                                        registro.montoPensionEstimado
+                                        )}
+                            </td>
+
+                            <td>
+
+                                <span class="status-pill">
+
+                                    ${registro.estado || '-'}
+
+                                </span>
+
+                            </td>
+
+                        `;
+
+
+                                tbody.appendChild(
+                                        fila
+                                        );
+
+                            }
+                    );
+
+                }
+
+
+
+                // =====================================================
+                // NOTA
+                // =====================================================
+
+                document.getElementById(
+                        'nota-periodo'
+                        ).innerHTML =
+                        'Datos AFP obtenidos de PostgreSQL para '
+
+                        + String(
+                                data.mes
+                                ).padStart(
+                        2,
+                        '0'
+                        )
+
+                        + '/'
+
+                        + data.anio
+
+                        + '. Simulaciones registradas: '
+
+                        + '<strong>'
+                        + simulaciones
+                        + '</strong>'
+
+                        + '. Pensión estimada promedio: '
+
+                        + '<strong>'
+                        + formatearMoneda(
+                                pensionPromedio
+                                )
+                        + '</strong>.';
+
+            }
+
+
+
+        // =========================================================
+        // BARRAS
+        // =========================================================
+
+            function actualizarBarra(
+                    id,
+                    valor,
+                    maximo
+                    ) {
+
+
+                const barra =
+                        document.getElementById(
+                                id
+                                );
+
+
+                let altura =
+                        0;
+
+
+                if (
+                        valor > 0
+                        ) {
+
+
+                    altura =
+                            Math.max(
+                                    15,
+                                    (
+                                            valor
+                                            /
+                            maximo
+                                            )
+                                    *
+                                    180
+
+                                    );
+
+                }
+
+
+                barra.style.height =
+                        altura
+                        + 'px';
+
+
+                barra.title =
+                        valor
+                        + ' registro(s)';
+
+            }
+
+
+
+        // =========================================================
+        // GENERAR
+        // =========================================================
+
+            document.getElementById(
+                    'btn-generar'
+                    ).addEventListener(
+                    'click',
+                    cargarReporte
+
+                    );
+
+
+
+        // =========================================================
+        // EXPORTAR CSV
+        // =========================================================
+
+            document.getElementById(
+                    'btn-exportar'
+                    ).addEventListener(
+                    'click',
+                    function () {
+
+
+                        const filas =
+                                [
+                                    ...document.querySelectorAll(
+                                            '#tabla-reporte tr'
+                                            )
+                                ];
+
+
+                        const csv =
+                                filas.map(
+                                        fila =>
+                                    [
+                                        ...fila.children
+                                    ]
+
+                                            .map(
+                                                    celda =>
+                                                '"'
+
+                                                        + celda
+                                                        .innerText
+                                                        .trim()
+                                                        .replaceAll(
+                                                                '"',
+                                                                '""'
+                                                                )
+
+                                                        + '"'
+
+                                            )
+
+                                            .join(';')
+
+                                )
+
+                                .join('\n');
+
+
+
+                        const blob =
+                                new Blob(
+                                        [
+                                            '\uFEFF'
+                                                    + csv
+                                        ],
+                                        {
+                                            type:
+                                                    'text/csv;charset=utf-8'
+                                        }
+
+                                );
+
+
+                        const url =
+                                URL.createObjectURL(
+                                        blob
+                                        );
+
+
+                        const enlace =
+                                document.createElement(
+                                        'a'
+                                        );
+
+
+                        enlace.href =
+                                url;
+
+
+                        enlace.download =
+                                'REP-PO-01_'
+                                + periodo.value
+                                + '.csv';
+
+
+                        enlace.click();
+
+
+                        URL.revokeObjectURL(
+                                url
+                                );
+
+                    }
+
+            );
+
+
+
+        // =========================================================
+        // CARGA AUTOMÁTICA
+        // =========================================================
+
+            cargarReporte();
+
+
+        </script>
+
+
+    </body>
+
+</html>

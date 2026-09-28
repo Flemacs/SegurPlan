@@ -25,6 +25,7 @@ public class DocumentoService {
     private final DocumentoRepository documentoRepository;
     private final UsuarioRepository usuarioRepository;
     private final SiniestroRepository siniestroRepository;
+    private final HistorialService historialService;
 
     /*
      * Los archivos se guardarán físicamente en:
@@ -36,17 +37,18 @@ public class DocumentoService {
     public DocumentoService(
             DocumentoRepository documentoRepository,
             UsuarioRepository usuarioRepository,
-            SiniestroRepository siniestroRepository) {
+            SiniestroRepository siniestroRepository,
+            HistorialService historialService) {
 
         this.documentoRepository = documentoRepository;
         this.usuarioRepository = usuarioRepository;
         this.siniestroRepository = siniestroRepository;
+        this.historialService = historialService;
     }
 
     // =====================================================
     // GUARDAR EVIDENCIA
     // =====================================================
-
     public Documento guardarEvidencia(
             String correo,
             Long idSiniestro,
@@ -56,27 +58,24 @@ public class DocumentoService {
         // -------------------------------------------------
         // 1. Obtener usuario autenticado
         // -------------------------------------------------
-
         Usuario usuario = usuarioRepository.findByCorreo(correo)
-                .orElseThrow(() ->
-                new IllegalArgumentException(
+                .orElseThrow(()
+                        -> new IllegalArgumentException(
                         "No se encontró el usuario autenticado."
                 ));
 
         // -------------------------------------------------
         // 2. Obtener siniestro
         // -------------------------------------------------
-
         Siniestro siniestro = siniestroRepository.findById(idSiniestro)
-                .orElseThrow(() ->
-                new IllegalArgumentException(
+                .orElseThrow(()
+                        -> new IllegalArgumentException(
                         "El siniestro indicado no existe."
                 ));
 
         // -------------------------------------------------
         // 3. Comprobar propietario
         // -------------------------------------------------
-
         if (siniestro.getUsuario() == null
                 || siniestro.getUsuario().getIdUsuario() == null
                 || !siniestro.getUsuario()
@@ -91,7 +90,6 @@ public class DocumentoService {
         // -------------------------------------------------
         // 4. Validaciones
         // -------------------------------------------------
-
         if (tipoDocumento == null || tipoDocumento.isBlank()) {
             throw new IllegalArgumentException(
                     "Debe indicar el tipo de documento."
@@ -122,7 +120,6 @@ public class DocumentoService {
         // -------------------------------------------------
         // 5. Crear directorio
         // -------------------------------------------------
-
         Path directorioSiniestro = directorioBase.resolve(
                 String.valueOf(idSiniestro)
         );
@@ -139,7 +136,6 @@ public class DocumentoService {
         // -------------------------------------------------
         // 6. Crear nombre físico único
         // -------------------------------------------------
-
         String extension = obtenerExtension(nombreOriginal);
 
         String nombreFisico
@@ -164,7 +160,6 @@ public class DocumentoService {
         // -------------------------------------------------
         // 7. Guardar archivo físicamente
         // -------------------------------------------------
-
         try {
 
             Files.copy(
@@ -184,7 +179,6 @@ public class DocumentoService {
         // -------------------------------------------------
         // 8. Registrar documento en PostgreSQL
         // -------------------------------------------------
-
         Documento documento = new Documento();
 
         documento.setUsuario(usuario);
@@ -211,19 +205,30 @@ public class DocumentoService {
 
         documento.setVersion(1);
         documento.setFechaCarga(LocalDateTime.now());
-        documento.setEstado("Cargado");
+        documento.setEstado("Pendiente");
 
         try {
 
-            return documentoRepository.save(documento);
+            Documento guardado
+                    = documentoRepository.save(documento);
+
+            historialService.registrar(
+                    usuario.getIdUsuario(),
+                    "DOCUMENTO",
+                    guardado.getIdDocumento(),
+                    "CREAR",
+                    null,
+                    "Documento cargado"
+                    + " | Tipo: " + guardado.getTipoDocumento()
+                    + " | Archivo: " + guardado.getNombreArchivo()
+                    + " | Estado: " + guardado.getEstado()
+                    + " | Siniestro: " + siniestro.getIdSiniestro()
+            );
+
+            return guardado;
 
         } catch (RuntimeException e) {
 
-            /*
-             * Si PostgreSQL rechaza el INSERT, intentamos
-             * eliminar el archivo físico para no dejarlo
-             * abandonado.
-             */
             try {
                 Files.deleteIfExists(destino);
             } catch (IOException ignored) {
@@ -236,20 +241,19 @@ public class DocumentoService {
     // =====================================================
     // LISTAR EVIDENCIAS DE UN SINIESTRO
     // =====================================================
-
     public List<Documento> listarPorSiniestro(
             String correo,
             Long idSiniestro) {
 
         Usuario usuario = usuarioRepository.findByCorreo(correo)
-                .orElseThrow(() ->
-                new IllegalArgumentException(
+                .orElseThrow(()
+                        -> new IllegalArgumentException(
                         "No se encontró el usuario autenticado."
                 ));
 
         Siniestro siniestro = siniestroRepository.findById(idSiniestro)
-                .orElseThrow(() ->
-                new IllegalArgumentException(
+                .orElseThrow(()
+                        -> new IllegalArgumentException(
                         "El siniestro indicado no existe."
                 ));
 
@@ -274,20 +278,19 @@ public class DocumentoService {
     // =====================================================
     // ELIMINAR EVIDENCIA
     // =====================================================
-
     public void eliminar(
             String correo,
             Long idDocumento) {
 
         Usuario usuario = usuarioRepository.findByCorreo(correo)
-                .orElseThrow(() ->
-                new IllegalArgumentException(
+                .orElseThrow(()
+                        -> new IllegalArgumentException(
                         "No se encontró el usuario autenticado."
                 ));
 
         Documento documento = documentoRepository.findById(idDocumento)
-                .orElseThrow(() ->
-                new IllegalArgumentException(
+                .orElseThrow(()
+                        -> new IllegalArgumentException(
                         "El documento indicado no existe."
                 ));
 
@@ -305,11 +308,41 @@ public class DocumentoService {
         Path ruta = Paths.get(documento.getRutaArchivo())
                 .normalize();
 
+        /*
+ * Guardamos la información antes de eliminar
+ * el registro.
+         */
+        Long idDocumentoHistorial
+                = documento.getIdDocumento();
+
+        String datosAnteriores
+                = "Tipo: " + documento.getTipoDocumento()
+                + " | Archivo: " + documento.getNombreArchivo()
+                + " | Estado: " + documento.getEstado();
+
         documentoRepository.delete(documento);
 
+        /*
+ * Registrar eliminación en historial.
+         */
+        historialService.registrar(
+                usuario.getIdUsuario(),
+                "DOCUMENTO",
+                idDocumentoHistorial,
+                "ELIMINAR",
+                datosAnteriores,
+                "Documento eliminado"
+        );
+
+        /*
+ * Eliminar archivo físico.
+         */
         try {
+
             Files.deleteIfExists(ruta);
+
         } catch (IOException e) {
+
             System.err.println(
                     "No se pudo eliminar el archivo físico: "
                     + ruta
@@ -320,7 +353,6 @@ public class DocumentoService {
     // =====================================================
     // VALIDAR EXTENSIONES
     // =====================================================
-
     private void validarTipoArchivo(
             String tipoDocumento,
             String nombreArchivo) {
@@ -370,7 +402,6 @@ public class DocumentoService {
     // =====================================================
     // VALIDAR TAMAÑO
     // =====================================================
-
     private void validarTamanoArchivo(
             String tipoDocumento,
             long bytes) {
@@ -407,7 +438,6 @@ public class DocumentoService {
     // =====================================================
     // OBTENER EXTENSIÓN
     // =====================================================
-
     private String obtenerExtension(String nombre) {
 
         int punto = nombre.lastIndexOf('.');
@@ -418,4 +448,25 @@ public class DocumentoService {
 
         return nombre.substring(punto);
     }
+    // =====================================================
+// LISTAR EVIDENCIAS PARA REVISIÓN INTERNA
+// =====================================================
+
+public List<Documento> listarParaRevision(
+        Long idSiniestro) {
+
+    Siniestro siniestro =
+            siniestroRepository
+                    .findById(idSiniestro)
+                    .orElseThrow(() ->
+                            new IllegalArgumentException(
+                                    "El siniestro indicado no existe."
+                            )
+                    );
+
+    return documentoRepository
+            .findBySiniestro_IdSiniestroOrderByFechaCargaDesc(
+                    siniestro.getIdSiniestro()
+            );
+}
 }

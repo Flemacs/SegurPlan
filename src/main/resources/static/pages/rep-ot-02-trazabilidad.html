@@ -1,14 +1,970 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SEGURPLAN — REP-OT-02 Historial y trazabilidad</title><link rel="stylesheet" href="../assets/styles.css"><style>
-.report-nav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 24px}.report-nav a{padding:9px 12px;border:1px solid #d7dce5;border-radius:6px;background:#fff;color:#183153;font-size:12px;font-weight:700;text-decoration:none}.report-nav a:hover{background:#eef2f8}.report-code{display:inline-block;padding:5px 9px;border-radius:20px;background:#eef2f8;color:#183153;font-size:12px;font-weight:800;margin-bottom:10px}.report-toolbar{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin:22px 0}.report-toolbar .field{display:flex;flex-direction:column;gap:6px}.report-toolbar label{font-size:12px;font-weight:700}.report-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0 24px}.report-kpi{background:#fff;border:1px solid #dfe3ea;border-radius:8px;padding:18px}.report-kpi strong{display:block;font-size:25px;color:#183153;margin-bottom:5px}.report-kpi span{font-size:11px;color:#687386;text-transform:uppercase;font-weight:700}.chart-panel{height:250px;display:flex;align-items:flex-end;gap:18px;padding:28px 24px 12px;border:1px solid #e1e5eb;border-radius:8px;background:#fafbfc;margin-bottom:24px}.chart-col{flex:1;min-width:40px;text-align:center}.chart-bar{margin:auto;width:min(65px,80%);background:#183153;border-radius:6px 6px 0 0;min-height:22px}.chart-col small{display:block;margin-top:8px;font-size:10px;color:#687386}.report-note{font-size:12px;color:#687386;margin-top:12px}.status-pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#eef2f8;font-weight:700;font-size:11px}@media(max-width:760px){.report-kpis{grid-template-columns:repeat(2,1fr)}.chart-panel{gap:8px}.site-header{height:auto}.header-right{flex-wrap:wrap}}
-</style></head><body>
-<header class="site-header"><div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div><div class="header-right"><span class="user-name" id="header-user">Usuario</span><button class="profile-btn" type="button">MI PERFIL</button><button class="btn-logout" type="button">CERRAR SESIÓN</button></div></header>
-<div class="page-wrap"><nav class="breadcrumb">SEGURPLAN &rsaquo; Reportes &rsaquo; Otros procesos &rsaquo; Historial y trazabilidad</nav><div class="report-nav"><a href="rep-mv-01-cotizaciones-estado.html">Marketing y Ventas</a><a href="rep-la-01-documentos.html">Logística</a><a href="rep-po-01-afp.html">Operaciones</a><a href="rep-dg-01-general.html">Gerencia</a><a href="rep-ot-02-trazabilidad.html">Trazabilidad</a><a href="s14-administracion.html">Administración</a></div><span class="report-code">REP-OT-02</span><h1 class="page-title">Historial y trazabilidad</h1><p class="page-subtitle">Registro de acciones para auditoría: usuario, fecha, módulo, operación y resultado.</p>
-<div class="report-toolbar"><div class="field"><label for="periodo">Período</label><input class="form-control" id="periodo" type="month"></div><button class="btn btn-primary" id="btn-generar" type="button">GENERAR</button><button class="btn btn-secondary" id="btn-exportar" type="button">EXPORTAR CSV</button></div>
-<div class="report-kpis"><div class="report-kpi"><strong>128</strong><span>Eventos</span></div><div class="report-kpi"><strong>24</strong><span>Usuarios</span></div><div class="report-kpi"><strong>123</strong><span>Operaciones exitosas</span></div><div class="report-kpi"><strong>5</strong><span>Observaciones</span></div></div><div class="card"><div class="card-header"><h2>Resumen visual</h2></div><div class="card-body"><div class="chart-panel"><div class="chart-col"><div class="chart-bar" style="height:55px"></div><small>Eventos</small></div><div class="chart-col"><div class="chart-bar" style="height:87px"></div><small>Usuarios</small></div><div class="chart-col"><div class="chart-bar" style="height:119px"></div><small>Operaciones exitosas</small></div><div class="chart-col"><div class="chart-bar" style="height:151px"></div><small>Observaciones</small></div></div><p class="report-note">Vista preliminar. Los valores se reemplazan con la respuesta del endpoint del reporte al conectar el backend.</p></div></div>
-<div class="card" style="margin-top:20px"><div class="card-header"><h2>Detalle del reporte</h2></div><div class="card-body"><div class="table-wrap"><table id="tabla-reporte"><thead><tr><th>Fecha y hora</th><th>Usuario</th><th>Rol</th><th>Módulo</th><th>Acción</th><th>Resultado</th></tr></thead><tbody><tr><td>23/09/2026 18:15</td><td>usuario@segurplan.pe</td><td>Administrador</td><td>Cotizaciones</td><td>Actualizó cotización</td><td>Correcto</td></tr><tr><td>23/09/2026 18:22</td><td>asesor@segurplan.pe</td><td>Asesor</td><td>AFP</td><td>Respondió orientación</td><td>Correcto</td></tr><tr><td>23/09/2026 18:31</td><td>admin@segurplan.pe</td><td>Administrador</td><td>Pólizas</td><td>Generó póliza</td><td>Correcto</td></tr></tbody></table></div><div class="notice" style="margin-top:16px"><strong>Integración pendiente:</strong> Documento e Historial todavía no están implementados como entidades persistentes en el backend actual. Esta pantalla queda lista para conectar cuando se creen sus endpoints.</div></div></div></div>
-<script src="../assets/app.js"></script><script>
-const sesion=sp_requireAuth('s01-login.html');if(sesion){document.getElementById('header-user').textContent=(sesion.nombres||'Usuario')+' '+(sesion.apellidos||'');}
-document.querySelector('.btn-logout').addEventListener('click',sp_logout);const p=document.getElementById('periodo');const d=new Date();p.value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
-document.getElementById('btn-generar').addEventListener('click',()=>alert('Reporte REP-OT-02: interfaz lista. Conecte el endpoint /api/reportes correspondiente para cargar datos reales.'));
-document.getElementById('btn-exportar').addEventListener('click',()=>{const rows=[...document.querySelectorAll('#tabla-reporte tr')].map(r=>[...r.children].map(c=>'"'+c.innerText.replaceAll('"','""')+'"').join(';')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\uFEFF'+rows],{type:'text/csv;charset=utf-8'}));a.download='REP-OT-02_'+p.value+'.csv';a.click();URL.revokeObjectURL(a.href);});
-</script></body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <title>SEGURPLAN — REP-OT-02 Historial y trazabilidad</title>
+
+    <link rel="stylesheet" href="../assets/styles.css">
+
+    <style>
+        .report-nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 0 0 24px;
+        }
+
+        .report-nav a {
+            padding: 9px 12px;
+            border: 1px solid #d7dce5;
+            border-radius: 6px;
+            background: #fff;
+            color: #183153;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .report-nav a:hover {
+            background: #eef2f8;
+        }
+
+        .report-code {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #eef2f8;
+            color: #183153;
+            font-size: 12px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .report-toolbar {
+            display: flex;
+            gap: 12px;
+            align-items: end;
+            flex-wrap: wrap;
+            margin: 22px 0;
+        }
+
+        .report-toolbar .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .report-toolbar label {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .report-kpis {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0,1fr));
+            gap: 14px;
+            margin: 18px 0 24px;
+        }
+
+        .report-kpi {
+            background: #fff;
+            border: 1px solid #dfe3ea;
+            border-radius: 8px;
+            padding: 18px;
+        }
+
+        .report-kpi strong {
+            display: block;
+            font-size: 25px;
+            color: #183153;
+            margin-bottom: 5px;
+        }
+
+        .report-kpi span {
+            font-size: 11px;
+            color: #687386;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .chart-panel {
+            height: 250px;
+            display: flex;
+            align-items: flex-end;
+            gap: 18px;
+            padding: 28px 24px 12px;
+            border: 1px solid #e1e5eb;
+            border-radius: 8px;
+            background: #fafbfc;
+            margin-bottom: 24px;
+        }
+
+        .chart-col {
+            flex: 1;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .chart-bar {
+            margin: auto;
+            width: min(65px,80%);
+            background: #183153;
+            border-radius: 6px 6px 0 0;
+            height: 0;
+            transition: height .4s ease;
+        }
+
+        .chart-col small {
+            display: block;
+            margin-top: 8px;
+            font-size: 10px;
+            color: #687386;
+        }
+
+        .chart-value {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: #183153;
+            margin-bottom: 5px;
+        }
+
+        .report-note {
+            font-size: 12px;
+            color: #687386;
+            margin-top: 12px;
+        }
+
+        .status-pill {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            background: #eef2f8;
+            font-weight: 700;
+            font-size: 11px;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 30px 15px !important;
+            color: #687386;
+        }
+
+        @media(max-width:760px) {
+            .report-kpis {
+                grid-template-columns: repeat(2,1fr);
+            }
+
+            .chart-panel {
+                gap: 8px;
+            }
+
+            .site-header {
+                height: auto;
+            }
+
+            .header-right {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+<link rel="stylesheet" href="../assets/theme.css">
+<script src="../assets/theme.js"></script>
+</head>
+
+<body>
+
+<header class="site-header">
+
+    <div class="logo">
+        SEGURPLAN
+        <span>Plataforma de seguros y AFP</span>
+    </div>
+
+    <div class="header-right">
+
+        <span class="user-name" id="header-user">
+            Usuario
+        </span>
+
+        <button class="profile-btn" type="button">
+            MI PERFIL
+        </button>
+
+        <button class="btn-logout" type="button">
+            CERRAR SESIÓN
+        </button>
+
+    </div>
+
+</header>
+
+
+<div class="page-wrap">
+
+    <nav class="breadcrumb">
+        SEGURPLAN &rsaquo;
+        Reportes &rsaquo;
+        Otros procesos &rsaquo;
+        Historial y trazabilidad
+    </nav>
+
+
+    <div class="report-nav">
+
+        <a href="rep-mv-01-cotizaciones-estado.html">
+            Marketing y Ventas
+        </a>
+
+        <a href="rep-la-01-documentos.html">
+            Logística
+        </a>
+
+        <a href="rep-po-01-afp.html">
+            Operaciones
+        </a>
+
+        <a href="rep-dg-01-general.html">
+            Gerencia
+        </a>
+
+        <a href="rep-ot-02-trazabilidad.html">
+            Trazabilidad
+        </a>
+
+        <a href="s14-administracion.html">
+            Administración
+        </a>
+
+    </div>
+
+
+    <span class="report-code">
+        REP-OT-02
+    </span>
+
+    <h1 class="page-title">
+        Historial y trazabilidad
+    </h1>
+
+    <p class="page-subtitle">
+        Registro de acciones realizadas en SEGURPLAN para fines
+        de seguimiento y auditoría.
+    </p>
+
+
+    <!-- FILTROS -->
+
+    <div class="report-toolbar">
+
+        <div class="field">
+
+            <label for="periodo">
+                Período
+            </label>
+
+            <input
+                class="form-control"
+                id="periodo"
+                type="month">
+
+        </div>
+
+        <button
+            class="btn btn-primary"
+            id="btn-generar"
+            type="button">
+            GENERAR
+        </button>
+
+        <button
+            class="btn btn-secondary"
+            id="btn-exportar"
+            type="button">
+            EXPORTAR CSV
+        </button>
+
+    </div>
+
+
+    <!-- KPI -->
+
+    <div class="report-kpis">
+
+        <div class="report-kpi">
+            <strong id="kpi-total">0</strong>
+            <span>Total eventos</span>
+        </div>
+
+        <div class="report-kpi">
+            <strong id="kpi-creaciones">0</strong>
+            <span>Creaciones</span>
+        </div>
+
+        <div class="report-kpi">
+            <strong id="kpi-actualizaciones">0</strong>
+            <span>Actualizaciones</span>
+        </div>
+
+        <div class="report-kpi">
+            <strong id="kpi-eliminaciones">0</strong>
+            <span>Eliminaciones</span>
+        </div>
+
+    </div>
+
+
+    <!-- GRÁFICO -->
+
+    <div class="card">
+
+        <div class="card-header">
+            <h2>Resumen visual</h2>
+        </div>
+
+        <div class="card-body">
+
+            <div class="chart-panel">
+
+                <div class="chart-col">
+
+                    <span
+                        class="chart-value"
+                        id="valor-total">
+                        0
+                    </span>
+
+                    <div
+                        class="chart-bar"
+                        id="barra-total">
+                    </div>
+
+                    <small>
+                        Eventos
+                    </small>
+
+                </div>
+
+
+                <div class="chart-col">
+
+                    <span
+                        class="chart-value"
+                        id="valor-creaciones">
+                        0
+                    </span>
+
+                    <div
+                        class="chart-bar"
+                        id="barra-creaciones">
+                    </div>
+
+                    <small>
+                        Creaciones
+                    </small>
+
+                </div>
+
+
+                <div class="chart-col">
+
+                    <span
+                        class="chart-value"
+                        id="valor-actualizaciones">
+                        0
+                    </span>
+
+                    <div
+                        class="chart-bar"
+                        id="barra-actualizaciones">
+                    </div>
+
+                    <small>
+                        Actualizaciones
+                    </small>
+
+                </div>
+
+
+                <div class="chart-col">
+
+                    <span
+                        class="chart-value"
+                        id="valor-eliminaciones">
+                        0
+                    </span>
+
+                    <div
+                        class="chart-bar"
+                        id="barra-eliminaciones">
+                    </div>
+
+                    <small>
+                        Eliminaciones
+                    </small>
+
+                </div>
+
+            </div>
+
+            <p
+                class="report-note"
+                id="nota-periodo">
+                Seleccione un período para consultar
+                el historial.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- DETALLE -->
+
+    <div
+        class="card"
+        style="margin-top:20px">
+
+        <div class="card-header">
+            <h2>Detalle del historial</h2>
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-wrap">
+
+                <table id="tabla-reporte">
+
+                    <thead>
+
+                        <tr>
+                            <th>Fecha y hora</th>
+                            <th>Usuario</th>
+                            <th>Entidad</th>
+                            <th>ID registro</th>
+                            <th>Acción</th>
+                            <th>Valor anterior</th>
+                            <th>Valor nuevo</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tabla-body">
+
+                        <tr>
+                            <td
+                                colspan="7"
+                                class="empty-message">
+                                No existen registros para mostrar.
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="../assets/app.js"></script>
+
+<script>
+
+const sesion = sp_requireAuth('s01-login.html');
+
+if (sesion) {
+
+    document.getElementById('header-user').textContent =
+        (sesion.nombres || 'Usuario')
+        + ' '
+        + (sesion.apellidos || '');
+
+}
+
+document
+    .querySelector('.btn-logout')
+    .addEventListener('click', sp_logout);
+
+
+// =====================================================
+// PERIODO ACTUAL
+// =====================================================
+
+const periodo = document.getElementById('periodo');
+
+const fechaActual = new Date();
+
+periodo.value =
+    fechaActual.getFullYear()
+    + '-'
+    + String(
+        fechaActual.getMonth() + 1
+    ).padStart(2, '0');
+
+
+// =====================================================
+// GENERAR REPORTE
+// =====================================================
+
+async function cargarReporte() {
+
+    if (!periodo.value) {
+
+        alert('Seleccione un período.');
+
+        return;
+    }
+
+    const partes = periodo.value.split('-');
+
+    const anio = partes[0];
+    const mes = partes[1];
+
+    try {
+
+        const respuesta = await fetch(
+            '/api/reportes/trazabilidad'
+            + '?anio=' + anio
+            + '&mes=' + mes
+        );
+
+        const data = await respuesta.json();
+
+        if (!respuesta.ok) {
+
+            throw new Error(
+                data.mensaje
+                || 'No se pudo generar el reporte.'
+            );
+
+        }
+
+        actualizarReporte(data);
+
+    } catch (error) {
+
+        console.error(
+            'Error REP-OT-02:',
+            error
+        );
+
+        alert(
+            'No se pudo cargar el reporte.\n'
+            + error.message
+        );
+
+    }
+
+}
+
+
+// =====================================================
+// ACTUALIZAR INTERFAZ
+// =====================================================
+
+function actualizarReporte(data) {
+
+    const total =
+        Number(data.totalRegistros || 0);
+
+    const creaciones =
+        Number(data.creaciones || 0);
+
+    const actualizaciones =
+        Number(data.actualizaciones || 0);
+
+    const eliminaciones =
+        Number(data.eliminaciones || 0);
+
+
+    // KPI
+
+    document.getElementById(
+        'kpi-total'
+    ).textContent = total;
+
+    document.getElementById(
+        'kpi-creaciones'
+    ).textContent = creaciones;
+
+    document.getElementById(
+        'kpi-actualizaciones'
+    ).textContent = actualizaciones;
+
+    document.getElementById(
+        'kpi-eliminaciones'
+    ).textContent = eliminaciones;
+
+
+    // VALORES DEL GRÁFICO
+
+    document.getElementById(
+        'valor-total'
+    ).textContent = total;
+
+    document.getElementById(
+        'valor-creaciones'
+    ).textContent = creaciones;
+
+    document.getElementById(
+        'valor-actualizaciones'
+    ).textContent = actualizaciones;
+
+    document.getElementById(
+        'valor-eliminaciones'
+    ).textContent = eliminaciones;
+
+
+    actualizarGrafico(
+        total,
+        creaciones,
+        actualizaciones,
+        eliminaciones
+    );
+
+
+    actualizarTabla(
+        data.registros || []
+    );
+
+
+    const mesTexto =
+        String(data.mes)
+        .padStart(2, '0');
+
+    document.getElementById(
+        'nota-periodo'
+    ).textContent =
+        'Datos obtenidos del historial de SEGURPLAN '
+        + 'para el período '
+        + mesTexto
+        + '/'
+        + data.anio
+        + '.';
+
+}
+
+
+// =====================================================
+// GRÁFICO
+// =====================================================
+
+function actualizarGrafico(
+    total,
+    creaciones,
+    actualizaciones,
+    eliminaciones
+) {
+
+    const valores = [
+        total,
+        creaciones,
+        actualizaciones,
+        eliminaciones
+    ];
+
+    const maximo =
+        Math.max(...valores, 1);
+
+    cambiarAltura(
+        'barra-total',
+        total,
+        maximo
+    );
+
+    cambiarAltura(
+        'barra-creaciones',
+        creaciones,
+        maximo
+    );
+
+    cambiarAltura(
+        'barra-actualizaciones',
+        actualizaciones,
+        maximo
+    );
+
+    cambiarAltura(
+        'barra-eliminaciones',
+        eliminaciones,
+        maximo
+    );
+
+}
+
+
+function cambiarAltura(
+    id,
+    valor,
+    maximo
+) {
+
+    const barra =
+        document.getElementById(id);
+
+    if (valor === 0) {
+
+        barra.style.height = '0px';
+
+        return;
+    }
+
+    const altura =
+        Math.max(
+            25,
+            (valor / maximo) * 170
+        );
+
+    barra.style.height =
+        altura + 'px';
+
+}
+
+
+// =====================================================
+// TABLA
+// =====================================================
+
+function actualizarTabla(registros) {
+
+    const tbody =
+        document.getElementById(
+            'tabla-body'
+        );
+
+    tbody.innerHTML = '';
+
+
+    if (!registros || registros.length === 0) {
+
+        tbody.innerHTML = `
+            <tr>
+                <td
+                    colspan="7"
+                    class="empty-message">
+                    No existen eventos registrados
+                    para este período.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    registros.forEach(registro => {
+
+        const fila =
+            document.createElement('tr');
+
+        fila.innerHTML = `
+
+            <td>
+                ${formatearFecha(
+                    registro.fechaHora
+                )}
+            </td>
+
+            <td>
+                ${escapar(
+                    registro.usuario
+                    || 'Sistema'
+                )}
+            </td>
+
+            <td>
+                ${escapar(
+                    registro.entidad
+                    || '-'
+                )}
+            </td>
+
+            <td>
+                ${registro.idRegistro ?? '-'}
+            </td>
+
+            <td>
+                <span class="status-pill">
+                    ${escapar(
+                        registro.accion
+                        || '-'
+                    )}
+                </span>
+            </td>
+
+            <td>
+                ${escapar(
+                    registro.valorAnterior
+                    || '-'
+                )}
+            </td>
+
+            <td>
+                ${escapar(
+                    registro.valorNuevo
+                    || '-'
+                )}
+            </td>
+
+        `;
+
+        tbody.appendChild(fila);
+
+    });
+
+}
+
+
+// =====================================================
+// FECHA
+// =====================================================
+
+function formatearFecha(fecha) {
+
+    if (!fecha) {
+        return '-';
+    }
+
+    const d = new Date(fecha);
+
+    if (isNaN(d.getTime())) {
+        return fecha;
+    }
+
+    return d.toLocaleString(
+        'es-PE'
+    );
+
+}
+
+
+// =====================================================
+// ESCAPAR HTML
+// =====================================================
+
+function escapar(valor) {
+
+    return String(valor)
+
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+
+}
+
+
+// =====================================================
+// BOTÓN GENERAR
+// =====================================================
+
+document
+    .getElementById('btn-generar')
+    .addEventListener(
+        'click',
+        cargarReporte
+    );
+
+
+// =====================================================
+// EXPORTAR CSV
+// =====================================================
+
+document
+    .getElementById('btn-exportar')
+    .addEventListener(
+        'click',
+        () => {
+
+            const filas = [
+                ...document.querySelectorAll(
+                    '#tabla-reporte tr'
+                )
+            ];
+
+            const csv = filas
+
+                .map(fila =>
+
+                    [...fila.children]
+
+                        .map(celda =>
+
+                            '"'
+                            + celda.innerText
+                                .replaceAll(
+                                    '"',
+                                    '""'
+                                )
+                            + '"'
+
+                        )
+
+                        .join(';')
+
+                )
+
+                .join('\n');
+
+
+            const archivo =
+                new Blob(
+                    [
+                        '\uFEFF'
+                        + csv
+                    ],
+                    {
+                        type:
+                        'text/csv;charset=utf-8'
+                    }
+                );
+
+
+            const url =
+                URL.createObjectURL(
+                    archivo
+                );
+
+
+            const enlace =
+                document.createElement('a');
+
+
+            enlace.href = url;
+
+            enlace.download =
+                'REP-OT-02_'
+                + periodo.value
+                + '.csv';
+
+
+            enlace.click();
+
+
+            URL.revokeObjectURL(
+                url
+            );
+
+        }
+    );
+
+
+// =====================================================
+// CARGAR AUTOMÁTICAMENTE
+// =====================================================
+
+cargarReporte();
+
+</script>
+
+</body>
+</html>

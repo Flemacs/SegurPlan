@@ -1,12 +1,15 @@
 package com.segurplan.service;
 
+import com.segurplan.model.Documento;
 import com.segurplan.model.Poliza;
+import com.segurplan.model.Prevision;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.segurplan.model.Historial;
+import com.segurplan.repository.HistorialRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -23,6 +26,12 @@ public class ReporteService {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    private final HistorialRepository historialRepository;
+
+    public ReporteService(HistorialRepository historialRepository) {
+        this.historialRepository = historialRepository;
+    }
 
     // =========================================================
     // REPORTE GENERAL
@@ -1195,354 +1204,1329 @@ public class ReporteService {
     // =========================================================
 // REP-MV-01 - COTIZACIONES POR ESTADO
 // =========================================================
-@Transactional(readOnly = true)
-public Map<String, Object> generarCotizacionesPorEstado(
-        Integer anio,
-        Integer mes) {
 
-    validarPeriodo(anio, mes);
+    @Transactional(readOnly = true)
+    public Map<String, Object> generarCotizacionesPorEstado(
+            Integer anio,
+            Integer mes) {
 
-    YearMonth periodo = YearMonth.of(anio, mes);
+        validarPeriodo(anio, mes);
 
-    LocalDateTime inicio = periodo
-            .atDay(1)
-            .atStartOfDay();
+        YearMonth periodo = YearMonth.of(anio, mes);
 
-    LocalDateTime fin = periodo
-            .plusMonths(1)
-            .atDay(1)
-            .atStartOfDay();
+        LocalDateTime inicio = periodo
+                .atDay(1)
+                .atStartOfDay();
 
-    long solicitadas = contarCotizaciones(inicio, fin, "Solicitada");
-    long enRevision = contarCotizaciones(inicio, fin, "En revisión");
-    long disponibles = contarCotizaciones(inicio, fin, "Disponible");
-    long aceptadas = contarCotizaciones(inicio, fin, "Aceptada");
-    long rechazadas = contarCotizaciones(inicio, fin, "Rechazada");
-    long vencidas = contarCotizaciones(inicio, fin, "Vencida");
+        LocalDateTime fin = periodo
+                .plusMonths(1)
+                .atDay(1)
+                .atStartOfDay();
 
-    long total = contarCotizaciones(inicio, fin, null);
+        long solicitadas = contarCotizaciones(inicio, fin, "Solicitada");
+        long enRevision = contarCotizaciones(inicio, fin, "En revisión");
+        long disponibles = contarCotizaciones(inicio, fin, "Disponible");
+        long aceptadas = contarCotizaciones(inicio, fin, "Aceptada");
+        long rechazadas = contarCotizaciones(inicio, fin, "Rechazada");
+        long vencidas = contarCotizaciones(inicio, fin, "Vencida");
 
-    Map<String, Object> reporte = new LinkedHashMap<>();
+        long total = contarCotizaciones(inicio, fin, null);
 
-    reporte.put("anio", anio);
-    reporte.put("mes", mes);
-    reporte.put("total", total);
+        Map<String, Object> reporte = new LinkedHashMap<>();
 
-    Map<String, Long> estados = new LinkedHashMap<>();
+        reporte.put("anio", anio);
+        reporte.put("mes", mes);
+        reporte.put("total", total);
 
-    estados.put("Solicitada", solicitadas);
-    estados.put("En revisión", enRevision);
-    estados.put("Disponible", disponibles);
-    estados.put("Aceptada", aceptadas);
-    estados.put("Rechazada", rechazadas);
-    estados.put("Vencida", vencidas);
+        Map<String, Long> estados = new LinkedHashMap<>();
 
-    reporte.put("estados", estados);
+        estados.put("Solicitada", solicitadas);
+        estados.put("En revisión", enRevision);
+        estados.put("Disponible", disponibles);
+        estados.put("Aceptada", aceptadas);
+        estados.put("Rechazada", rechazadas);
+        estados.put("Vencida", vencidas);
 
-    return reporte;
-}
+        reporte.put("estados", estados);
+
+        return reporte;
+    }
 // =========================================================
 // REP-MV-02 - CONVERSIÓN DE VENTAS
 // =========================================================
-@Transactional(readOnly = true)
-public Map<String, Object> generarConversionVentas(
-        Integer anio,
-        Integer mes) {
 
-    validarPeriodo(anio, mes);
+    @Transactional(readOnly = true)
+    public Map<String, Object> generarConversionVentas(
+            Integer anio,
+            Integer mes) {
 
-    YearMonth periodo = YearMonth.of(anio, mes);
+        validarPeriodo(anio, mes);
 
-    LocalDateTime inicio =
-            periodo.atDay(1).atStartOfDay();
+        YearMonth periodo = YearMonth.of(anio, mes);
 
-    LocalDateTime fin =
-            periodo.plusMonths(1)
-                    .atDay(1)
-                    .atStartOfDay();
+        LocalDateTime inicio
+                = periodo.atDay(1).atStartOfDay();
 
+        LocalDateTime fin
+                = periodo.plusMonths(1)
+                        .atDay(1)
+                        .atStartOfDay();
 
-    // ============================================
-    // 1. TOTAL DE SOLICITUDES
-    // ============================================
-
-    Long solicitudes = entityManager.createQuery("""
+        // ============================================
+        // 1. TOTAL DE SOLICITUDES
+        // ============================================
+        Long solicitudes = entityManager.createQuery("""
         SELECT COUNT(c)
         FROM Cotizacion c
         WHERE c.fechaSolicitud >= :inicio
           AND c.fechaSolicitud < :fin
         """, Long.class)
-            .setParameter("inicio", inicio)
-            .setParameter("fin", fin)
-            .getSingleResult();
+                .setParameter("inicio", inicio)
+                .setParameter("fin", fin)
+                .getSingleResult();
 
-
-    // ============================================
-    // 2. COTIZACIONES RESPONDIDAS
-    //
-    // Consideramos respondida cuando ya existe
-    // fechaRespuesta.
-    // ============================================
-
-    Long respondidas = entityManager.createQuery("""
+        // ============================================
+        // 2. COTIZACIONES RESPONDIDAS
+        //
+        // Consideramos respondida cuando ya existe
+        // fechaRespuesta.
+        // ============================================
+        Long respondidas = entityManager.createQuery("""
         SELECT COUNT(c)
         FROM Cotizacion c
         WHERE c.fechaSolicitud >= :inicio
           AND c.fechaSolicitud < :fin
           AND c.fechaRespuesta IS NOT NULL
         """, Long.class)
-            .setParameter("inicio", inicio)
-            .setParameter("fin", fin)
-            .getSingleResult();
+                .setParameter("inicio", inicio)
+                .setParameter("fin", fin)
+                .getSingleResult();
 
-
-    // ============================================
-    // 3. COMPRAS / CONTRATACIONES
-    //
-    // Contamos contrataciones correspondientes
-    // a cotizaciones solicitadas en el período.
-    // ============================================
-
-    Long compras = entityManager.createQuery("""
+        // ============================================
+        // 3. COMPRAS / CONTRATACIONES
+        //
+        // Contamos contrataciones correspondientes
+        // a cotizaciones solicitadas en el período.
+        // ============================================
+        Long compras = entityManager.createQuery("""
         SELECT COUNT(ct)
         FROM Contratacion ct
         WHERE ct.cotizacion.fechaSolicitud >= :inicio
           AND ct.cotizacion.fechaSolicitud < :fin
         """, Long.class)
-            .setParameter("inicio", inicio)
-            .setParameter("fin", fin)
-            .getSingleResult();
+                .setParameter("inicio", inicio)
+                .setParameter("fin", fin)
+                .getSingleResult();
 
-
-    // ============================================
-    // 4. PÓLIZAS EMITIDAS
-    // ============================================
-
-    Long polizas = entityManager.createQuery("""
+        // ============================================
+        // 4. PÓLIZAS EMITIDAS
+        // ============================================
+        Long polizas = entityManager.createQuery("""
         SELECT COUNT(p)
         FROM Poliza p
         WHERE p.contratacion.cotizacion.fechaSolicitud >= :inicio
           AND p.contratacion.cotizacion.fechaSolicitud < :fin
         """, Long.class)
-            .setParameter("inicio", inicio)
-            .setParameter("fin", fin)
-            .getSingleResult();
+                .setParameter("inicio", inicio)
+                .setParameter("fin", fin)
+                .getSingleResult();
 
+        // ============================================
+        // TASA DE CONVERSIÓN
+        // ============================================
+        double tasaConversion = 0.0;
 
-    // ============================================
-    // TASA DE CONVERSIÓN
-    // ============================================
+        if (solicitudes != null && solicitudes > 0) {
 
-    double tasaConversion = 0.0;
-
-    if (solicitudes != null && solicitudes > 0) {
-
-        tasaConversion =
-                (polizas.doubleValue()
-                        / solicitudes.doubleValue())
-                        * 100.0;
-    }
-
-
-    tasaConversion =
-            Math.round(tasaConversion * 100.0)
-                    / 100.0;
-
-
-    // ============================================
-    // RESPUESTA
-    // ============================================
-
-    Map<String, Object> reporte =
-            new LinkedHashMap<>();
-
-
-    reporte.put("anio", anio);
-    reporte.put("mes", mes);
-
-    reporte.put(
-            "solicitudes",
-            solicitudes
-    );
-
-    reporte.put(
-            "respondidas",
-            respondidas
-    );
-
-    reporte.put(
-            "compras",
-            compras
-    );
-
-    reporte.put(
-            "polizasEmitidas",
-            polizas
-    );
-
-    reporte.put(
-            "tasaConversion",
             tasaConversion
-    );
+                    = (polizas.doubleValue()
+                    / solicitudes.doubleValue())
+                    * 100.0;
+        }
 
+        tasaConversion
+                = Math.round(tasaConversion * 100.0)
+                / 100.0;
 
-    return reporte;
-}
+        // ============================================
+        // RESPUESTA
+        // ============================================
+        Map<String, Object> reporte
+                = new LinkedHashMap<>();
+
+        reporte.put("anio", anio);
+        reporte.put("mes", mes);
+
+        reporte.put(
+                "solicitudes",
+                solicitudes
+        );
+
+        reporte.put(
+                "respondidas",
+                respondidas
+        );
+
+        reporte.put(
+                "compras",
+                compras
+        );
+
+        reporte.put(
+                "polizasEmitidas",
+                polizas
+        );
+
+        reporte.put(
+                "tasaConversion",
+                tasaConversion
+        );
+
+        return reporte;
+    }
 // =========================================================
 // REP-MV-05 - CARTERA DE PÓLIZAS
 // =========================================================
-@Transactional(readOnly = true)
-public Map<String, Object> generarCarteraPolizas(
-        Integer anio,
-        Integer mes) {
 
-    validarPeriodo(anio, mes);
+    @Transactional(readOnly = true)
+    public Map<String, Object> generarCarteraPolizas(
+            Integer anio,
+            Integer mes) {
 
-    YearMonth periodo = YearMonth.of(anio, mes);
+        validarPeriodo(anio, mes);
 
-    LocalDate inicio = periodo.atDay(1);
-    LocalDate fin = periodo.plusMonths(1).atDay(1);
+        YearMonth periodo = YearMonth.of(anio, mes);
 
-    // -----------------------------------------------------
-    // CONSULTAR PÓLIZAS DEL PERÍODO
-    // -----------------------------------------------------
+        LocalDate inicio = periodo.atDay(1);
+        LocalDate fin = periodo.plusMonths(1).atDay(1);
 
-    List<Poliza> polizas = entityManager.createQuery("""
+        // -----------------------------------------------------
+        // CONSULTAR PÓLIZAS DEL PERÍODO
+        // -----------------------------------------------------
+        List<Poliza> polizas = entityManager.createQuery("""
         SELECT p
         FROM Poliza p
         WHERE p.fechaInicio >= :inicio
           AND p.fechaInicio < :fin
         ORDER BY p.fechaInicio DESC
         """, Poliza.class)
-            .setParameter("inicio", inicio)
-            .setParameter("fin", fin)
-            .getResultList();
+                .setParameter("inicio", inicio)
+                .setParameter("fin", fin)
+                .getResultList();
 
+        // -----------------------------------------------------
+        // INDICADORES
+        // -----------------------------------------------------
+        long total = polizas.size();
 
-    // -----------------------------------------------------
-    // INDICADORES
-    // -----------------------------------------------------
+        long vigentes = polizas.stream()
+                .filter(p
+                        -> "Vigente".equalsIgnoreCase(
+                        p.getEstado()
+                )
+                )
+                .count();
 
-    long total = polizas.size();
+        long vencidas = polizas.stream()
+                .filter(p
+                        -> "Vencida".equalsIgnoreCase(
+                        p.getEstado()
+                )
+                )
+                .count();
 
-    long vigentes = polizas.stream()
-            .filter(p ->
-                    "Vigente".equalsIgnoreCase(
-                            p.getEstado()
-                    )
-            )
-            .count();
+        BigDecimal primaTotal = polizas.stream()
+                .map(Poliza::getPrima)
+                .filter(Objects::nonNull)
+                .reduce(
+                        BigDecimal.ZERO,
+                        BigDecimal::add
+                );
 
-    long vencidas = polizas.stream()
-            .filter(p ->
-                    "Vencida".equalsIgnoreCase(
-                            p.getEstado()
-                    )
-            )
-            .count();
+        // -----------------------------------------------------
+        // DETALLE
+        // -----------------------------------------------------
+        List<Map<String, Object>> detalle
+                = new ArrayList<>();
 
+        for (Poliza p : polizas) {
 
-    BigDecimal primaTotal = polizas.stream()
-            .map(Poliza::getPrima)
-            .filter(Objects::nonNull)
-            .reduce(
-                    BigDecimal.ZERO,
-                    BigDecimal::add
+            Map<String, Object> fila
+                    = new LinkedHashMap<>();
+
+            fila.put(
+                    "idPoliza",
+                    p.getIdPoliza()
             );
 
+            fila.put(
+                    "numeroPoliza",
+                    p.getNumeroPoliza()
+            );
 
-    // -----------------------------------------------------
-    // DETALLE
-    // -----------------------------------------------------
+            fila.put(
+                    "fechaInicio",
+                    p.getFechaInicio()
+            );
 
-    List<Map<String, Object>> detalle =
-            new ArrayList<>();
+            fila.put(
+                    "fechaFin",
+                    p.getFechaFin()
+            );
 
+            fila.put(
+                    "prima",
+                    p.getPrima()
+            );
 
-    for (Poliza p : polizas) {
+            fila.put(
+                    "cobertura",
+                    p.getCobertura()
+            );
 
-        Map<String, Object> fila =
-                new LinkedHashMap<>();
+            fila.put(
+                    "deducible",
+                    p.getDeducible()
+            );
 
-        fila.put(
-                "idPoliza",
-                p.getIdPoliza()
+            fila.put(
+                    "estado",
+                    p.getEstado()
+            );
+
+            detalle.add(fila);
+        }
+
+        // -----------------------------------------------------
+        // RESPUESTA
+        // -----------------------------------------------------
+        Map<String, Object> reporte
+                = new LinkedHashMap<>();
+
+        reporte.put("anio", anio);
+        reporte.put("mes", mes);
+
+        reporte.put(
+                "total",
+                total
         );
 
-        fila.put(
-                "numeroPoliza",
-                p.getNumeroPoliza()
+        reporte.put(
+                "vigentes",
+                vigentes
         );
 
-        fila.put(
-                "fechaInicio",
-                p.getFechaInicio()
+        reporte.put(
+                "vencidas",
+                vencidas
         );
 
-        fila.put(
-                "fechaFin",
-                p.getFechaFin()
+        reporte.put(
+                "primaTotal",
+                primaTotal
         );
 
-        fila.put(
-                "prima",
-                p.getPrima()
+        reporte.put(
+                "polizas",
+                detalle
         );
 
-        fila.put(
-                "cobertura",
-                p.getCobertura()
-        );
-
-        fila.put(
-                "deducible",
-                p.getDeducible()
-        );
-
-        fila.put(
-                "estado",
-                p.getEstado()
-        );
-
-        detalle.add(fila);
+        return reporte;
     }
+// =========================================================
+// REP-LA-01 - DOCUMENTOS POR TIPO Y ESTADO
+// =========================================================
 
+    @Transactional(readOnly = true)
+    public Map<String, Object> generarDocumentosPorTipoEstado(
+            Integer anio,
+            Integer mes) {
 
-    // -----------------------------------------------------
-    // RESPUESTA
-    // -----------------------------------------------------
+        validarPeriodo(anio, mes);
 
-    Map<String, Object> reporte =
-            new LinkedHashMap<>();
+        YearMonth periodo = YearMonth.of(anio, mes);
 
-    reporte.put("anio", anio);
-    reporte.put("mes", mes);
+        LocalDateTime inicio
+                = periodo.atDay(1)
+                        .atStartOfDay();
 
-    reporte.put(
-            "total",
-            total
-    );
+        LocalDateTime fin
+                = periodo.plusMonths(1)
+                        .atDay(1)
+                        .atStartOfDay();
 
-    reporte.put(
-            "vigentes",
-            vigentes
-    );
+        // =====================================================
+        // DOCUMENTOS DEL PERÍODO
+        // =====================================================
+        List<Documento> documentos
+                = entityManager.createQuery("""
+                SELECT d
+                FROM Documento d
+                WHERE d.fechaCarga >= :inicio
+                  AND d.fechaCarga < :fin
+                ORDER BY d.fechaCarga DESC
+                """, Documento.class)
+                        .setParameter("inicio", inicio)
+                        .setParameter("fin", fin)
+                        .getResultList();
 
-    reporte.put(
-            "vencidas",
-            vencidas
-    );
+        // =====================================================
+        // KPI POR ESTADO
+        // =====================================================
+        long total
+                = documentos.size();
 
-    reporte.put(
-            "primaTotal",
-            primaTotal
-    );
+        long pendientes
+                = documentos.stream()
+                        .filter(d
+                                -> "Pendiente".equalsIgnoreCase(
+                                d.getEstado()
+                        )
+                        )
+                        .count();
 
-    reporte.put(
-            "polizas",
-            detalle
-    );
+        long validados
+                = documentos.stream()
+                        .filter(d
+                                -> "Validado".equalsIgnoreCase(
+                                d.getEstado()
+                        )
+                        )
+                        .count();
 
-    return reporte;
-}
+        long observados
+                = documentos.stream()
+                        .filter(d
+                                -> "Observado".equalsIgnoreCase(
+                                d.getEstado()
+                        )
+                        )
+                        .count();
+
+        long rechazados
+                = documentos.stream()
+                        .filter(d
+                                -> "Rechazado".equalsIgnoreCase(
+                                d.getEstado()
+                        )
+                        )
+                        .count();
+
+        // =====================================================
+        // AGRUPACIÓN POR TIPO
+        // =====================================================
+        Map<String, Long> porTipo
+                = documentos.stream()
+                        .collect(
+                                java.util.stream.Collectors.groupingBy(
+                                        d -> {
+
+                                            if (d.getTipoDocumento() == null
+                                            || d.getTipoDocumento().isBlank()) {
+
+                                                return "Sin especificar";
+                                            }
+
+                                            return d.getTipoDocumento();
+                                        },
+                                        LinkedHashMap::new,
+                                        java.util.stream.Collectors.counting()
+                                )
+                        );
+
+        // =====================================================
+        // DETALLE DE DOCUMENTOS
+        // =====================================================
+        List<Map<String, Object>> detalle
+                = new ArrayList<>();
+
+        for (Documento documento : documentos) {
+
+            Map<String, Object> fila
+                    = new LinkedHashMap<>();
+
+            fila.put(
+                    "idDocumento",
+                    documento.getIdDocumento()
+            );
+
+            fila.put(
+                    "tipoDocumento",
+                    documento.getTipoDocumento()
+            );
+
+            fila.put(
+                    "nombreArchivo",
+                    documento.getNombreArchivo()
+            );
+
+            fila.put(
+                    "version",
+                    documento.getVersion()
+            );
+
+            fila.put(
+                    "fechaCarga",
+                    documento.getFechaCarga()
+            );
+
+            fila.put(
+                    "estado",
+                    documento.getEstado()
+            );
+
+            detalle.add(
+                    fila
+            );
+        }
+
+        // =====================================================
+        // RESPUESTA
+        // =====================================================
+        Map<String, Object> reporte
+                = new LinkedHashMap<>();
+
+        reporte.put(
+                "anio",
+                anio
+        );
+
+        reporte.put(
+                "mes",
+                mes
+        );
+
+        reporte.put(
+                "total",
+                total
+        );
+
+        reporte.put(
+                "pendientes",
+                pendientes
+        );
+
+        reporte.put(
+                "validados",
+                validados
+        );
+
+        reporte.put(
+                "observados",
+                observados
+        );
+
+        reporte.put(
+                "rechazados",
+                rechazados
+        );
+
+        reporte.put(
+                "porTipo",
+                porTipo
+        );
+
+        reporte.put(
+                "documentos",
+                detalle
+        );
+
+        return reporte;
+    }
+// =========================================================
+// REP-PO-01 - REPORTE AFP
+// =========================================================
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> generarReporteAfpPorPeriodo(
+            Integer anio,
+            Integer mes) {
+
+        validarPeriodo(anio, mes);
+
+        YearMonth periodo
+                = YearMonth.of(anio, mes);
+
+        LocalDateTime inicio
+                = periodo.atDay(1)
+                        .atStartOfDay();
+
+        LocalDateTime fin
+                = periodo.plusMonths(1)
+                        .atDay(1)
+                        .atStartOfDay();
+
+        // =====================================================
+        // CONSULTAS AFP DEL PERÍODO
+        // =====================================================
+        List<Prevision> registros
+                = entityManager.createQuery("""
+                SELECT p
+                FROM Prevision p
+                WHERE p.fechaRegistro >= :inicio
+                  AND p.fechaRegistro < :fin
+                  AND UPPER(p.tipoSistema) = 'AFP'
+                ORDER BY p.fechaRegistro DESC
+                """, Prevision.class)
+                        .setParameter("inicio", inicio)
+                        .setParameter("fin", fin)
+                        .getResultList();
+
+        // =====================================================
+        // KPI
+        // =====================================================
+        long total
+                = registros.size();
+
+        long registradas
+                = registros.stream()
+                        .filter(p
+                                -> "Registrada".equalsIgnoreCase(
+                                p.getEstado()
+                        )
+                        )
+                        .count();
+
+        long enRevision
+                = registros.stream()
+                        .filter(p
+                                -> "En revisión".equalsIgnoreCase(
+                                p.getEstado()
+                        )
+                        )
+                        .count();
+
+        long simuladas
+                = registros.stream()
+                        .filter(p
+                                -> "Simulada".equalsIgnoreCase(
+                                p.getEstado()
+                        )
+                        )
+                        .count();
+
+        long respondidas
+                = registros.stream()
+                        .filter(p
+                                -> "Respondida".equalsIgnoreCase(
+                                p.getEstado()
+                        )
+                        )
+                        .count();
+
+        long cerradas
+                = registros.stream()
+                        .filter(p
+                                -> "Cerrada".equalsIgnoreCase(
+                                p.getEstado()
+                        )
+                        )
+                        .count();
+
+        // =====================================================
+        // DETALLE
+        // =====================================================
+        List<Map<String, Object>> detalle
+                = new ArrayList<>();
+
+        for (Prevision prevision : registros) {
+
+            Map<String, Object> fila
+                    = new LinkedHashMap<>();
+
+            fila.put(
+                    "idPrevision",
+                    prevision.getIdPrevision()
+            );
+
+            fila.put(
+                    "tipoSistema",
+                    prevision.getTipoSistema()
+            );
+
+            fila.put(
+                    "edad",
+                    prevision.getEdad()
+            );
+
+            fila.put(
+                    "ingresoMensual",
+                    prevision.getIngresoMensual()
+            );
+
+            fila.put(
+                    "aniosAporte",
+                    prevision.getAniosAporte()
+            );
+
+            fila.put(
+                    "fechaRegistro",
+                    prevision.getFechaRegistro()
+            );
+
+            fila.put(
+                    "montoPensionEstimado",
+                    prevision.getMontoPensionEstimado()
+            );
+
+            fila.put(
+                    "resultadoSimulacion",
+                    prevision.getResultadoSimulacion()
+            );
+
+            fila.put(
+                    "consulta",
+                    prevision.getConsulta()
+            );
+
+            fila.put(
+                    "respuesta",
+                    prevision.getRespuesta()
+            );
+
+            fila.put(
+                    "estado",
+                    prevision.getEstado()
+            );
+
+            detalle.add(
+                    fila
+            );
+        }
+
+        // =====================================================
+        // RESPUESTA
+        // =====================================================
+        Map<String, Object> reporte
+                = new LinkedHashMap<>();
+
+        reporte.put(
+                "anio",
+                anio
+        );
+
+        reporte.put(
+                "mes",
+                mes
+        );
+
+        reporte.put(
+                "total",
+                total
+        );
+
+        reporte.put(
+                "registradas",
+                registradas
+        );
+
+        reporte.put(
+                "enRevision",
+                enRevision
+        );
+
+        reporte.put(
+                "simuladas",
+                simuladas
+        );
+
+        reporte.put(
+                "respondidas",
+                respondidas
+        );
+
+        reporte.put(
+                "cerradas",
+                cerradas
+        );
+
+        reporte.put(
+                "registros",
+                detalle
+        );
+
+        return reporte;
+    }
+    // =========================================================
+// REP-PO-03 - SINIESTROS POR ASEGURADORA
+// =========================================================
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> generarSiniestrosPorAseguradora(
+            Integer anio,
+            Integer mes) {
+
+        validarPeriodo(anio, mes);
+
+        YearMonth periodo
+                = YearMonth.of(anio, mes);
+
+        LocalDateTime inicio
+                = periodo.atDay(1)
+                        .atStartOfDay();
+
+        LocalDateTime fin
+                = periodo.plusMonths(1)
+                        .atDay(1)
+                        .atStartOfDay();
+
+        // =====================================================
+        // CONSULTA AGRUPADA POR ASEGURADORA
+        // =====================================================
+        List<Object[]> resultados
+                = entityManager.createQuery("""
+            SELECT
+                a.idAseguradora,
+                a.nombre,
+                COUNT(s),
+
+                SUM(
+                    CASE
+                        WHEN LOWER(s.estado) = 'aprobado'
+                        THEN 1
+                        ELSE 0
+                    END
+                ),
+
+                SUM(
+                    CASE
+                        WHEN LOWER(s.estado) = 'rechazado'
+                        THEN 1
+                        ELSE 0
+                    END
+                ),
+
+                SUM(
+                    CASE
+                        WHEN LOWER(s.estado) = 'observado'
+                        THEN 1
+                        ELSE 0
+                    END
+                ),
+
+                SUM(
+                    CASE
+                        WHEN s.resultadoEvaluacion IS NOT NULL
+                        THEN 1
+                        ELSE 0
+                    END
+                )
+
+            FROM Siniestro s
+
+            JOIN s.aseguradora a
+
+            WHERE s.fechaRegistro >= :inicio
+              AND s.fechaRegistro < :fin
+
+            GROUP BY
+                a.idAseguradora,
+                a.nombre
+
+            ORDER BY COUNT(s) DESC
+            """, Object[].class)
+                        .setParameter(
+                                "inicio",
+                                inicio
+                        )
+                        .setParameter(
+                                "fin",
+                                fin
+                        )
+                        .getResultList();
+
+        // =====================================================
+        // DETALLE
+        // =====================================================
+        List<Map<String, Object>> aseguradoras
+                = new ArrayList<>();
+
+        long totalSiniestros = 0;
+        long totalAprobados = 0;
+        long totalRechazados = 0;
+        long totalObservados = 0;
+        long totalConResultado = 0;
+
+        for (Object[] resultado : resultados) {
+
+            Long idAseguradora
+                    = ((Number) resultado[0])
+                            .longValue();
+
+            String nombre
+                    = String.valueOf(
+                            resultado[1]
+                    );
+
+            long total
+                    = resultado[2] == null
+                            ? 0
+                            : ((Number) resultado[2])
+                                    .longValue();
+
+            long aprobados
+                    = resultado[3] == null
+                            ? 0
+                            : ((Number) resultado[3])
+                                    .longValue();
+
+            long rechazados
+                    = resultado[4] == null
+                            ? 0
+                            : ((Number) resultado[4])
+                                    .longValue();
+
+            long observados
+                    = resultado[5] == null
+                            ? 0
+                            : ((Number) resultado[5])
+                                    .longValue();
+
+            long conResultado
+                    = resultado[6] == null
+                            ? 0
+                            : ((Number) resultado[6])
+                                    .longValue();
+
+            totalSiniestros += total;
+            totalAprobados += aprobados;
+            totalRechazados += rechazados;
+            totalObservados += observados;
+            totalConResultado += conResultado;
+
+            Map<String, Object> fila
+                    = new LinkedHashMap<>();
+
+            fila.put(
+                    "idAseguradora",
+                    idAseguradora
+            );
+
+            fila.put(
+                    "aseguradora",
+                    nombre
+            );
+
+            fila.put(
+                    "total",
+                    total
+            );
+
+            fila.put(
+                    "aprobados",
+                    aprobados
+            );
+
+            fila.put(
+                    "rechazados",
+                    rechazados
+            );
+
+            fila.put(
+                    "observados",
+                    observados
+            );
+
+            fila.put(
+                    "conResultado",
+                    conResultado
+            );
+
+            aseguradoras.add(
+                    fila
+            );
+        }
+
+        // =====================================================
+        // RESPUESTA
+        // =====================================================
+        Map<String, Object> reporte
+                = new LinkedHashMap<>();
+
+        reporte.put(
+                "anio",
+                anio
+        );
+
+        reporte.put(
+                "mes",
+                mes
+        );
+
+        reporte.put(
+                "totalSiniestros",
+                totalSiniestros
+        );
+
+        reporte.put(
+                "totalAseguradoras",
+                aseguradoras.size()
+        );
+
+        reporte.put(
+                "aprobados",
+                totalAprobados
+        );
+
+        reporte.put(
+                "rechazados",
+                totalRechazados
+        );
+
+        reporte.put(
+                "observados",
+                totalObservados
+        );
+
+        reporte.put(
+                "conResultado",
+                totalConResultado
+        );
+
+        reporte.put(
+                "aseguradoras",
+                aseguradoras
+        );
+
+        return reporte;
+    }
+    // =========================================================
+// REP-DG-02 - INDICADORES GERENCIALES
+// =========================================================
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> generarIndicadoresGerenciales(
+            Integer anio,
+            Integer mes) {
+
+        validarPeriodo(anio, mes);
+
+        YearMonth periodo = YearMonth.of(anio, mes);
+
+        LocalDateTime inicio = periodo
+                .atDay(1)
+                .atStartOfDay();
+
+        LocalDateTime fin = periodo
+                .plusMonths(1)
+                .atDay(1)
+                .atStartOfDay();
+
+        LocalDate inicioFecha = periodo.atDay(1);
+        LocalDate finFecha = periodo
+                .plusMonths(1)
+                .atDay(1);
+
+        // =====================================================
+        // 1. COTIZACIONES DEL PERÍODO
+        // =====================================================
+        long totalCotizaciones = contarCotizaciones(
+                inicio,
+                fin,
+                null
+        );
+
+        long cotizacionesAceptadas = contarCotizaciones(
+                inicio,
+                fin,
+                "Aceptada"
+        );
+
+        BigDecimal tasaConversion = porcentaje(
+                cotizacionesAceptadas,
+                totalCotizaciones
+        );
+
+        // =====================================================
+        // 2. PÓLIZAS DEL PERÍODO
+        // =====================================================
+        List<Poliza> polizas = entityManager.createQuery("""
+        SELECT p
+        FROM Poliza p
+        WHERE p.fechaInicio >= :inicio
+          AND p.fechaInicio < :fin
+        """, Poliza.class)
+                .setParameter("inicio", inicioFecha)
+                .setParameter("fin", finFecha)
+                .getResultList();
+
+        long totalPolizas = polizas.size();
+
+        long polizasVigentes = polizas.stream()
+                .filter(p
+                        -> "Vigente".equalsIgnoreCase(
+                        p.getEstado()
+                )
+                )
+                .count();
+
+        BigDecimal primaTotal = polizas.stream()
+                .map(Poliza::getPrima)
+                .filter(Objects::nonNull)
+                .reduce(
+                        BigDecimal.ZERO,
+                        BigDecimal::add
+                );
+
+        // =====================================================
+        // 3. SINIESTROS DEL PERÍODO
+        // =====================================================
+        long totalSiniestros = contarSiniestros(
+                inicio,
+                fin,
+                null
+        );
+
+        /*
+     * Consideramos abiertos todos los siniestros que todavía
+     * no están Cerrados, Aprobados o Rechazados.
+         */
+        Long siniestrosAbiertos = entityManager.createQuery("""
+        SELECT COUNT(s)
+        FROM Siniestro s
+        WHERE s.fechaRegistro >= :inicio
+          AND s.fechaRegistro < :fin
+          AND s.estado NOT IN (
+              'Cerrado',
+              'Aprobado',
+              'Rechazado'
+          )
+        """, Long.class)
+                .setParameter("inicio", inicio)
+                .setParameter("fin", fin)
+                .getSingleResult();
+
+        long siniestrosAprobados = contarSiniestros(
+                inicio,
+                fin,
+                "Aprobado"
+        );
+
+        long siniestrosRechazados = contarSiniestros(
+                inicio,
+                fin,
+                "Rechazado"
+        );
+
+        // =====================================================
+        // 4. AFP
+        // =====================================================
+        long totalAFP = contarPrevisiones(
+                inicio,
+                fin,
+                null
+        );
+
+        long afpSimulaciones = contarPrevisionesSimuladas(
+                inicio,
+                fin
+        );
+
+        // =====================================================
+        // 5. RESPUESTA
+        // =====================================================
+        Map<String, Object> reporte = new LinkedHashMap<>();
+
+        reporte.put("anio", anio);
+        reporte.put("mes", mes);
+
+        // Indicadores principales
+        reporte.put("tasaConversion", tasaConversion);
+        reporte.put("primaTotal", primaTotal);
+        reporte.put("siniestrosAbiertos", siniestrosAbiertos);
+        reporte.put("polizasVigentes", polizasVigentes);
+
+        // Cotizaciones
+        reporte.put("totalCotizaciones", totalCotizaciones);
+        reporte.put(
+                "cotizacionesAceptadas",
+                cotizacionesAceptadas
+        );
+
+        // Pólizas
+        reporte.put("totalPolizas", totalPolizas);
+
+        // Siniestros
+        reporte.put("totalSiniestros", totalSiniestros);
+        reporte.put(
+                "siniestrosAprobados",
+                siniestrosAprobados
+        );
+        reporte.put(
+                "siniestrosRechazados",
+                siniestrosRechazados
+        );
+
+        // AFP
+        reporte.put("totalAFP", totalAFP);
+        reporte.put("afpSimulaciones", afpSimulaciones);
+
+        return reporte;
+    }
+// =========================================================
+// REP-OT-02 - HISTORIAL Y TRAZABILIDAD
+// =========================================================
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> generarTrazabilidad(
+            Integer anio,
+            Integer mes) {
+
+        validarPeriodo(anio, mes);
+
+        YearMonth periodo
+                = YearMonth.of(anio, mes);
+
+        LocalDateTime inicio
+                = periodo
+                        .atDay(1)
+                        .atStartOfDay();
+
+        LocalDateTime fin
+                = periodo
+                        .plusMonths(1)
+                        .atDay(1)
+                        .atStartOfDay();
+
+        List<Historial> registros
+                = historialRepository
+                        .findByFechaHoraGreaterThanEqualAndFechaHoraLessThanOrderByFechaHoraDesc(
+                                inicio,
+                                fin
+                        );
+
+        long creaciones
+                = registros.stream()
+                        .filter(h
+                                -> "CREAR".equalsIgnoreCase(h.getAccion())
+                        || "REGISTRAR".equalsIgnoreCase(h.getAccion()))
+                        .count();
+
+        long actualizaciones
+                = registros.stream()
+                        .filter(h
+                                -> "ACTUALIZAR".equalsIgnoreCase(h.getAccion()))
+                        .count();
+
+        long eliminaciones
+                = registros.stream()
+                        .filter(h
+                                -> "ELIMINAR".equalsIgnoreCase(h.getAccion()))
+                        .count();
+
+        Map<String, Long> entidades
+                = new LinkedHashMap<>();
+
+        for (Historial historial : registros) {
+
+            String entidad
+                    = historial.getEntidad() != null
+                    ? historial.getEntidad()
+                    : "SIN ENTIDAD";
+
+            entidades.put(
+                    entidad,
+                    entidades.getOrDefault(entidad, 0L) + 1
+            );
+        }
+
+        List<Map<String, Object>> detalle
+                = new ArrayList<>();
+
+        for (Historial historial : registros) {
+
+            Map<String, Object> fila
+                    = new LinkedHashMap<>();
+
+            fila.put(
+                    "idHistorial",
+                    historial.getIdHistorial()
+            );
+
+            fila.put(
+                    "entidad",
+                    historial.getEntidad()
+            );
+
+            fila.put(
+                    "idRegistro",
+                    historial.getIdRegistro()
+            );
+
+            fila.put(
+                    "accion",
+                    historial.getAccion()
+            );
+
+            fila.put(
+                    "valorAnterior",
+                    historial.getValorAnterior()
+            );
+
+            fila.put(
+                    "valorNuevo",
+                    historial.getValorNuevo()
+            );
+
+            fila.put(
+                    "fechaHora",
+                    historial.getFechaHora()
+            );
+
+            if (historial.getUsuario() != null) {
+
+                fila.put(
+                        "idUsuario",
+                        historial.getUsuario().getIdUsuario()
+                );
+
+            } else {
+
+                fila.put(
+                        "idUsuario",
+                        null
+                );
+            }
+
+            detalle.add(fila);
+        }
+
+        Map<String, Object> reporte
+                = new LinkedHashMap<>();
+
+        reporte.put("anio", anio);
+        reporte.put("mes", mes);
+
+        reporte.put(
+                "totalRegistros",
+                registros.size()
+        );
+
+        reporte.put(
+                "creaciones",
+                creaciones
+        );
+
+        reporte.put(
+                "actualizaciones",
+                actualizaciones
+        );
+
+        reporte.put(
+                "eliminaciones",
+                eliminaciones
+        );
+
+        reporte.put(
+                "entidades",
+                entidades
+        );
+
+        reporte.put(
+                "registros",
+                detalle
+        );
+
+        return reporte;
+    }
 }
