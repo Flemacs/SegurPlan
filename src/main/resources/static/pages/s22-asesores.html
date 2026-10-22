@@ -1,0 +1,1921 @@
+<!DOCTYPE html>
+<html lang="es">
+
+    <head>
+
+        <meta charset="UTF-8">
+
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0">
+
+        <title>
+            SEGURPLAN — Gestionar asesores
+        </title>
+
+        <link rel="stylesheet"
+              href="../assets/styles.css">
+
+        <style>
+
+            .asesores-toolbar {
+                display: flex;
+                gap: 12px;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 18px;
+                flex-wrap: wrap;
+            }
+
+            .asesores-search {
+                width: 100%;
+                max-width: 420px;
+                padding: 11px 13px;
+                border: 1px solid #cbd5e1;
+                border-radius: 4px;
+                font: inherit;
+                box-sizing: border-box;
+            }
+
+            .toolbar-actions {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .tabla-contenedor {
+                overflow-x: auto;
+            }
+
+            .tabla-asesores {
+                width: 100%;
+                border-collapse: collapse;
+                min-width: 850px;
+            }
+
+            .tabla-asesores th {
+                background: #2f4a7a;
+                color: white;
+                text-align: left;
+                padding: 12px;
+                font-size: 13px;
+            }
+
+            .tabla-asesores td {
+                padding: 12px;
+                border-bottom: 1px solid #d7deea;
+                font-size: 13px;
+                vertical-align: middle;
+            }
+
+            .tabla-asesores tbody tr:hover {
+                background: #f7f9fc;
+            }
+
+            .estado {
+                display: inline-block;
+                padding: 5px 10px;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: 600;
+            }
+
+            .estado-activo {
+                background: #e5f4e8;
+                color: #17652c;
+            }
+
+            .estado-inactivo {
+                background: #fdeaea;
+                color: #9f1d1d;
+            }
+
+            .acciones {
+                display: flex;
+                gap: 6px;
+                flex-wrap: wrap;
+            }
+
+            .btn-tabla {
+                border: 1px solid #2f4a7a;
+                background: white;
+                color: #203b6c;
+                padding: 7px 10px;
+                border-radius: 3px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 12px;
+            }
+
+            .btn-tabla:hover {
+                background: #f0f4fa;
+            }
+
+            .btn-estado {
+                background: #2f4a7a;
+                color: white;
+            }
+
+            .mensaje-asesores {
+                margin-bottom: 15px;
+                display: none;
+                padding: 12px 14px;
+                border-radius: 4px;
+            }
+
+            .mensaje-error {
+                display: block;
+                background: #fdeaea;
+                color: #9f1d1d;
+            }
+
+            .mensaje-ok {
+                display: block;
+                background: #e5f4e8;
+                color: #17652c;
+            }
+
+            .modal-fondo {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, .45);
+                display: none;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+                padding: 20px;
+                box-sizing: border-box;
+            }
+
+            .modal-fondo.visible {
+                display: flex;
+            }
+
+            .modal-asesor {
+                background: white;
+                width: 100%;
+                max-width: 540px;
+                max-height: 90vh;
+                overflow-y: auto;
+                border-radius: 6px;
+                box-shadow: 0 15px 40px
+                    rgba(0, 0, 0, .20);
+            }
+
+            .modal-header {
+                padding: 20px 24px;
+                border-bottom: 1px solid #d7deea;
+            }
+
+            .modal-header h2 {
+                margin: 0;
+                color: #17376b;
+                font-size: 20px;
+            }
+
+            .modal-body {
+                padding: 24px;
+            }
+
+            .campo-modal {
+                margin-bottom: 15px;
+            }
+
+            .campo-modal label {
+                display: block;
+                margin-bottom: 6px;
+                font-size: 13px;
+                font-weight: 600;
+                color: #203b6c;
+            }
+
+            .campo-modal input {
+                width: 100%;
+                padding: 10px 11px;
+                border: 1px solid #cbd5e1;
+                border-radius: 4px;
+                box-sizing: border-box;
+                font: inherit;
+            }
+
+            .campo-modal input:disabled {
+                background: #f2f4f7;
+            }
+
+            .modal-footer {
+                padding: 16px 24px;
+                border-top: 1px solid #d7deea;
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+            }
+
+            .nota-campo {
+                display: block;
+                margin-top: 5px;
+                font-size: 11px;
+                color: #64748b;
+            }
+
+            @media (max-width: 700px) {
+
+                .asesores-toolbar {
+                    align-items: stretch;
+                }
+
+                .asesores-search {
+                    max-width: none;
+                }
+
+                .toolbar-actions {
+                    width: 100%;
+                }
+            }
+
+        </style>
+
+    <link rel="stylesheet" href="../assets/theme.css">
+<script src="../assets/theme.js"></script>
+</head>
+
+    <body>
+
+        <header class="site-header">
+
+            <div class="logo">
+
+                SEGURPLAN
+
+                <span>
+                    Plataforma de seguros y AFP
+                </span>
+
+            </div>
+
+            <div class="header-right">
+
+                <span class="user-name"
+                      id="usuario-header">
+
+                    Usuario: Administrador
+
+                </span>
+
+                <button class="bell-btn"
+                        title="Notificaciones">
+
+                    <svg width="20"
+                         height="20"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2">
+
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+
+                    </svg>
+
+                </button>
+
+                <button class="profile-btn">
+                    MI PERFIL
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <div class="page-wrap">
+
+            <nav class="breadcrumb">
+
+                SEGURPLAN
+                &rsaquo;
+                Administración
+                &rsaquo;
+                Asesores
+
+            </nav>
+
+            <h1 class="page-title">
+                Gestionar asesores
+            </h1>
+
+            <p style="
+               margin-top:-8px;
+               margin-bottom:25px;
+               color:var(--text-sub);">
+
+                Registre, consulte, modifique y administre
+                las cuentas de los asesores de SEGURPLAN.
+
+            </p>
+
+
+            <div id="mensaje"
+                 class="mensaje-asesores">
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h2>
+                            Asesores registrados
+                        </h2>
+
+                        <p id="contador">
+                            Cargando asesores...
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="asesores-toolbar">
+
+                        <input
+                            id="buscar"
+                            class="asesores-search"
+                            type="search"
+                            name="busqueda_asesores_seguro"
+                            placeholder="Buscar por nombre, correo o estado..."
+                            autocomplete="off"
+                            autocapitalize="off"
+                            spellcheck="false">
+
+                        <div class="toolbar-actions">
+
+                            <button
+                                class="btn btn-primary"
+                                onclick="abrirNuevo()">
+
+                                NUEVO ASESOR
+
+                            </button>
+
+                            <button
+                                class="btn btn-outline"
+                                onclick="volverAdministracion()">
+
+                                VOLVER A ADMINISTRACIÓN
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="tabla-contenedor">
+
+                        <table class="tabla-asesores">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>ID</th>
+
+                                    <th>Asesor</th>
+
+                                    <th>Correo</th>
+
+                                    <th>Teléfono</th>
+
+                                    <th>Rol</th>
+
+                                    <th>Estado</th>
+
+                                    <th>Registro</th>
+
+                                    <th>Acciones</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody id="asesores-body">
+
+                                <tr>
+
+                                    <td colspan="8"
+                                        style="
+                                        text-align:center;
+                                        padding:25px;">
+
+                                        Cargando asesores...
+
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             MODAL REGISTRAR ASESOR
+        ===================================================== -->
+
+        <div id="modal-nuevo"
+             class="modal-fondo">
+
+            <div class="modal-asesor">
+
+                <div class="modal-header">
+
+                    <h2>
+                        Registrar asesor
+                    </h2>
+
+                </div>
+
+
+                <div class="modal-body">
+
+                    <div class="campo-modal">
+
+                        <label>
+                            Nombres
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nuevo-nombres"
+                            maxlength="100">
+
+                    </div>
+
+
+                    <div class="campo-modal">
+
+                        <label>
+                            Apellidos
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nuevo-apellidos"
+                            maxlength="100">
+
+                    </div>
+
+
+                    <div class="campo-modal">
+
+                        <label>
+                            Correo electrónico
+                        </label>
+
+                        <input
+                            type="email"
+                            id="nuevo-correo"
+                            maxlength="150">
+
+                    </div>
+
+
+                    <div class="campo-modal">
+
+                        <label>
+                            Teléfono
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nuevo-telefono"
+                            maxlength="20">
+
+                    </div>
+
+
+                    <div class="campo-modal">
+
+                        <label>
+                            Contraseña inicial
+                        </label>
+
+                        <input
+                            type="password"
+                            id="nuevo-password"
+                            minlength="6">
+
+                        <span class="nota-campo">
+                            Mínimo 6 caracteres.
+                        </span>
+
+                    </div>
+
+
+                    <div class="campo-modal">
+
+                        <label>
+                            Rol
+                        </label>
+
+                        <input
+                            type="text"
+                            value="Asesor"
+                            disabled>
+
+                        <span class="nota-campo">
+                            El rol se asigna automáticamente.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        class="btn btn-outline"
+                        onclick="cerrarNuevo()">
+
+                        CANCELAR
+
+                    </button>
+
+                    <button
+                        class="btn btn-primary"
+                        onclick="registrarAsesor()">
+
+                        REGISTRAR ASESOR
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             MODAL EDITAR ASESOR
+        ===================================================== -->
+
+        <div id="modal-editar"
+             class="modal-fondo">
+
+            <div class="modal-asesor">
+
+                <div class="modal-header">
+
+                    <h2>
+                        Editar asesor
+                    </h2>
+
+                </div>
+
+
+                <div class="modal-body">
+
+                    <input
+                        type="hidden"
+                        id="editar-id">
+
+
+                    <div class="campo-modal">
+
+                        <label>
+                            Nombres
+                        </label>
+
+                        <input
+                            type="text"
+                            id="editar-nombres"
+                            maxlength="100">
+
+                    </div>
+
+
+                    <div class="campo-modal">
+
+                        <label>
+                            Apellidos
+                        </label>
+
+                        <input
+                            type="text"
+                            id="editar-apellidos"
+                            maxlength="100">
+
+                    </div>
+
+
+                    <div class="campo-modal">
+
+                        <label>
+                            Correo
+                        </label>
+
+                        <input
+                            type="email"
+                            id="editar-correo"
+                            disabled>
+
+                    </div>
+
+
+                    <div class="campo-modal">
+
+                        <label>
+                            Teléfono
+                        </label>
+
+                        <input
+                            type="text"
+                            id="editar-telefono"
+                            maxlength="20">
+
+                    </div>
+
+
+                    <div class="campo-modal">
+
+                        <label>
+                            Rol
+                        </label>
+
+                        <input
+                            type="text"
+                            id="editar-rol"
+                            disabled>
+
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        class="btn btn-outline"
+                        onclick="cerrarEditar()">
+
+                        CANCELAR
+
+                    </button>
+
+                    <button
+                        class="btn btn-primary"
+                        onclick="guardarAsesor()">
+
+                        GUARDAR CAMBIOS
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <footer class="site-footer">
+
+            <div class="footer-brand">
+
+                SEGURPLAN
+
+                <span>
+                    Plataforma de seguros y AFP
+                </span>
+
+            </div>
+
+            <nav class="footer-links">
+
+                <a href="../index.html">
+                    Inicio
+                </a>
+
+            </nav>
+
+            <div class="footer-meta">
+
+                <span>
+                    © 2026 SEGURPLAN.
+                    Todos los derechos reservados.
+                </span>
+
+            </div>
+
+        </footer>
+
+
+        <script src="../assets/app.js"></script>
+
+        <script>
+
+                            let asesores = [];
+
+
+                            document.addEventListener(
+                                    'DOMContentLoaded',
+                                    iniciarPagina
+                                    );
+
+
+                            // =====================================================
+                            // INICIAR
+                            // =====================================================
+
+                            async function iniciarPagina() {
+
+                                const session =
+                                        sp_getSession();
+
+                                if (!session) {
+
+                                    window.location.replace(
+                                            's01-login.html'
+                                            );
+
+                                    return;
+                                }
+
+
+                                if (
+                                        String(session.rol || '')
+                                        .toLowerCase()
+                                        !== 'administrador'
+                                        ) {
+
+                                    alert(
+                                            'Esta sección es exclusiva ' +
+                                            'para administradores.'
+                                            );
+
+                                    window.location.replace(
+                                            's02-panel-usuario.html'
+                                            );
+
+                                    return;
+                                }
+
+
+                                const header =
+                                        document.getElementById(
+                                                'usuario-header'
+                                                );
+
+                                header.textContent =
+                                        'Usuario: '
+                                        + (session.nombres || '')
+                                        + ' '
+                                        + (session.apellidos || '')
+                                        + ' — Administrador';
+
+
+                                const buscador =
+                                        document.getElementById(
+                                                'buscar'
+                                                );
+
+// Evita valores restaurados/autocompletados
+// por el navegador.
+                                buscador.value = '';
+
+                                buscador.addEventListener(
+                                        'input',
+                                        filtrarAsesores
+                                        );
+
+                                await cargarAsesores();
+
+// Algunos navegadores restauran el valor
+// después de DOMContentLoaded.
+                                setTimeout(
+                                        function () {
+
+                                            if (buscador.value !== '') {
+
+                                                buscador.value = '';
+
+                                                renderAsesores(
+                                                        asesores
+                                                        );
+                                            }
+
+                                        },
+                                        300
+                                        );
+                            }
+
+
+                            // =====================================================
+                            // CARGAR ASESORES
+                            // =====================================================
+
+                            async function cargarAsesores() {
+
+                                const tbody =
+                                        document.getElementById(
+                                                'asesores-body'
+                                                );
+
+                                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8"
+                            style="
+                            text-align:center;
+                            padding:25px;">
+
+                            Cargando asesores...
+
+                        </td>
+                    </tr>
+                `;
+
+
+                                try {
+
+                                    const response =
+                                            await fetch(
+                                                    '/api/admin/asesores',
+                                                    {
+                                                        method: 'GET',
+                                                        credentials: 'same-origin'
+                                                    }
+                                            );
+
+
+                                    if (response.status === 401) {
+
+                                        window.location.replace(
+                                                's01-login.html'
+                                                );
+
+                                        return;
+                                    }
+
+
+                                    if (response.status === 403) {
+
+                                        throw new Error(
+                                                'No tiene permisos para ' +
+                                                'consultar asesores.'
+                                                );
+                                    }
+
+
+                                    const data =
+                                            await leerJson(response);
+
+
+                                    if (!response.ok) {
+
+                                        throw new Error(
+                                                data.mensaje
+                                                || 'No se pudieron cargar los asesores.'
+                                                );
+                                    }
+
+
+                                    asesores =
+                                            Array.isArray(data)
+                                            ? data
+                                            : [];
+
+
+                                    renderAsesores(
+                                            asesores
+                                            );
+
+
+                                } catch (error) {
+
+                                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8"
+                                style="
+                                text-align:center;
+                                padding:25px;">
+
+                                ${escapeHtml(
+                                            error.message
+                                            )}
+
+                            </td>
+                        </tr>
+                    `;
+
+
+                                    mostrarMensaje(
+                                            error.message,
+                                            false
+                                            );
+                                }
+                            }
+
+
+                            // =====================================================
+                            // RENDERIZAR TABLA
+                            // =====================================================
+
+                            function renderAsesores(lista) {
+
+                                const tbody =
+                                        document.getElementById(
+                                                'asesores-body'
+                                                );
+
+
+                                const contador =
+                                        document.getElementById(
+                                                'contador'
+                                                );
+
+
+                                contador.textContent =
+                                        lista.length
+                                        + ' asesor'
+                                        + (
+                                                lista.length === 1
+                                                ? ''
+                                                : 'es'
+                                                );
+
+
+                                if (lista.length === 0) {
+
+                                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8"
+                                style="
+                                text-align:center;
+                                padding:25px;">
+
+                                No existen asesores registrados.
+
+                            </td>
+                        </tr>
+                    `;
+
+                                    return;
+                                }
+
+
+                                tbody.innerHTML =
+                                        lista.map(asesor => {
+
+                                            const activo =
+                                                    String(
+                                                            asesor.estado || ''
+                                                            )
+                                                    .toLowerCase()
+                                                    === 'activo';
+
+
+                                            const claseEstado =
+                                                    activo
+                                                    ? 'estado-activo'
+                                                    : 'estado-inactivo';
+
+
+                                            const textoBoton =
+                                                    activo
+                                                    ? 'DESACTIVAR'
+                                                    : 'ACTIVAR';
+
+
+                                            return `
+                            <tr>
+
+                                <td>
+                                    ${asesor.idUsuario}
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        ${escapeHtml(
+                                                    asesor.nombres
+                                                    )}
+                                        ${escapeHtml(
+                                                    asesor.apellidos
+                                                    )}
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    ${escapeHtml(
+                                                    asesor.correo
+                                                    )}
+                                </td>
+
+                                <td>
+                                    ${escapeHtml(
+                                                    asesor.telefono || '—'
+                                                    )}
+                                </td>
+
+                                <td>
+                                    ${escapeHtml(
+                                                    asesor.rol || 'Asesor'
+                                                    )}
+                                </td>
+
+                                <td>
+
+                                    <span class="
+                                        estado
+                                        ${claseEstado}
+                                    ">
+
+                                        ${escapeHtml(
+                                                    asesor.estado
+                                                    )}
+
+                                    </span>
+
+                                </td>
+
+                                <td>
+                                    ${formatearFecha(
+                                                    asesor.fechaRegistro
+                                                    )}
+                                </td>
+
+                                <td>
+
+                                    <div class="acciones">
+
+                                        <button
+                                            class="btn-tabla"
+                                            onclick="
+                                            abrirEditar(
+                                                ${asesor.idUsuario}
+                                            )">
+
+                                            EDITAR
+
+                                        </button>
+
+                                        <button
+                                            class="
+                                            btn-tabla
+                                            btn-estado"
+                                            onclick="
+                                            cambiarEstado(
+                                                ${asesor.idUsuario},
+                                                '${activo
+                                                    ? 'Inactivo'
+                                                    : 'Activo'}'
+                                            )">
+
+                                            ${textoBoton}
+
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        `;
+
+                                        }).join('');
+                            }
+
+
+                            // =====================================================
+                            // FILTRAR
+                            // =====================================================
+
+                            function filtrarAsesores() {
+
+                                const texto =
+                                        document.getElementById(
+                                                'buscar'
+                                                )
+                                        .value
+                                        .trim()
+                                        .toLowerCase();
+
+
+                                if (!texto) {
+
+                                    renderAsesores(
+                                            asesores
+                                            );
+
+                                    return;
+                                }
+
+
+                                const filtrados =
+                                        asesores.filter(
+                                                asesor => {
+
+                                                    const contenido = [
+
+                                                        asesor.nombres,
+                                                        asesor.apellidos,
+                                                        asesor.correo,
+                                                        asesor.telefono,
+                                                        asesor.estado,
+                                                        asesor.rol
+
+                                                    ]
+                                                            .filter(Boolean)
+                                                            .join(' ')
+                                                            .toLowerCase();
+
+
+                                                    return contenido
+                                                            .includes(texto);
+                                                }
+                                        );
+
+
+                                renderAsesores(
+                                        filtrados
+                                        );
+                            }
+
+
+                            // =====================================================
+                            // ABRIR NUEVO
+                            // =====================================================
+
+                            function abrirNuevo() {
+
+                                limpiarNuevo();
+
+                                document.getElementById(
+                                        'modal-nuevo'
+                                        ).classList.add(
+                                        'visible'
+                                        );
+                            }
+
+
+                            // =====================================================
+                            // CERRAR NUEVO
+                            // =====================================================
+
+                            function cerrarNuevo() {
+
+                                document.getElementById(
+                                        'modal-nuevo'
+                                        ).classList.remove(
+                                        'visible'
+                                        );
+                            }
+
+
+                            // =====================================================
+                            // LIMPIAR FORMULARIO NUEVO
+                            // =====================================================
+
+                            function limpiarNuevo() {
+
+                                document.getElementById(
+                                        'nuevo-nombres'
+                                        ).value = '';
+
+                                document.getElementById(
+                                        'nuevo-apellidos'
+                                        ).value = '';
+
+                                document.getElementById(
+                                        'nuevo-correo'
+                                        ).value = '';
+
+                                document.getElementById(
+                                        'nuevo-telefono'
+                                        ).value = '';
+
+                                document.getElementById(
+                                        'nuevo-password'
+                                        ).value = '';
+                            }
+
+
+                            // =====================================================
+                            // REGISTRAR ASESOR
+                            // =====================================================
+
+                            async function registrarAsesor() {
+
+                                const nombres =
+                                        document.getElementById(
+                                                'nuevo-nombres'
+                                                ).value.trim();
+
+
+                                const apellidos =
+                                        document.getElementById(
+                                                'nuevo-apellidos'
+                                                ).value.trim();
+
+
+                                const correo =
+                                        document.getElementById(
+                                                'nuevo-correo'
+                                                ).value.trim();
+
+
+                                const telefono =
+                                        document.getElementById(
+                                                'nuevo-telefono'
+                                                ).value.trim();
+
+
+                                const password =
+                                        document.getElementById(
+                                                'nuevo-password'
+                                                ).value;
+
+
+                                if (!nombres) {
+
+                                    alert(
+                                            'Ingrese los nombres del asesor.'
+                                            );
+
+                                    return;
+                                }
+
+
+                                if (!apellidos) {
+
+                                    alert(
+                                            'Ingrese los apellidos del asesor.'
+                                            );
+
+                                    return;
+                                }
+
+
+                                if (!correo) {
+
+                                    alert(
+                                            'Ingrese el correo del asesor.'
+                                            );
+
+                                    return;
+                                }
+
+
+                                if (!password) {
+
+                                    alert(
+                                            'Ingrese una contraseña inicial.'
+                                            );
+
+                                    return;
+                                }
+
+
+                                if (password.length < 6) {
+
+                                    alert(
+                                            'La contraseña debe tener ' +
+                                            'al menos 6 caracteres.'
+                                            );
+
+                                    return;
+                                }
+
+
+                                try {
+
+                                    const csrf =
+                                            await sp_getCsrfToken();
+
+
+                                    const response =
+                                            await fetch(
+                                                    '/api/admin/asesores',
+                                                    {
+                                                        method: 'POST',
+
+                                                        credentials:
+                                                                'same-origin',
+
+                                                        headers: {
+
+                                                            'Content-Type':
+                                                                    'application/json',
+
+                                                            [csrf.headerName]:
+                                                                    csrf.token
+                                                        },
+
+                                                        body: JSON.stringify({
+
+                                                            nombres:
+                                                                    nombres,
+
+                                                            apellidos:
+                                                                    apellidos,
+
+                                                            correo:
+                                                                    correo,
+
+                                                            telefono:
+                                                                    telefono,
+
+                                                            password:
+                                                                    password
+                                                        })
+                                                    }
+                                            );
+
+
+                                    const data =
+                                            await leerJson(
+                                                    response
+                                                    );
+
+
+                                    if (!response.ok) {
+
+                                        throw new Error(
+                                                data.mensaje
+                                                || 'No se pudo registrar el asesor.'
+                                                );
+                                    }
+
+
+                                    cerrarNuevo();
+
+
+                                    mostrarMensaje(
+                                            data.mensaje
+                                            || 'Asesor registrado correctamente.',
+                                            true
+                                            );
+
+
+                                    await cargarAsesores();
+
+
+                                } catch (error) {
+
+                                    mostrarMensaje(
+                                            error.message,
+                                            false
+                                            );
+                                }
+                            }
+
+
+                            // =====================================================
+                            // ABRIR EDITAR
+                            // =====================================================
+
+                            function abrirEditar(
+                                    idUsuario
+                                    ) {
+
+                                const asesor =
+                                        asesores.find(
+                                                item =>
+                                            Number(
+                                                    item.idUsuario
+                                                    )
+                                                    ===
+                                                    Number(
+                                                            idUsuario
+                                                            )
+                                        );
+
+
+                                if (!asesor) {
+
+                                    mostrarMensaje(
+                                            'Asesor no encontrado.',
+                                            false
+                                            );
+
+                                    return;
+                                }
+
+
+                                document.getElementById(
+                                        'editar-id'
+                                        ).value =
+                                        asesor.idUsuario;
+
+
+                                document.getElementById(
+                                        'editar-nombres'
+                                        ).value =
+                                        asesor.nombres || '';
+
+
+                                document.getElementById(
+                                        'editar-apellidos'
+                                        ).value =
+                                        asesor.apellidos || '';
+
+
+                                document.getElementById(
+                                        'editar-correo'
+                                        ).value =
+                                        asesor.correo || '';
+
+
+                                document.getElementById(
+                                        'editar-telefono'
+                                        ).value =
+                                        asesor.telefono || '';
+
+
+                                document.getElementById(
+                                        'editar-rol'
+                                        ).value =
+                                        asesor.rol || 'Asesor';
+
+
+                                document.getElementById(
+                                        'modal-editar'
+                                        ).classList.add(
+                                        'visible'
+                                        );
+                            }
+
+
+                            // =====================================================
+                            // CERRAR EDITAR
+                            // =====================================================
+
+                            function cerrarEditar() {
+
+                                document.getElementById(
+                                        'modal-editar'
+                                        ).classList.remove(
+                                        'visible'
+                                        );
+                            }
+
+
+                            // =====================================================
+                            // GUARDAR ASESOR
+                            // =====================================================
+
+                            async function guardarAsesor() {
+
+                                const idUsuario =
+                                        document.getElementById(
+                                                'editar-id'
+                                                ).value;
+
+
+                                const nombres =
+                                        document.getElementById(
+                                                'editar-nombres'
+                                                ).value.trim();
+
+
+                                const apellidos =
+                                        document.getElementById(
+                                                'editar-apellidos'
+                                                ).value.trim();
+
+
+                                const telefono =
+                                        document.getElementById(
+                                                'editar-telefono'
+                                                ).value.trim();
+
+
+                                if (!nombres) {
+
+                                    alert(
+                                            'Ingrese los nombres.'
+                                            );
+
+                                    return;
+                                }
+
+
+                                if (!apellidos) {
+
+                                    alert(
+                                            'Ingrese los apellidos.'
+                                            );
+
+                                    return;
+                                }
+
+
+                                try {
+
+                                    const csrf =
+                                            await sp_getCsrfToken();
+
+
+                                    const response =
+                                            await fetch(
+                                                    '/api/admin/asesores/'
+                                                    + idUsuario,
+                                                    {
+                                                        method: 'PUT',
+
+                                                        credentials:
+                                                                'same-origin',
+
+                                                        headers: {
+
+                                                            'Content-Type':
+                                                                    'application/json',
+
+                                                            [csrf.headerName]:
+                                                                    csrf.token
+                                                        },
+
+                                                        body: JSON.stringify({
+
+                                                            nombres:
+                                                                    nombres,
+
+                                                            apellidos:
+                                                                    apellidos,
+
+                                                            telefono:
+                                                                    telefono
+                                                        })
+                                                    }
+                                            );
+
+
+                                    const data =
+                                            await leerJson(
+                                                    response
+                                                    );
+
+
+                                    if (!response.ok) {
+
+                                        throw new Error(
+                                                data.mensaje
+                                                || 'No se pudo actualizar el asesor.'
+                                                );
+                                    }
+
+
+                                    cerrarEditar();
+
+
+                                    mostrarMensaje(
+                                            data.mensaje
+                                            || 'Asesor actualizado correctamente.',
+                                            true
+                                            );
+
+
+                                    await cargarAsesores();
+
+
+                                } catch (error) {
+
+                                    mostrarMensaje(
+                                            error.message,
+                                            false
+                                            );
+                                }
+                            }
+
+
+                            // =====================================================
+                            // CAMBIAR ESTADO
+                            // =====================================================
+
+                            async function cambiarEstado(
+                                    idUsuario,
+                                    nuevoEstado
+                                    ) {
+
+                                const asesor =
+                                        asesores.find(
+                                                item =>
+                                            Number(
+                                                    item.idUsuario
+                                                    )
+                                                    ===
+                                                    Number(
+                                                            idUsuario
+                                                            )
+                                        );
+
+
+                                if (!asesor) {
+                                    return;
+                                }
+
+
+                                const accion =
+                                        nuevoEstado === 'Activo'
+                                        ? 'activar'
+                                        : 'desactivar';
+
+
+                                const confirmar =
+                                        window.confirm(
+                                                '¿Desea '
+                                                + accion
+                                                + ' la cuenta de '
+                                                + asesor.nombres
+                                                + ' '
+                                                + asesor.apellidos
+                                                + '?'
+                                                );
+
+
+                                if (!confirmar) {
+                                    return;
+                                }
+
+
+                                try {
+
+                                    const csrf =
+                                            await sp_getCsrfToken();
+
+
+                                    const response =
+                                            await fetch(
+                                                    '/api/admin/asesores/'
+                                                    + idUsuario
+                                                    + '/estado',
+                                                    {
+                                                        method: 'PUT',
+
+                                                        credentials:
+                                                                'same-origin',
+
+                                                        headers: {
+
+                                                            'Content-Type':
+                                                                    'application/json',
+
+                                                            [csrf.headerName]:
+                                                                    csrf.token
+                                                        },
+
+                                                        body: JSON.stringify({
+                                                            estado:
+                                                                    nuevoEstado
+                                                        })
+                                                    }
+                                            );
+
+
+                                    const data =
+                                            await leerJson(
+                                                    response
+                                                    );
+
+
+                                    if (!response.ok) {
+
+                                        throw new Error(
+                                                data.mensaje
+                                                || 'No se pudo cambiar el estado.'
+                                                );
+                                    }
+
+
+                                    mostrarMensaje(
+                                            data.mensaje
+                                            || 'Estado actualizado correctamente.',
+                                            true
+                                            );
+
+
+                                    await cargarAsesores();
+
+
+                                } catch (error) {
+
+                                    mostrarMensaje(
+                                            error.message,
+                                            false
+                                            );
+                                }
+                            }
+
+
+                            // =====================================================
+                            // MENSAJES
+                            // =====================================================
+
+                            function mostrarMensaje(
+                                    texto,
+                                    correcto
+                                    ) {
+
+                                const mensaje =
+                                        document.getElementById(
+                                                'mensaje'
+                                                );
+
+
+                                mensaje.className =
+                                        'mensaje-asesores '
+                                        + (
+                                                correcto
+                                                ? 'mensaje-ok'
+                                                : 'mensaje-error'
+                                                );
+
+
+                                mensaje.textContent =
+                                        texto;
+
+
+                                mensaje.style.display =
+                                        'block';
+                            }
+
+
+                            // =====================================================
+                            // LEER JSON
+                            // =====================================================
+
+                            async function leerJson(
+                                    response
+                                    ) {
+
+                                const texto =
+                                        await response.text();
+
+
+                                if (!texto) {
+                                    return {};
+                                }
+
+
+                                try {
+
+                                    return JSON.parse(
+                                            texto
+                                            );
+
+                                } catch (error) {
+
+                                    return {
+                                        mensaje:
+                                                texto
+                                    };
+                                }
+                            }
+
+
+                            // =====================================================
+                            // FORMATEAR FECHA
+                            // =====================================================
+
+                            function formatearFecha(
+                                    fecha
+                                    ) {
+
+                                if (!fecha) {
+                                    return '—';
+                                }
+
+
+                                const date =
+                                        new Date(
+                                                fecha
+                                                );
+
+
+                                if (
+                                        Number.isNaN(
+                                                date.getTime()
+                                                )
+                                        ) {
+
+                                    return escapeHtml(
+                                            fecha
+                                            );
+                                }
+
+
+                                return date.toLocaleDateString(
+                                        'es-PE',
+                                        {
+                                            day:
+                                                    '2-digit',
+
+                                            month:
+                                                    '2-digit',
+
+                                            year:
+                                                    'numeric'
+                                        }
+                                );
+                            }
+
+
+                            // =====================================================
+                            // ESCAPAR HTML
+                            // =====================================================
+
+                            function escapeHtml(
+                                    valor
+                                    ) {
+
+                                return String(
+                                        valor ?? ''
+                                        )
+                                        .replaceAll(
+                                                '&',
+                                                '&amp;'
+                                                )
+                                        .replaceAll(
+                                                '<',
+                                                '&lt;'
+                                                )
+                                        .replaceAll(
+                                                '>',
+                                                '&gt;'
+                                                )
+                                        .replaceAll(
+                                                '"',
+                                                '&quot;'
+                                                )
+                                        .replaceAll(
+                                                "'",
+                                                '&#039;'
+                                                );
+                            }
+
+
+                            // =====================================================
+                            // VOLVER
+                            // =====================================================
+
+                            function volverAdministracion() {
+
+                                window.location.href =
+                                        's14-administracion.html';
+                            }
+
+
+                            // =====================================================
+                            // CERRAR MODALES AL PULSAR FUERA
+                            // =====================================================
+
+                            document.getElementById(
+                                    'modal-nuevo'
+                                    ).addEventListener(
+                                    'click',
+                                    function (event) {
+
+                                        if (
+                                                event.target === this
+                                                ) {
+
+                                            cerrarNuevo();
+                                        }
+                                    }
+                            );
+
+
+                            document.getElementById(
+                                    'modal-editar'
+                                    ).addEventListener(
+                                    'click',
+                                    function (event) {
+
+                                        if (
+                                                event.target === this
+                                                ) {
+
+                                            cerrarEditar();
+                                        }
+                                    }
+                            );
+
+        </script>
+
+    </body>
+
+</html>
