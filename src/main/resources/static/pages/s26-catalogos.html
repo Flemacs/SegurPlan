@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SEGURPLAN — Mantenimiento de catálogos</title>
+<link rel="stylesheet" href="../assets/styles.css" />
+<link rel="stylesheet" href="../assets/theme.css">
+<script src="../assets/theme.js"></script>
+<style>
+.tbl{width:100%;border-collapse:collapse;min-width:700px}
+.tbl th{background:#2f4a7a;color:#fff;text-align:left;padding:11px;font-size:13px}
+.tbl td{padding:11px;border-bottom:1px solid #d7deea;font-size:13px}
+.msg{display:none;margin-bottom:14px;padding:12px 14px;border-radius:4px}
+.msg.ok{display:block;background:#e5f4e8;color:#17652c}
+.msg.err{display:block;background:#fdeaea;color:#9f1d1d}
+.row-actions{display:flex;gap:6px;flex-wrap:wrap}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tabs button.activa{background:#2f4a7a;color:#fff}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+  <div class="header-right">
+    <span class="user-name">Usuario: Administrador</span>
+    <button class="btn-logout" type="button">CERRAR SESIÓN</button>
+  </div>
+</header>
+<div class="page-wrap">
+<nav class="breadcrumb"><a href="s14-administracion.html">Administración</a> &rsaquo; Mantenimiento de catálogos</nav>
+<h1 class="page-title">Mantenimiento de catálogos</h1>
+<p class="page-subtitle">Administre las aseguradoras y los tipos de seguro disponibles para cotizar</p>
+<div id="msg" class="msg"></div>
+
+<div class="tabs">
+  <button class="btn activa" id="tab-aseg" type="button">ASEGURADORAS</button>
+  <button class="btn" id="tab-tipo" type="button">TIPOS DE SEGURO</button>
+</div>
+
+<div class="card">
+  <div class="card-header"><h2 id="form-titulo">Nuevo registro</h2></div>
+  <div class="card-body">
+    <input type="hidden" id="f-id" />
+    <div class="form-group"><label for="f-nombre">Nombre *</label>
+      <input class="form-control" id="f-nombre" maxlength="150" /></div>
+    <div class="form-group" data-aseg><label for="f-ruc">RUC (11 dígitos)</label>
+      <input class="form-control" id="f-ruc" maxlength="11" /></div>
+    <div class="form-group" data-aseg><label for="f-telefono">Teléfono</label>
+      <input class="form-control" id="f-telefono" maxlength="20" /></div>
+    <div class="form-group" data-aseg><label for="f-correo">Correo</label>
+      <input class="form-control" id="f-correo" maxlength="150" /></div>
+    <div class="form-group" data-tipo><label for="f-desc">Descripción</label>
+      <input class="form-control" id="f-desc" maxlength="200" /></div>
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-primary" id="btn-guardar" type="button">GUARDAR</button>
+    <button class="btn btn-secondary" id="btn-limpiar" type="button">LIMPIAR</button>
+  </div>
+</div>
+
+<div class="card" style="margin-top:24px">
+  <div class="card-body"><div style="overflow-x:auto">
+    <table class="tbl"><thead id="thead"></thead><tbody id="tabla"></tbody></table>
+  </div></div>
+</div>
+</div>
+<footer class="site-footer">
+  <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+  <div class="footer-meta"><span>© 2026 SEGURPLAN. Todos los derechos reservados.</span></div>
+</footer>
+<script src="../assets/app.js"></script>
+<script>
+const session = sp_getSession();
+if (!session) { location.href = 's01-login.html'; }
+else if (session.rol !== 'Administrador') { location.href = 's02-panel-usuario.html'; }
+
+function mostrar(texto, ok) {
+  const m = document.getElementById('msg');
+  m.textContent = texto;
+  m.className = 'msg ' + (ok ? 'ok' : 'err');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function celda(tr, texto) {
+  const td = document.createElement('td');
+  td.textContent = texto == null || texto === '' ? '—' : texto;
+  tr.appendChild(td);
+  return td;
+}
+function boton(texto, clase, fn) {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'btn ' + clase;
+  b.textContent = texto;
+  b.addEventListener('click', fn);
+  return b;
+}
+async function api(url, metodo, cuerpo) {
+  const opciones = { method: metodo || 'GET', credentials: 'same-origin', headers: {} };
+  if (metodo && metodo !== 'GET') {
+    const csrf = await sp_getCsrfToken();
+    opciones.headers[csrf.headerName] = csrf.token;
+  }
+  if (cuerpo !== undefined) {
+    opciones.headers['Content-Type'] = 'application/json';
+    opciones.body = JSON.stringify(cuerpo);
+  }
+  const r = await fetch(url, opciones);
+  const texto = await r.text();
+  let datos = {};
+  try { datos = texto ? JSON.parse(texto) : {}; } catch (e) { datos = { mensaje: texto }; }
+  if (!r.ok) {
+    if (r.status === 401) throw new Error('Tu sesión ha expirado. Inicia sesión nuevamente.');
+    if (r.status === 403) throw new Error('Acceso denegado: se requiere rol Administrador.');
+    throw new Error(datos.mensaje || ('Error HTTP ' + r.status));
+  }
+  return datos;
+}
+
+let modo = 'aseg';   // 'aseg' | 'tipo'
+const base = function () { return '/api/admin/catalogos/' + (modo === 'aseg' ? 'aseguradoras' : 'tipos-seguro'); };
+const idDe = function (x) { return modo === 'aseg' ? x.idAseguradora : x.idTipoSeguro; };
+
+function cambiarModo(m) {
+  modo = m;
+  document.getElementById('tab-aseg').classList.toggle('activa', m === 'aseg');
+  document.getElementById('tab-tipo').classList.toggle('activa', m === 'tipo');
+  document.querySelectorAll('[data-aseg]').forEach(function (e) { e.style.display = m === 'aseg' ? '' : 'none'; });
+  document.querySelectorAll('[data-tipo]').forEach(function (e) { e.style.display = m === 'tipo' ? '' : 'none'; });
+  limpiar();
+  cargar();
+}
+
+function limpiar() {
+  ['f-id', 'f-nombre', 'f-ruc', 'f-telefono', 'f-correo', 'f-desc'].forEach(function (i) { document.getElementById(i).value = ''; });
+  document.getElementById('form-titulo').textContent =
+      modo === 'aseg' ? 'Nueva aseguradora' : 'Nuevo tipo de seguro';
+}
+
+function editar(x) {
+  document.getElementById('f-id').value = idDe(x);
+  document.getElementById('f-nombre').value = x.nombre || '';
+  document.getElementById('f-ruc').value = x.ruc || '';
+  document.getElementById('f-telefono').value = x.telefono || '';
+  document.getElementById('f-correo').value = x.correo || '';
+  document.getElementById('f-desc').value = x.descripcion || '';
+  document.getElementById('form-titulo').textContent = 'Editar #' + idDe(x);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function cargar() {
+  const thead = document.getElementById('thead');
+  const tbody = document.getElementById('tabla');
+  const cols = modo === 'aseg'
+      ? ['ID', 'Nombre', 'RUC', 'Teléfono', 'Correo', 'Estado', 'Acciones']
+      : ['ID', 'Nombre', 'Descripción', 'Estado', 'Acciones'];
+  thead.innerHTML = '<tr>' + cols.map(function (c) { return '<th>' + c + '</th>'; }).join('') + '</tr>';
+  try {
+    const lista = await api(base());
+    tbody.replaceChildren();
+    if (lista.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="' + cols.length + '">Sin registros.</td></tr>';
+      return;
+    }
+    lista.forEach(function (x) {
+      const tr = document.createElement('tr');
+      celda(tr, idDe(x));
+      celda(tr, x.nombre);
+      if (modo === 'aseg') { celda(tr, x.ruc); celda(tr, x.telefono); celda(tr, x.correo); }
+      else { celda(tr, x.descripcion); }
+      celda(tr, x.estado);
+      const td = document.createElement('td');
+      const div = document.createElement('div');
+      div.className = 'row-actions';
+      div.appendChild(boton('EDITAR', 'btn-secondary', function () { editar(x); }));
+      const nuevo = x.estado === 'Activo' ? 'Inactivo' : 'Activo';
+      div.appendChild(boton(nuevo === 'Inactivo' ? 'DESACTIVAR' : 'ACTIVAR', 'btn-primary', async function () {
+        try {
+          await api(base() + '/' + idDe(x) + '/estado', 'PUT', { estado: nuevo });
+          mostrar('Estado actualizado.', true);
+          cargar();
+        } catch (e) { mostrar(e.message, false); }
+      }));
+      td.appendChild(div);
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+    });
+  } catch (e) { mostrar(e.message, false); }
+}
+
+document.getElementById('btn-guardar').addEventListener('click', async function () {
+  const id = document.getElementById('f-id').value;
+  const v = function (i) { return document.getElementById(i).value.trim(); };
+  const cuerpo = modo === 'aseg'
+      ? { nombre: v('f-nombre'), ruc: v('f-ruc'), telefono: v('f-telefono'), correo: v('f-correo') }
+      : { nombre: v('f-nombre'), descripcion: v('f-desc') };
+  try {
+    await api(id ? base() + '/' + id : base(), id ? 'PUT' : 'POST', cuerpo);
+    mostrar(id ? 'Registro actualizado.' : 'Registro creado.', true);
+    limpiar();
+    cargar();
+  } catch (e) { mostrar(e.message, false); }
+});
+
+document.getElementById('btn-limpiar').addEventListener('click', limpiar);
+document.getElementById('tab-aseg').addEventListener('click', function () { cambiarModo('aseg'); });
+document.getElementById('tab-tipo').addEventListener('click', function () { cambiarModo('tipo'); });
+
+if (session && session.rol === 'Administrador') cambiarModo('aseg');
+</script>
+</body></html>
