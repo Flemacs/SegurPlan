@@ -1,13 +1,9 @@
 -- =====================================================================
--- SEGURPLAN - Script de base de datos (PostgreSQL)
--- Base: SegurPlan   |   Motor: PostgreSQL 14 o superior
---
--- Uso:   createdb -U postgres SegurPlan
---        psql -U postgres -d SegurPlan -f SegurPlan_schema.sql
---
--- Cambios respecto a DB.txt: se corrigieron las restricciones CHECK que
--- estaban incompletas (operadores >, >= perdidos y nombres pegados a la
--- palabra CHECK), que impedian ejecutar el script.
+-- SEGURPLAN v5 - Script de instalación COMPLETO (PostgreSQL 14+)
+--   createdb -U postgres SegurPlan
+--   psql -U postgres -d SegurPlan -f db/SegurPlan_schema.sql
+--   psql -U postgres -d SegurPlan -f db/datos_iniciales.sql
+-- Si la base YA existe de una versión anterior use db/migracion_v5.sql
 -- =====================================================================
 
 CREATE TABLE rol (
@@ -271,9 +267,8 @@ CREATE TABLE historial (
     CONSTRAINT fk_historial_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
 );
 
-
--- Pago simulado de la contratación (ver también db/migracion_pago.sql)
-CREATE TABLE IF NOT EXISTS pago (
+-- Pago simulado de la contratación
+CREATE TABLE pago (
     id_pago BIGSERIAL PRIMARY KEY,
     id_cotizacion BIGINT NOT NULL,
     id_contratacion BIGINT,
@@ -286,9 +281,9 @@ CREATE TABLE IF NOT EXISTS pago (
     tarjeta_ultimos4 VARCHAR(4),
     titular VARCHAR(120),
     motivo_rechazo VARCHAR(200),
-    celular_origen VARCHAR(15),    -- Yape/Plin: celular enmascarado
-    numero_operacion VARCHAR(20),  -- Yape/Plin: nº de operación
-    destino VARCHAR(20),           -- Yape/Plin: nº ficticio del QR
+    celular_origen VARCHAR(15),
+    numero_operacion VARCHAR(20),
+    destino VARCHAR(20),
     fecha_pago TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_pago_cotizacion FOREIGN KEY (id_cotizacion) REFERENCES cotizacion(id_cotizacion),
     CONSTRAINT fk_pago_contratacion FOREIGN KEY (id_contratacion) REFERENCES contratacion(id_contratacion),
@@ -296,52 +291,95 @@ CREATE TABLE IF NOT EXISTS pago (
     CONSTRAINT chk_pago_monto CHECK (monto > 0),
     CONSTRAINT chk_pago_estado CHECK (estado IN ('Aprobado', 'Rechazado'))
 );
+CREATE UNIQUE INDEX ux_pago_cotizacion_aprobado ON pago (id_cotizacion) WHERE estado = 'Aprobado';
 
--- Un solo pago aprobado por cotización (los rechazados pueden repetirse)
-CREATE UNIQUE INDEX IF NOT EXISTS ux_pago_cotizacion_aprobado
-    ON pago (id_cotizacion) WHERE estado = 'Aprobado';
-CREATE TABLE IF NOT EXISTS pago (
-    id_pago BIGSERIAL PRIMARY KEY,
-    id_cotizacion BIGINT NOT NULL,
-    id_contratacion BIGINT,
-    id_usuario BIGINT NOT NULL,
-    metodo VARCHAR(30) NOT NULL DEFAULT 'Tarjeta (simulado)',
-    monto NUMERIC(12,2) NOT NULL,
-    moneda VARCHAR(5) NOT NULL DEFAULT 'PEN',
-    estado VARCHAR(20) NOT NULL,
-    referencia VARCHAR(40) NOT NULL UNIQUE,
-    tarjeta_ultimos4 VARCHAR(4),
-    titular VARCHAR(120),
-    motivo_rechazo VARCHAR(200),
-    celular_origen VARCHAR(15),    -- Yape/Plin: celular enmascarado
-    numero_operacion VARCHAR(20),  -- Yape/Plin: nº de operación
-    destino VARCHAR(20),           -- Yape/Plin: nº ficticio del QR
-    fecha_pago TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_pago_cotizacion FOREIGN KEY (id_cotizacion) REFERENCES cotizacion(id_cotizacion),
-    CONSTRAINT fk_pago_contratacion FOREIGN KEY (id_contratacion) REFERENCES contratacion(id_contratacion),
-    CONSTRAINT fk_pago_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
-    CONSTRAINT chk_pago_monto CHECK (monto > 0),
-    CONSTRAINT chk_pago_estado CHECK (estado IN ('Aprobado', 'Rechazado'))
-);
-
-CREATE UNIQUE INDEX IF NOT EXISTS ux_pago_cotizacion_aprobado
-    ON pago (id_cotizacion) WHERE estado = 'Aprobado';
-
-ALTER TABLE pago ADD COLUMN IF NOT EXISTS celular_origen   VARCHAR(15);
-ALTER TABLE pago ADD COLUMN IF NOT EXISTS numero_operacion VARCHAR(20);
-ALTER TABLE pago ADD COLUMN IF NOT EXISTS destino          VARCHAR(20);
-
+-- =============== Extensiones v5 (idéntico a migracion_v5.sql) ===============
 BEGIN;
 
-ALTER TABLE cotizacion DROP CONSTRAINT IF EXISTS chk_cotizacion_precio;
-ALTER TABLE cotizacion DROP CONSTRAINT IF EXISTS chk_cotizacion_deducible;
-ALTER TABLE poliza     DROP CONSTRAINT IF EXISTS chk_poliza_deducible;
+-- ---- Usuario: perfil (RF003) y especialidad de asesor (RF029) --------
+ALTER TABLE usuario ADD COLUMN IF NOT EXISTS direccion          VARCHAR(200);
+ALTER TABLE usuario ADD COLUMN IF NOT EXISTS fecha_modificacion TIMESTAMP;
+ALTER TABLE usuario ADD COLUMN IF NOT EXISTS area_especialidad  VARCHAR(30);
 
-ALTER TABLE cotizacion ADD CONSTRAINT chk_cotizacion_precio
-    CHECK (precio IS NULL OR precio >= 0);
-ALTER TABLE cotizacion ADD CONSTRAINT chk_cotizacion_deducible
-    CHECK (deducible IS NULL OR deducible >= 0);
-ALTER TABLE poliza ADD CONSTRAINT chk_poliza_deducible
-    CHECK (deducible IS NULL OR deducible >= 0);
+-- ---- Cotización: formulario dinámico por tipo de seguro (RF004) ------
+ALTER TABLE cotizacion ADD COLUMN IF NOT EXISTS datos_json TEXT;
 
-COMMIT;    
+-- ---- Siniestro: evaluación de la aseguradora (RF024/RF025) ----------
+ALTER TABLE siniestro ADD COLUMN IF NOT EXISTS monto_aprobado   NUMERIC(12,2);
+ALTER TABLE siniestro ADD COLUMN IF NOT EXISTS fecha_evaluacion TIMESTAMP;
+ALTER TABLE siniestro ADD COLUMN IF NOT EXISTS fecha_derivacion TIMESTAMP;
+ALTER TABLE siniestro DROP CONSTRAINT IF EXISTS chk_siniestro_estado;
+ALTER TABLE siniestro ADD CONSTRAINT chk_siniestro_estado CHECK (estado IN (
+    'Registrado','En revisión','Información pendiente','Información completa',
+    'Derivado','En evaluación','Evaluación recibida','Observado','Aprobado',
+    'Rechazado','Cerrado'));
+ALTER TABLE siniestro DROP CONSTRAINT IF EXISTS chk_siniestro_monto;
+ALTER TABLE siniestro ADD CONSTRAINT chk_siniestro_monto
+    CHECK (monto_aprobado IS NULL OR monto_aprobado >= 0);
+
+-- ---- Documento: adjuntos de cotización y observación del asesor ------
+ALTER TABLE documento ADD COLUMN IF NOT EXISTS id_cotizacion BIGINT;
+ALTER TABLE documento ADD COLUMN IF NOT EXISTS observacion   TEXT;
+ALTER TABLE documento DROP CONSTRAINT IF EXISTS fk_documento_cotizacion;
+ALTER TABLE documento ADD CONSTRAINT fk_documento_cotizacion
+    FOREIGN KEY (id_cotizacion) REFERENCES cotizacion(id_cotizacion);
+ALTER TABLE documento DROP CONSTRAINT IF EXISTS chk_documento_referencia;
+ALTER TABLE documento ADD CONSTRAINT chk_documento_referencia CHECK (
+    id_contratacion IS NOT NULL OR id_siniestro IS NOT NULL OR id_cotizacion IS NOT NULL);
+
+-- ---- Comunicación del asesor con la aseguradora (RF005) -------------
+CREATE TABLE IF NOT EXISTS comunicacion_aseguradora (
+    id_comunicacion BIGSERIAL PRIMARY KEY,
+    id_cotizacion   BIGINT NOT NULL REFERENCES cotizacion(id_cotizacion),
+    id_asesor       BIGINT NOT NULL REFERENCES usuario(id_usuario),
+    fecha           TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    medio           VARCHAR(30) NOT NULL DEFAULT 'Correo',
+    contacto        VARCHAR(150),
+    observaciones   TEXT NOT NULL
+);
+
+-- ---- Notificaciones internas (RF032) --------------------------------
+CREATE TABLE IF NOT EXISTS notificacion (
+    id_notificacion BIGSERIAL PRIMARY KEY,
+    id_usuario      BIGINT NOT NULL REFERENCES usuario(id_usuario),
+    tipo            VARCHAR(40) NOT NULL,
+    titulo          VARCHAR(150) NOT NULL,
+    mensaje         TEXT,
+    entidad         VARCHAR(40),
+    id_registro     BIGINT,
+    leida           BOOLEAN NOT NULL DEFAULT FALSE,
+    fecha           TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS ix_notificacion_usuario ON notificacion (id_usuario, leida, fecha DESC);
+
+-- ---- Permisos por rol y módulo (RF030) ------------------------------
+CREATE TABLE IF NOT EXISTS rol_permiso (
+    id_rol   INT NOT NULL REFERENCES rol(id_rol),
+    modulo   VARCHAR(40) NOT NULL,
+    ver      BOOLEAN NOT NULL DEFAULT FALSE,
+    crear    BOOLEAN NOT NULL DEFAULT FALSE,
+    editar   BOOLEAN NOT NULL DEFAULT FALSE,
+    eliminar BOOLEAN NOT NULL DEFAULT FALSE,
+    PRIMARY KEY (id_rol, modulo)
+);
+
+-- ---- Historial inmutable (RF033): impide UPDATE y DELETE -------------
+CREATE OR REPLACE FUNCTION fn_historial_inmutable() RETURNS trigger AS $$
+BEGIN
+    RAISE EXCEPTION 'El historial no se puede modificar ni eliminar';
+END;
+$$ LANGUAGE plpgsql;
+DROP TRIGGER IF EXISTS trg_historial_inmutable ON historial;
+CREATE TRIGGER trg_historial_inmutable
+    BEFORE UPDATE OR DELETE ON historial
+    FOR EACH ROW EXECUTE FUNCTION fn_historial_inmutable();
+
+-- ---- Unificación: el rol Gerente pasa a ser Administrador ------------
+UPDATE usuario SET id_rol = (SELECT id_rol FROM rol WHERE nombre = 'Administrador')
+ WHERE id_rol IN (SELECT id_rol FROM rol WHERE nombre = 'Gerente')
+   AND EXISTS (SELECT 1 FROM rol WHERE nombre = 'Administrador');
+DELETE FROM rol_permiso WHERE id_rol IN (SELECT id_rol FROM rol WHERE nombre = 'Gerente');
+DELETE FROM rol r WHERE r.nombre = 'Gerente'
+   AND NOT EXISTS (SELECT 1 FROM usuario u WHERE u.id_rol = r.id_rol);
+
+COMMIT;

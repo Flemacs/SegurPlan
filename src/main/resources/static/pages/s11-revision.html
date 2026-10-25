@@ -858,6 +858,26 @@ function evaluarDocumentacion() {
    DERIVAR A ASEGURADORA
    ========================================================= */
 
+async function prepararDerivacion(csrf) {
+    const cab = {
+        'Content-Type': 'application/json',
+        [csrf.headerName]: csrf.token
+    };
+    const base = '/api/siniestros/gestion/' + idSiniestroActual;
+    const r = await fetch(base, { credentials: 'same-origin' });
+    if (!r.ok) { return; }
+    const s = await r.json();
+    if (s.estado === 'Registrado') {
+        await fetch(base + '/revision', { method: 'POST', credentials: 'same-origin', headers: cab,
+            body: JSON.stringify({ accion: 'INICIAR' }) });
+        s.estado = 'En revisión';
+    }
+    if (s.estado === 'En revisión' || s.estado === 'Información pendiente') {
+        await fetch(base + '/revision', { method: 'POST', credentials: 'same-origin', headers: cab,
+            body: JSON.stringify({ accion: 'APROBAR_DERIVACION', mensaje: 'Aprobado desde la pantalla de revisión' }) });
+    }
+}
+
 async function derivarAseguradora() {
 
     if (!idSiniestroActual) {
@@ -907,6 +927,9 @@ async function derivarAseguradora() {
         // ==========================================
         // PETICIÓN
         // ==========================================
+
+        // El flujo exige: Registrado -> En revisión -> Información completa -> Derivado
+        await prepararDerivacion(csrf);
 
         const response =
             await fetch(

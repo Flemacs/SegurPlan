@@ -22,12 +22,13 @@ public class SiniestroController {
             LoggerFactory.getLogger(SiniestroController.class);
 
     private final SiniestroService siniestroService;
+    private final com.segurplan.service.SiniestroGestionService gestionService;
 
     public SiniestroController(
-            SiniestroService siniestroService) {
-
-        this.siniestroService =
-                siniestroService;
+            SiniestroService siniestroService,
+            com.segurplan.service.SiniestroGestionService gestionService) {
+        this.siniestroService = siniestroService;
+        this.gestionService = gestionService;
     }
 
 
@@ -47,6 +48,7 @@ public class SiniestroController {
                             principal.getName(),
                             request
                     );
+            gestionService.alRegistrar(siniestro);
 
             Map<String, Object> respuesta =
                     convertir(siniestro);
@@ -246,10 +248,7 @@ public ResponseEntity<?> derivarAseguradora(
     try {
 
         Siniestro siniestro =
-                siniestroService.derivarAseguradora(
-                        principal.getName(),
-                        idSiniestro
-                );
+                gestionService.derivar(principal.getName(), idSiniestro);
 
         return ResponseEntity.ok(
                 Map.of(

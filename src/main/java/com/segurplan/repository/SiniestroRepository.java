@@ -24,4 +24,6 @@ public interface SiniestroRepository
     findByEstadoOrderByFechaRegistroDesc(
             String estado
     );
+
+    List<Siniestro> findAllByOrderByFechaRegistroDesc();
 }

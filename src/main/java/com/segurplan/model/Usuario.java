@@ -122,4 +122,21 @@ public class Usuario {
     public void setRol(Rol rol) {
         this.rol = rol;
     }
+
+    // ---- v5: perfil (RF003) y especialidad del asesor (RF029) ----
+    @Column(name = "direccion", length = 200)
+    private String direccion;
+
+    @Column(name = "fecha_modificacion")
+    private LocalDateTime fechaModificacion;
+
+    @Column(name = "area_especialidad", length = 30)
+    private String areaEspecialidad;
+
+    public String getDireccion() { return direccion; }
+    public void setDireccion(String direccion) { this.direccion = direccion; }
+    public LocalDateTime getFechaModificacion() { return fechaModificacion; }
+    public void setFechaModificacion(LocalDateTime fechaModificacion) { this.fechaModificacion = fechaModificacion; }
+    public String getAreaEspecialidad() { return areaEspecialidad; }
+    public void setAreaEspecialidad(String areaEspecialidad) { this.areaEspecialidad = areaEspecialidad; }
 }

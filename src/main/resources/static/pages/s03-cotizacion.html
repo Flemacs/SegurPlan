@@ -69,6 +69,11 @@
                     <div id="datos-req" style="display:none;">
                         <h3 class="section-title" id="req-title"></h3>
                         <div id="req-campos"></div>
+                        <div class="form-group">
+                            <label for="adjuntos">Adjuntar documentos (opcional: PDF, JPG o PNG, máx. 10 MB c/u)</label>
+                            <input class="form-control" type="file" id="adjuntos" multiple
+                                   accept=".pdf,.jpg,.jpeg,.png" />
+                        </div>
                     </div>
                 </div>
                 <div class="card-footer">
@@ -243,8 +248,24 @@
                               '. Teléfono: ' + telefono + '.';
 
 
+                      // Datos del formulario dinámico según el tipo de seguro (RF004)
+                      const datos = {};
+                      document.querySelectorAll('#req-campos .form-group').forEach(g => {
+                          const et = g.querySelector('label');
+                          const inp = g.querySelector('input');
+                          if (et && inp && inp.value.trim() !== '') {
+                              datos[et.textContent.trim()] = inp.value.trim();
+                          }
+                      });
+                      datos['Cliente'] = nombre;
+                      if (dni) { datos['DNI'] = dni; }
+                      if (telefono) { datos['Teléfono'] = telefono; }
+                      const detalle = Object.keys(datos)
+                              .filter(k => k !== 'Cliente' && k !== 'DNI' && k !== 'Teléfono')
+                              .map(k => k + ': ' + datos[k]).join('. ');
                       const result =
                               await sp_saveCotizacion({
+                                  datosJson: JSON.stringify(datos),
 
                                   idAseguradora:
                                           Number(idAseguradora),
@@ -253,7 +274,7 @@
                                           Number(idTipoSeguro),
 
                                   descripcionSolicitud:
-                                          descripcion
+                                          descripcion + (detalle ? ' Datos: ' + detalle + '.' : '')
                               });
 
 
@@ -268,6 +289,16 @@
                       }
 
 
+                      // Adjuntos opcionales
+                      const archivos = document.getElementById('adjuntos').files;
+                      for (const f of archivos) {
+                          try {
+                              await spSubir('/api/documentos/cotizacion/' + result.cotizacion.idCotizacion,
+                                      { tipoDocumento: 'ADJUNTO_COTIZACION' }, f);
+                          } catch (e) {
+                              alert('No se pudo adjuntar "' + f.name + '": ' + e.message);
+                          }
+                      }
                       sessionStorage.setItem(
                               'sp_last_quote',
                               result.cotizacion.idCotizacion

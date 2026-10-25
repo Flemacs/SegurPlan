@@ -158,4 +158,17 @@ public class Documento {
     public void setEstado(String estado) {
         this.estado = estado;
     }
+
+    // ---- v5: adjuntos de cotización y observación del asesor (RF009 / RF011) ----
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_cotizacion")
+    private Cotizacion cotizacion;
+
+    @Column(name = "observacion", columnDefinition = "TEXT")
+    private String observacion;
+
+    public Cotizacion getCotizacion() { return cotizacion; }
+    public void setCotizacion(Cotizacion cotizacion) { this.cotizacion = cotizacion; }
+    public String getObservacion() { return observacion; }
+    public void setObservacion(String observacion) { this.observacion = observacion; }
 }

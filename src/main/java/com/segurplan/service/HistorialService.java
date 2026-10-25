@@ -205,4 +205,20 @@ public class HistorialService {
                 historial.getFechaHora()
         );
     }
+
+    // v5: línea de tiempo de un registro (RF027 / RF033)
+    @Transactional(readOnly = true)
+    public List<HistorialDTO> listarPorRegistro(
+            String entidad,
+            Long idRegistro) {
+
+        return historialRepository
+                .findByEntidadAndIdRegistroOrderByFechaHoraAsc(
+                        entidad,
+                        idRegistro
+                )
+                .stream()
+                .map(this::convertirDTO)
+                .toList();
+    }
 }

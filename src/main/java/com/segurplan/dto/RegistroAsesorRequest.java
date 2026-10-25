@@ -50,4 +50,15 @@ public class RegistroAsesorRequest {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    // v5: área de especialidad del asesor (Ventas, Siniestros, AFP)
+    private String areaEspecialidad;
+
+    public String getAreaEspecialidad() {
+        return areaEspecialidad;
+    }
+
+    public void setAreaEspecialidad(String areaEspecialidad) {
+        this.areaEspecialidad = areaEspecialidad;
+    }
 }

@@ -24,4 +24,8 @@ public interface DocumentoRepository extends JpaRepository<Documento, Long> {
             Long idSiniestro,
             Long idUsuario
     );
+
+    List<Documento> findByCotizacion_IdCotizacionOrderByFechaCargaDesc(
+            Long idCotizacion
+    );
 }
