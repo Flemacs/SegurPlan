@@ -235,6 +235,16 @@
                                             );
 
                                     cuerpo.appendChild(datos);
+                                    // RF008: documento digital de la póliza en PDF
+                                    const btnPdf = document.createElement('button');
+                                    btnPdf.type = 'button';
+                                    btnPdf.className = 'btn btn-outline btn-sm';
+                                    btnPdf.style.marginTop = '12px';
+                                    btnPdf.textContent = 'DESCARGAR PÓLIZA EN PDF';
+                                    btnPdf.addEventListener('click', () =>
+                                        spDescargar('/api/polizas/' + poliza.idPoliza + '/pdf',
+                                                    'poliza-' + poliza.numeroPoliza + '.pdf'));
+                                    cuerpo.appendChild(btnPdf);
 
                                     tarjeta.append(
                                             encabezado,

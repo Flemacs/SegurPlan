@@ -17,11 +17,14 @@ import java.util.Map;
 public class PrevisionController {
 
     private final PrevisionService previsionService;
+    private final com.segurplan.service.NotificacionService notificaciones;
 
     public PrevisionController(
-            PrevisionService previsionService) {
+            PrevisionService previsionService,
+            com.segurplan.service.NotificacionService notificaciones) {
 
         this.previsionService = previsionService;
+        this.notificaciones = notificaciones;
     }
 
     // =========================================================
@@ -123,6 +126,11 @@ public class PrevisionController {
                             principal.getName()
                     );
 
+            notificaciones.notificarRol("Asesor", "AFP_SOLICITUD",
+                    "Nueva solicitud de orientación AFP",
+                    "Un cliente solicitó orientación sobre su simulación N° " + idPrevision + ".",
+                    "PREVISION", idPrevision);
+
             return ResponseEntity.ok(
                     convertir(prevision)
             );
@@ -173,6 +181,17 @@ public class PrevisionController {
                                     idPrevision,
                                     body.get("respuesta")
                             );
+
+            try {
+                notificaciones.notificar(
+                        prevision.getUsuario().getIdUsuario(),
+                        "AFP_RESPUESTA",
+                        "Respuesta a su consulta AFP",
+                        "Un asesor respondió su solicitud de orientación.",
+                        "PREVISION", idPrevision);
+            } catch (RuntimeException ignorada) {
+                // la notificación nunca debe impedir responder
+            }
 
             return ResponseEntity.ok(
                     convertir(prevision)

@@ -1,5 +1,7 @@
 package com.segurplan.model;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -321,4 +323,21 @@ public class Siniestro {
         this.estado =
                 estado;
     }
+
+    // ---- v5: evaluación de la aseguradora (RF024 / RF025) ----
+    @Column(name = "monto_aprobado", precision = 12, scale = 2)
+    private BigDecimal montoAprobado;
+
+    @Column(name = "fecha_evaluacion")
+    private LocalDateTime fechaEvaluacion;
+
+    @Column(name = "fecha_derivacion")
+    private LocalDateTime fechaDerivacion;
+
+    public BigDecimal getMontoAprobado() { return montoAprobado; }
+    public void setMontoAprobado(BigDecimal montoAprobado) { this.montoAprobado = montoAprobado; }
+    public LocalDateTime getFechaEvaluacion() { return fechaEvaluacion; }
+    public void setFechaEvaluacion(LocalDateTime fechaEvaluacion) { this.fechaEvaluacion = fechaEvaluacion; }
+    public LocalDateTime getFechaDerivacion() { return fechaDerivacion; }
+    public void setFechaDerivacion(LocalDateTime fechaDerivacion) { this.fechaDerivacion = fechaDerivacion; }
 }

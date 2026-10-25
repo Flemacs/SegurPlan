@@ -63,6 +63,7 @@ public class UsuarioService {
     @Transactional
     public Usuario registrar(
             RegistroRequest request) {
+        com.segurplan.util.PasswordPolicy.validar(request.getPassword());
 
         if (request.getCorreo() == null
                 || request.getCorreo().isBlank()) {
@@ -428,6 +429,9 @@ public class UsuarioService {
         asesor.setRol(
                 rolAsesor
         );
+        asesor.setAreaEspecialidad(
+                normalizarArea(request.getAreaEspecialidad())
+        );
 
 
         Usuario guardado =
@@ -785,12 +789,7 @@ public class UsuarioService {
         }
 
 
-        if (request.getPassword().length() < 6) {
-
-            throw new IllegalArgumentException(
-                    "La contraseña debe tener al menos 6 caracteres"
-            );
-        }
+        com.segurplan.util.PasswordPolicy.validar(request.getPassword());
     }
 
 
@@ -914,7 +913,7 @@ public class UsuarioService {
         }
 
 
-        return new UsuarioAdminDTO(
+        UsuarioAdminDTO dto = new UsuarioAdminDTO(
                 usuario.getIdUsuario(),
                 usuario.getNombres(),
                 usuario.getApellidos(),
@@ -924,6 +923,23 @@ public class UsuarioService {
                 usuario.getFechaRegistro(),
                 nombreRol
         );
+        dto.setAreaEspecialidad(usuario.getAreaEspecialidad());
+        return dto;
+    }
+
+    /** Solo se admiten las áreas definidas en el análisis (RF029). */
+    private String normalizarArea(String area) {
+        if (area == null || area.isBlank()) {
+            return null;
+        }
+        String a = area.trim();
+        for (String valida : new String[]{"Ventas", "Siniestros", "AFP"}) {
+            if (valida.equalsIgnoreCase(a)) {
+                return valida;
+            }
+        }
+        throw new IllegalArgumentException(
+                "El área de especialidad debe ser Ventas, Siniestros o AFP");
     }
 
 

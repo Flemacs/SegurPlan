@@ -21,13 +21,19 @@ public class PolizaController {
 
     private final PolizaService polizaService;
     private final UsuarioRepository usuarioRepository;
+    private final com.segurplan.service.AccesoService acceso;
+    private final com.segurplan.service.NotificacionService notificaciones;
 
     public PolizaController(
         PolizaService polizaService,
-        UsuarioRepository usuarioRepository) {
+        UsuarioRepository usuarioRepository,
+        com.segurplan.service.AccesoService acceso,
+        com.segurplan.service.NotificacionService notificaciones) {
 
     this.polizaService = polizaService;
     this.usuarioRepository = usuarioRepository;
+    this.acceso = acceso;
+    this.notificaciones = notificaciones;
 }
 
     @PostMapping
@@ -36,6 +42,17 @@ public class PolizaController {
     ) {
         try {
             Poliza poliza = polizaService.generar(request);
+
+            try {
+                notificaciones.notificar(
+                        poliza.getContratacion().getUsuario().getIdUsuario(),
+                        "POLIZA_GENERADA",
+                        "Póliza " + poliza.getNumeroPoliza() + " generada",
+                        "Ya puede consultar y descargar su póliza en PDF.",
+                        "POLIZA", poliza.getIdPoliza());
+            } catch (RuntimeException ignorada) {
+                // la notificación nunca debe impedir la emisión de la póliza
+            }
 
             Map<String, Object> respuesta =
                     new LinkedHashMap<>();
@@ -83,8 +100,13 @@ public class PolizaController {
 
     @GetMapping("/usuario/{idUsuario}")
     public ResponseEntity<?> listarPorUsuario(
-            @PathVariable Long idUsuario
+            @PathVariable Long idUsuario,
+            org.springframework.security.core.Authentication auth
     ) {
+        if (!acceso.puedeVer(auth, idUsuario)) {
+            return ResponseEntity.status(403).body(Map.of(
+                    "mensaje", "No tiene permiso para ver estas pólizas."));
+        }
         try {
             List<PolizaResumenDTO> polizas =
                     polizaService.listarPorUsuario(idUsuario);

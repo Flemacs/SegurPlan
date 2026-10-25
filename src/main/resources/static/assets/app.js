@@ -22,10 +22,9 @@ const KEY_COUNTER      = 'sp_counters';
 
 /* ── Catálogos (en memoria, no persisten) ───────────────── */
 const ROLES_CAT = [
-  { id_rol: 1, nombre: 'Usuario',       descripcion: 'Cliente del sistema' },
+  { id_rol: 1, nombre: 'Cliente',       descripcion: 'Cliente del sistema' },
   { id_rol: 2, nombre: 'Asesor',        descripcion: 'Asesor comercial' },
   { id_rol: 3, nombre: 'Administrador', descripcion: 'Administrador del sistema' },
-  { id_rol: 4, nombre: 'Gerente',       descripcion: 'Gerente con acceso a reportes' },
 ];
 
 const TIPOS_SEGURO_CAT = [
@@ -57,7 +56,7 @@ const ASEGURADORAS_CAT = [
 
 /* Estados válidos por entidad */
 const ESTADOS_COTIZACION   = ['Solicitada','En revisión','Disponible','Aceptada','Rechazada','Vencida'];
-const ESTADOS_SINIESTRO    = ['Registrado','En revisión','Información pendiente','Derivado','En evaluación','Observado','Aprobado','Rechazado','Cerrado'];
+const ESTADOS_SINIESTRO    = ['Registrado','En revisión','Información pendiente','Información completa','Derivado','En evaluación','Evaluación recibida','Observado','Aprobado','Rechazado','Cerrado'];
 const ESTADOS_CONTRATACION = ['Iniciada','Documentación pendiente','Documentación validada','En revisión legal','Enviada a aseguradora','En evaluación','Aprobada','Rechazada','Finalizada'];
 const ESTADOS_DOCUMENTO    = ['Pendiente','Validado','Observado','Rechazado'];
 const ESTADOS_PREVISION    = ['Registrada','En revisión','Simulada','Respondida','Cerrada'];
@@ -270,7 +269,8 @@ async function sp_saveCotizacion(data) {
                 idUsuario: Number(session.id_usuario),
                 idTipoSeguro: Number(data.idTipoSeguro),
                 idAseguradora: Number(data.idAseguradora),
-                descripcionSolicitud: data.descripcionSolicitud
+                descripcionSolicitud: data.descripcionSolicitud,
+                datosJson: data.datosJson || null
             })
         });
 
@@ -543,24 +543,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Crear el usuario de demostración si no existe ninguno.
-    if (sp_getUsuarios().length === 0) {
-        sp_set(KEY_USUARIOS, [{
-            id_usuario: 1,
-            id_rol: 1,
-            nombres: 'Juan Carlos',
-            apellidos: 'García López',
-            correo: 'juan@correo.com',
-            password: 'Demo1234!',
-            telefono: '+51 999 999 999',
-            estado: 'Activo',
-            fecha_registro: '01/01/2026 08:00',
-            dni: '12345678',
-            fnacimiento: '1990-05-15',
-            genero: 'Masculino',
-            departamento: 'Lima'
-        }]);
-    }
 
 }); // Aquí termina DOMContentLoaded.//
 
@@ -642,3 +624,10 @@ async function sp_getCsrfToken() {
 
     return csrf;
 }
+
+/* v5: campana de notificaciones, menú por rol, perfil y exportación */
+(function () {
+  const s = document.createElement('script');
+  s.src = (location.pathname.indexOf('/pages/') !== -1 ? '../assets/' : 'assets/') + 'sp-extras.js';
+  document.head.appendChild(s);
+})();

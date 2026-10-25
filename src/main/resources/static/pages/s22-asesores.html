@@ -507,6 +507,21 @@
 
                     </div>
 
+                    <div class="campo-modal">
+
+                        <label>
+                            Área de especialidad
+                        </label>
+
+                        <select id="nuevo-area">
+                            <option value="">Sin especificar</option>
+                            <option value="Ventas">Ventas</option>
+                            <option value="Siniestros">Siniestros</option>
+                            <option value="AFP">AFP</option>
+                        </select>
+
+                    </div>
+
 
                     <div class="campo-modal">
 
@@ -648,6 +663,21 @@
                             type="text"
                             id="editar-telefono"
                             maxlength="20">
+
+                    </div>
+
+                    <div class="campo-modal">
+
+                        <label>
+                            Área de especialidad
+                        </label>
+
+                        <select id="editar-area">
+                            <option value="">Sin especificar</option>
+                            <option value="Ventas">Ventas</option>
+                            <option value="Siniestros">Siniestros</option>
+                            <option value="AFP">AFP</option>
+                        </select>
 
                     </div>
 
@@ -1135,6 +1165,7 @@
                                                         asesor.apellidos,
                                                         asesor.correo,
                                                         asesor.telefono,
+                                                        asesor.areaEspecialidad,
                                                         asesor.estado,
                                                         asesor.rol
 
@@ -1338,6 +1369,7 @@
 
                                                             telefono:
                                                                     telefono,
+ areaEspecialidad: (document.getElementById('nuevo-area') || {}).value || null,
 
                                                             password:
                                                                     password
@@ -1444,6 +1476,9 @@
                                         'editar-telefono'
                                         ).value =
                                         asesor.telefono || '';
+
+                                document.getElementById('editar-area').value =
+                                        asesor.areaEspecialidad || '';
 
 
                                 document.getElementById(
@@ -1558,7 +1593,8 @@
                                                                     apellidos,
 
                                                             telefono:
-                                                                    telefono
+                                                                    telefono,
+ areaEspecialidad: (document.getElementById('editar-area') || {}).value || null
                                                         })
                                                     }
                                             );

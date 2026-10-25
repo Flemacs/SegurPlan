@@ -1,0 +1,35 @@
+name: CI
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: SegurPlan
+          POSTGRES_PASSWORD: ci_password
+        ports: [ "5432:5432" ]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s
+          --health-timeout 5s --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+      - name: Cargar esquema y datos iniciales
+        run: |
+          sudo apt-get install -y postgresql-client
+          PGPASSWORD=ci_password psql -h localhost -U postgres -d SegurPlan -f db/SegurPlan_schema.sql
+          PGPASSWORD=ci_password psql -h localhost -U postgres -d SegurPlan -f db/datos_iniciales.sql
+      - name: Compilar y ejecutar pruebas
+        env:
+          DB_PASSWORD: ci_password
+        run: mvn -B verify

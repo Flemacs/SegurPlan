@@ -18,32 +18,15 @@ import java.security.SecureRandom;
 import java.time.YearMonth;
 import java.util.UUID;
 
-/**
- * PAGOS SIMULADOS. No se conecta a ninguna pasarela ni cobra dinero real.
- *
- * Métodos: TARJETA, YAPE y PLIN (billeteras digitales con código QR).
- *
- * Reglas de la simulación:
- *  Tarjeta
- *   - 4111 1111 1111 1111  -> aprobado
- *   - 4000 0000 0000 0002  -> rechazado (fondos insuficientes)
- *   - 4000 0000 0000 0069  -> rechazado (tarjeta vencida según el banco)
- *   - cualquier otra con formato válido (Luhn) -> aprobado
- *  Yape / Plin
- *   - celular de 9 dígitos que empiece con 9
- *   - celular terminado en 000 -> rechazado (saldo insuficiente)
- *   - cualquier otro -> aprobado, con número de operación generado
- *
- * Si el pago es aprobado se registra la contratación en la misma transacción.
- */
+
 @Service
 public class PagoService {
 
     public static final String METODO_TARJETA = "Tarjeta (simulado)";
 
     // Datos FICTICIOS del comercio que recibe el pago por QR
-    public static final String CELULAR_COMERCIO = "999888777";
-    public static final String NOMBRE_COMERCIO = "SEGURPLAN S.A.C. (ficticio)";
+    public static final String CELULAR_COMERCIO = "935953460";
+    public static final String NOMBRE_COMERCIO = "SEGURPLAN S.A.C.";
 
     private static final SecureRandom RANDOM = new SecureRandom();
 

@@ -89,7 +89,7 @@
                       document.addEventListener('DOMContentLoaded', async function () {
                           const session = sp_getSession();
 
-                          if (!session || session.rol !== 'Administrador') {
+                          if (!session || (session.rol !== 'Administrador' && session.rol !== 'Asesor')) {
                               window.location.replace('s01-login.html');
                               return;
                           }

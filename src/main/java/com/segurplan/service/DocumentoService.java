@@ -430,8 +430,8 @@ public class DocumentoService {
 
         } else if ("FOTO_ACCIDENTE".equals(tipo)) {
 
-            // 20 MB
-            maximo = 20L * 1024L * 1024L;
+            // 10 MB (RF009)
+            maximo = 10L * 1024L * 1024L;
 
         } else {
 

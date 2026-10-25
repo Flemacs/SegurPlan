@@ -16,9 +16,22 @@ import java.util.Map;
 public class CotizacionController {
 
     private final CotizacionService cotizacionService;
+    private final com.segurplan.service.AccesoService acceso;
+    private final com.segurplan.service.NotificacionService notificaciones;
 
-    public CotizacionController(CotizacionService cotizacionService) {
+    public CotizacionController(
+            CotizacionService cotizacionService,
+            com.segurplan.service.AccesoService acceso,
+            com.segurplan.service.NotificacionService notificaciones) {
         this.cotizacionService = cotizacionService;
+        this.acceso = acceso;
+        this.notificaciones = notificaciones;
+    }
+
+    private ResponseEntity<Map<String, String>> prohibido() {
+        Map<String, String> e = new HashMap<>();
+        e.put("mensaje", "No tiene permiso para acceder a esta información.");
+        return ResponseEntity.status(403).body(e);
     }
 
     @PostMapping
@@ -89,6 +102,10 @@ public ResponseEntity<?> buscarPorId(
         respuesta.put(
                 "descripcionSolicitud",
                 cotizacion.getDescripcionSolicitud()
+        );
+        respuesta.put(
+                "datosJson",
+                cotizacion.getDatosJson()
         );
 
         respuesta.put(
@@ -252,6 +269,13 @@ public ResponseEntity<?> responderCotizacion(
                         idCotizacion,
                         request
                 );
+        notificaciones.notificar(cotizacion.getUsuario().getIdUsuario(),
+                "COTIZACION_RESPONDIDA",
+                "Cotización N° " + cotizacion.getIdCotizacion() + ": " + cotizacion.getEstado(),
+                "Disponible".equals(cotizacion.getEstado())
+                        ? "Ya puede revisar la propuesta y contratar."
+                        : "Su solicitud está siendo revisada por un asesor.",
+                "COTIZACION", cotizacion.getIdCotizacion());
 
         Map<String, Object> respuesta =
                 new HashMap<>();

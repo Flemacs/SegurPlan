@@ -41,4 +41,10 @@ public interface HistorialRepository
     findByUsuario_IdUsuarioOrderByFechaHoraDesc(
             Long idUsuario
     );
+
+    List<Historial>
+    findByEntidadAndIdRegistroOrderByFechaHoraAsc(
+            String entidad,
+            Long idRegistro
+    );
 }

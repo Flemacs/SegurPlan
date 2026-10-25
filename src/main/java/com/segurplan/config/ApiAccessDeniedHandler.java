@@ -21,9 +21,11 @@ public class ApiAccessDeniedHandler
             AccessDeniedException accessDeniedException)
             throws IOException {
 
-        response.sendError(
-                HttpServletResponse.SC_FORBIDDEN,
-                "No tiene permisos para esta operación."
-        );
+        // Respuesta JSON directa (evita pasar por /error y redirecciones)
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(
+                "{\"mensaje\":\"No tiene permisos para esta operación.\"}");
     }
 }

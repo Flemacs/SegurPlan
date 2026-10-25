@@ -22,11 +22,13 @@ public class DocumentoController {
             LoggerFactory.getLogger(DocumentoController.class);
 
     private final DocumentoService documentoService;
+    private final com.segurplan.service.SiniestroGestionService gestionService;
 
     public DocumentoController(
-            DocumentoService documentoService) {
-
+            DocumentoService documentoService,
+            com.segurplan.service.SiniestroGestionService gestionService) {
         this.documentoService = documentoService;
+        this.gestionService = gestionService;
     }
 
     // =====================================================
@@ -60,6 +62,8 @@ public class DocumentoController {
                             tipoDocumento,
                             archivo
                     );
+            gestionService.alCargarEvidencia(
+                    idSiniestro, documento.getUsuario().getIdUsuario());
 
             Map<String, Object> respuesta
                     = convertirDocumento(documento);
@@ -265,6 +269,7 @@ public class DocumentoController {
             );
         }
 
+        dto.put("observacion", documento.getObservacion());
         return dto;
     }
     // =====================================================

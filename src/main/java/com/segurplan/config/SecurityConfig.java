@@ -78,7 +78,9 @@ public class SecurityConfig {
                         "/index.html",
                         "/assets/**",
                         "/pages/s00-registro.html",
-                        "/pages/s01-login.html"
+                        "/pages/s01-login.html",
+                        "/privacidad.html",
+                        "/pages/privacidad.html"
                 ).permitAll()
 
                 // -------------------------------------------------
@@ -113,14 +115,15 @@ public class SecurityConfig {
                 .requestMatchers(
                         HttpMethod.POST,
                         "/api/polizas"
-                ).hasRole(
-                        "Administrador"
+                ).hasAnyRole(
+                        "Administrador",
+                        "Asesor"
                 )
 
                 // Reportes
                 .requestMatchers(
                         "/api/reportes/**"
-                ).hasRole(
+                ).hasAnyRole(
                         "Administrador"
                 )
 
@@ -200,6 +203,59 @@ public class SecurityConfig {
                         "Cliente"
                 )
 
+                // =================================================
+                // v5 - CONTROL DE ACCESO POR ROL
+                // =================================================
+                // Gestión de usuarios duplicada: solo administrador
+                .requestMatchers(
+                        "/api/usuarios/admin/**"
+                ).hasRole(
+                        "Administrador"
+                )
+                // Listado general de cotizaciones: solo personal
+                .requestMatchers(
+                        HttpMethod.GET,
+                        "/api/cotizaciones"
+                ).hasAnyRole(
+                        "Asesor",
+                        "Administrador"
+                )
+                // Responder cotizaciones y comunicarse con la aseguradora
+                .requestMatchers(
+                        HttpMethod.PUT,
+                        "/api/cotizaciones/*/respuesta"
+                ).hasAnyRole(
+                        "Asesor",
+                        "Administrador"
+                )
+                .requestMatchers(
+                        "/api/cotizaciones/*/comunicaciones"
+                ).hasAnyRole(
+                        "Asesor",
+                        "Administrador"
+                )
+                // Contrataciones (datos de todos los clientes): solo personal
+                .requestMatchers(
+                        "/api/contrataciones/**"
+                ).hasAnyRole(
+                        "Asesor",
+                        "Administrador"
+                )
+                // Flujo del asesor sobre siniestros
+                .requestMatchers(
+                        "/api/siniestros/gestion/**"
+                ).hasAnyRole(
+                        "Asesor",
+                        "Administrador"
+                )
+                // Validación documental
+                .requestMatchers(
+                        HttpMethod.PUT,
+                        "/api/documentos/*/validacion"
+                ).hasAnyRole(
+                        "Asesor",
+                        "Administrador"
+                )
                 // =================================================
                 // RESTO DE ENDPOINTS
                 // =================================================

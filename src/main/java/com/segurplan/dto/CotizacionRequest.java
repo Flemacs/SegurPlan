@@ -45,4 +45,15 @@ public class CotizacionRequest {
     public void setDescripcionSolicitud(String descripcionSolicitud) {
         this.descripcionSolicitud = descripcionSolicitud;
     }
+
+    // v5: datos del formulario dinámico (JSON) según el tipo de seguro
+    private String datosJson;
+
+    public String getDatosJson() {
+        return datosJson;
+    }
+
+    public void setDatosJson(String datosJson) {
+        this.datosJson = datosJson;
+    }
 }

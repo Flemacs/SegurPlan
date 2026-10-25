@@ -21,9 +21,17 @@ public class ApiAuthenticationEntryPoint
             AuthenticationException authException)
             throws IOException {
 
-       response.sendError(
-                HttpServletResponse.SC_FORBIDDEN,
-                "No tiene permisos para esta operación."
-        );
+        String uri = request.getRequestURI();
+        if (uri != null && uri.startsWith("/api/")) {
+            // API: 401 para que el frontend sepa que debe iniciar sesión
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(
+                    "{\"mensaje\":\"Debe iniciar sesión para continuar.\"}");
+        } else {
+            // Páginas: se envía al login
+            response.sendRedirect("/pages/s01-login.html");
+        }
     }
 }

@@ -41,14 +41,16 @@ public class UsuarioController {
 
     private final SegurplanUserDetailsService
             usuarioDetailsService;
+    private final com.segurplan.service.NotificacionService notificaciones;
 
     public UsuarioController(
             UsuarioService usuarioService,
-            SegurplanUserDetailsService usuarioDetailsService) {
-
+            SegurplanUserDetailsService usuarioDetailsService,
+            com.segurplan.service.NotificacionService notificaciones) {
         this.usuarioService = usuarioService;
         this.usuarioDetailsService =
                 usuarioDetailsService;
+        this.notificaciones = notificaciones;
     }
 
     // =====================================================
@@ -63,6 +65,10 @@ public class UsuarioController {
 
             Usuario usuario =
                     usuarioService.registrar(request);
+            notificaciones.notificar(usuario.getIdUsuario(), "BIENVENIDA",
+                    "¡Bienvenido a SEGURPLAN!",
+                    "Su cuenta fue creada. Ya puede cotizar seguros, simular su AFP y registrar siniestros.",
+                    "USUARIO", usuario.getIdUsuario());
 
             Map<String, Object> respuesta =
                     new HashMap<>();

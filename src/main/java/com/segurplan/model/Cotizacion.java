@@ -163,4 +163,11 @@ public class Cotizacion {
     public void setFechaRespuesta(LocalDateTime fechaRespuesta) {
         this.fechaRespuesta = fechaRespuesta;
     }
+
+    // ---- v5: datos del formulario dinámico según el tipo de seguro (RF004) ----
+    @Column(name = "datos_json", columnDefinition = "TEXT")
+    private String datosJson;
+
+    public String getDatosJson() { return datosJson; }
+    public void setDatosJson(String datosJson) { this.datosJson = datosJson; }
 }

@@ -1,0 +1,44 @@
+# Levanta TODO el sistema (base de datos + aplicación) con un solo comando:
+#     docker compose up --build
+# Luego abrir http://localhost:8080
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: SegurPlan
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-segurplan123}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Se ejecutan solo la primera vez (base vacía), en orden alfabético
+      - ./db/SegurPlan_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./db/datos_iniciales.sql:/docker-entrypoint-initdb.d/02_datos.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d SegurPlan"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/SegurPlan
+      DB_USER: postgres
+      DB_PASSWORD: ${DB_PASSWORD:-segurplan123}
+      PG_BIN_DIR: ""
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+    ports:
+      - "${PORT:-8080}:8080"
+    volumes:
+      - uploads:/app/uploads
+      - backups:/app/backups
+      - logs:/app/logs
+
+volumes:
+  pgdata:
+  uploads:
+  backups:
+  logs:

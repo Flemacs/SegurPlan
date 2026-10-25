@@ -123,6 +123,10 @@ public class CotizacionService {
         cotizacion.setDescripcionSolicitud(
                 request.getDescripcionSolicitud()
         );
+        if (request.getDatosJson() != null
+                && request.getDatosJson().length() <= 4000) {
+            cotizacion.setDatosJson(request.getDatosJson());
+        }
 
 
         // Primero guardamos para obtener el ID generado

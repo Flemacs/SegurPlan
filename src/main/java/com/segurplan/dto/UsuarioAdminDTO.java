@@ -99,4 +99,15 @@ public class UsuarioAdminDTO {
     public void setRol(String rol) {
         this.rol = rol;
     }
+
+    // v5: área de especialidad del asesor (Ventas, Siniestros, AFP)
+    private String areaEspecialidad;
+
+    public String getAreaEspecialidad() {
+        return areaEspecialidad;
+    }
+
+    public void setAreaEspecialidad(String areaEspecialidad) {
+        this.areaEspecialidad = areaEspecialidad;
+    }
 }
