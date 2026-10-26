@@ -1,6 +1,6 @@
 # SEGURPLAN — Plataforma de seguros y AFP
 
-Aplicación web (Spring Boot 4 · Java 21 · PostgreSQL · HTML/JS) con módulos de cotización,   
+Aplicación web (Spring Boot 4 · Java 21 · PostgreSQL · HTML/JS) con módulos de cotización,         
 pólizas, simulación AFP, siniestros, administración, reportes, notificaciones y respaldo.
 
 > Detalle de lo implementado en la v5: [docs/CAMBIOS_V5.md](docs/CAMBIOS_V5.md)
