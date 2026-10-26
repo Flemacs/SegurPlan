@@ -6,7 +6,7 @@ pólizas, simulación AFP, siniestros, administración, reportes, notificaciones
 > Detalle de lo implementado en la v5: [docs/CAMBIOS_V5.md](docs/CAMBIOS_V5.md)
 > Arquitectura y respaldo: [docs/RESPALDO_Y_ARQUITECTURA.md](docs/RESPALDO_Y_ARQUITECTURA.md)
 
-## Cómo levantarlo
+## Cómo levantarlo          
 
 ### Opción A — Docker (recomendada para presentar al profesor)
 Requiere solo Docker Desktop.
