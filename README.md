@@ -12,7 +12,7 @@ pólizas, simulación AFP, siniestros, administración, reportes, notificaciones
 Requiere solo Docker Desktop.
 
 ```bash
-docker compose up --build
+docker compose up --build        
 ```
 Abrir **http://localhost:8080**. La primera vez crea la base `SegurPlan`, las tablas y los datos iniciales.
 Para empezar de cero: `docker compose down -v`.
@@ -20,7 +20,7 @@ Para empezar de cero: `docker compose down -v`.
 ### Opción B — Local (NetBeans / terminal)
 Requiere Java 21, Maven y PostgreSQL 14+.
 
-```bash
+```bash  
 createdb -U postgres SegurPlan
 psql -U postgres -d SegurPlan -f db/SegurPlan_schema.sql
 psql -U postgres -d SegurPlan -f db/datos_iniciales.sql
