@@ -57,3 +57,4 @@ Cámbielas desde **Mi perfil** antes de un uso real. Los clientes nuevos se regi
 
 ## Pruebas y CI
 `mvn test` (pruebas unitarias). `.github/workflows/ci.yml` ejecuta compilación y pruebas con PostgreSQL en cada *push*.
+  n              
