@@ -18,7 +18,7 @@ Abrir **http://localhost:8080**. La primera vez crea la base `SegurPlan`, las ta
 Para empezar de cero: `docker compose down -v`.
 
 ### Opción B — Local (NetBeans / terminal)
-Requiere Java 21, Maven y PostgreSQL 14+.
+Requiere Java 21, Maven y PostgreSQL 14+.    
 
 ```bash
 createdb -U postgres SegurPlan
