@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SEGURPLAN — Respaldo de base de datos</title>
+<link rel="stylesheet" href="../assets/styles.css" />
+<link rel="stylesheet" href="../assets/theme.css">
+<script src="../assets/theme.js"></script>
+<style>
+.tbl{width:100%;border-collapse:collapse;min-width:700px}
+.tbl th{background:#2f4a7a;color:#fff;text-align:left;padding:11px;font-size:13px}
+.tbl td{padding:11px;border-bottom:1px solid #d7deea;font-size:13px}
+.msg{display:none;margin-bottom:14px;padding:12px 14px;border-radius:4px}
+.msg.ok{display:block;background:#e5f4e8;color:#17652c}
+.msg.err{display:block;background:#fdeaea;color:#9f1d1d}
+.row-actions{display:flex;gap:6px;flex-wrap:wrap}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tabs button.activa{background:#2f4a7a;color:#fff}
+</style>
+<!-- pro:head -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/pro.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+  <div class="header-right">
+    <span class="user-name">Usuario: Administrador</span>
+    <button class="btn-logout" type="button">CERRAR SESIÓN</button>
+  </div>
+</header>
+<!-- pro:banner -->
+<div class="pro-hero" data-art="panel" aria-hidden="true"><div class="pro-hero__art"></div><div class="pro-hero__in"><span class="pro-hero__k">Administración</span><p class="pro-hero__t">Respaldo de la base de datos</p><p class="pro-hero__s">Protege la información de la plataforma.</p></div></div>
+
+<div class="page-wrap">
+<nav class="breadcrumb"><a href="s14-administracion.html">Administración</a> &rsaquo; Respaldo de base de datos</nav>
+<h1 class="page-title">Respaldo de base de datos</h1>
+<p class="page-subtitle">Genere, descargue y restaure copias de seguridad de la base SegurPlan (PostgreSQL)</p>
+<div id="msg" class="msg"></div>
+
+<div class="card">
+  <div class="card-header"><h2>Copias de seguridad</h2>
+    <p>Se genera con pg_dump. Además se crea un respaldo automático diario (02:00) con retención de 14 días.</p></div>
+  <div class="card-body">
+    <button class="btn btn-primary" id="btn-crear" type="button">CREAR RESPALDO AHORA</button>
+    <div style="overflow-x:auto;margin-top:18px">
+      <table class="tbl"><thead><tr>
+        <th>Archivo</th><th>Fecha</th><th>Tamaño</th><th>Acciones</th>
+      </tr></thead><tbody id="tabla"><tr><td colspan="4">Cargando...</td></tr></tbody></table>
+    </div>
+  </div>
+</div>
+</div>
+<footer class="site-footer">
+  <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+  <div class="footer-meta"><span>© 2026 SEGURPLAN. Todos los derechos reservados.</span></div>
+</footer>
+<script src="../assets/app.js"></script>
+<script>
+const session = sp_getSession();
+if (!session) { location.href = 's01-login.html'; }
+else if (session.rol !== 'Administrador') { location.href = 's02-panel-usuario.html'; }
+
+function mostrar(texto, ok) {
+  const m = document.getElementById('msg');
+  m.textContent = texto;
+  m.className = 'msg ' + (ok ? 'ok' : 'err');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function celda(tr, texto) {
+  const td = document.createElement('td');
+  td.textContent = texto == null || texto === '' ? '—' : texto;
+  tr.appendChild(td);
+  return td;
+}
+function boton(texto, clase, fn) {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'btn ' + clase;
+  b.textContent = texto;
+  b.addEventListener('click', fn);
+  return b;
+}
+async function api(url, metodo, cuerpo) {
+  const opciones = { method: metodo || 'GET', credentials: 'same-origin', headers: {} };
+  if (metodo && metodo !== 'GET') {
+    const csrf = await sp_getCsrfToken();
+    opciones.headers[csrf.headerName] = csrf.token;
+  }
+  if (cuerpo !== undefined) {
+    opciones.headers['Content-Type'] = 'application/json';
+    opciones.body = JSON.stringify(cuerpo);
+  }
+  const r = await fetch(url, opciones);
+  const texto = await r.text();
+  let datos = {};
+  try { datos = texto ? JSON.parse(texto) : {}; } catch (e) { datos = { mensaje: texto }; }
+  if (!r.ok) {
+    if (r.status === 401) throw new Error('Tu sesión ha expirado. Inicia sesión nuevamente.');
+    if (r.status === 403) throw new Error('Acceso denegado: se requiere rol Administrador.');
+    throw new Error(datos.mensaje || ('Error HTTP ' + r.status));
+  }
+  return datos;
+}
+
+function tamano(b) { return b > 1048576 ? (b / 1048576).toFixed(2) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB'; }
+
+async function cargar() {
+  const tbody = document.getElementById('tabla');
+  try {
+    const lista = await api('/api/admin/backups');
+    tbody.replaceChildren();
+    if (lista.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4">Aún no hay respaldos.</td></tr>';
+      return;
+    }
+    lista.forEach(function (b) {
+      const tr = document.createElement('tr');
+      celda(tr, b.nombre);
+      celda(tr, new Date(b.fecha).toLocaleString('es-PE'));
+      celda(tr, tamano(b.tamanoBytes));
+      const td = document.createElement('td');
+      const div = document.createElement('div');
+      div.className = 'row-actions';
+      const a = document.createElement('a');
+      a.className = 'btn btn-secondary';
+      a.textContent = 'DESCARGAR';
+      a.href = '/api/admin/backups/' + encodeURIComponent(b.nombre) + '/descargar';
+      div.appendChild(a);
+      div.appendChild(boton('RESTAURAR', 'btn-primary', function () { restaurar(b.nombre); }));
+      div.appendChild(boton('ELIMINAR', 'btn-secondary', function () { eliminar(b.nombre); }));
+      td.appendChild(div);
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+    });
+  } catch (e) {
+    tbody.innerHTML = '<tr><td colspan="4">No se pudo cargar la lista.</td></tr>';
+    mostrar(e.message, false);
+  }
+}
+
+document.getElementById('btn-crear').addEventListener('click', async function () {
+  const btn = this;
+  btn.disabled = true;
+  btn.textContent = 'GENERANDO...';
+  try {
+    const b = await api('/api/admin/backups', 'POST');
+    mostrar('Respaldo creado: ' + b.nombre, true);
+    await cargar();
+  } catch (e) { mostrar(e.message, false); }
+  btn.disabled = false;
+  btn.textContent = 'CREAR RESPALDO AHORA';
+});
+
+async function restaurar(nombre) {
+  if (!confirm('Se reemplazarán TODOS los datos actuales por los de:\n' + nombre +
+      '\n\nAntes se creará un respaldo de seguridad automático. ¿Continuar?')) return;
+  try {
+    const r = await api('/api/admin/backups/' + encodeURIComponent(nombre) + '/restaurar', 'POST');
+    mostrar(r.mensaje, true);
+    await cargar();
+  } catch (e) { mostrar(e.message, false); }
+}
+
+async function eliminar(nombre) {
+  if (!confirm('¿Eliminar el respaldo ' + nombre + '?')) return;
+  try {
+    await api('/api/admin/backups/' + encodeURIComponent(nombre), 'DELETE');
+    mostrar('Respaldo eliminado.', true);
+    await cargar();
+  } catch (e) { mostrar(e.message, false); }
+}
+
+if (session && session.rol === 'Administrador') cargar();
+</script>
+</body></html>

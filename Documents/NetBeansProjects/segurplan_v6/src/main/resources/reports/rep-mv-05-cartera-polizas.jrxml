@@ -1,0 +1,137 @@
+<!-- Created with Jaspersoft Studio version 7.0.8.final using JasperReports Library version 7.0.8-6f896111  -->
+<jasperReport name="rep-mv-05-cartera-polizas" language="java" columnCount="1" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a060ce02-5068-4d71-b824-ac90d9d54b98">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SegurPlan"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<query language="SQL"><![CDATA[SELECT numero_poliza,
+       fecha_inicio,
+       fecha_fin,
+       prima,
+       cobertura,
+       deducible,
+       estado
+FROM poliza
+ORDER BY fecha_inicio DESC]]></query>
+	<field name="numero_poliza" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="numero_poliza"/>
+		<property name="com.jaspersoft.studio.field.label" value="numero_poliza"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="poliza"/>
+	</field>
+	<field name="fecha_inicio" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_inicio"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_inicio"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="poliza"/>
+	</field>
+	<field name="fecha_fin" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_fin"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_fin"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="poliza"/>
+	</field>
+	<field name="prima" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prima"/>
+		<property name="com.jaspersoft.studio.field.label" value="prima"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="poliza"/>
+	</field>
+	<field name="cobertura" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cobertura"/>
+		<property name="com.jaspersoft.studio.field.label" value="cobertura"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="poliza"/>
+	</field>
+	<field name="deducible" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="deducible"/>
+		<property name="com.jaspersoft.studio.field.label" value="deducible"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="poliza"/>
+	</field>
+	<field name="estado" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="estado"/>
+		<property name="com.jaspersoft.studio.field.label" value="estado"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="poliza"/>
+	</field>
+	<background splitType="Stretch"/>
+	<title height="32" splitType="Stretch">
+		<element kind="staticText" uuid="6cf93e1d-138c-4abf-a018-72b09f15d93d" x="330" y="0" width="156" height="22">
+			<text><![CDATA[REP-MV-05 — Cartera de pólizas]]></text>
+		</element>
+	</title>
+	<pageHeader height="23" splitType="Stretch">
+		<element kind="textField" uuid="a021544a-0d21-4b69-8854-a62a26a4109b" x="345" y="0" width="100" height="14" pattern="MMMMM dd, yyyy">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+		<element kind="textField" uuid="8ba4b77a-70e9-446a-88d3-db8bd9902783" x="445" y="0" width="100" height="19" pattern="HH:mm">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+	</pageHeader>
+	<columnHeader height="34" splitType="Stretch">
+		<element kind="staticText" uuid="c0f86f77-9c2b-455a-8841-f12d8d7d7a5b" x="-10" y="10" width="71" height="19">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7018c81f-0816-4fa2-967e-66537b295ea4"/>
+			<text><![CDATA[numero_poliza]]></text>
+		</element>
+		<element kind="staticText" uuid="e0a1a5ef-e04d-4a4b-8498-dc164d361a05" x="74" y="10" width="63" height="18">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2b1f7b54-929c-4edd-bc1f-268863de600a"/>
+			<text><![CDATA[fecha_inicio]]></text>
+		</element>
+		<element kind="staticText" uuid="1fb07ac8-6f80-4dfe-87a5-a11d1771cca8" x="151" y="10" width="49" height="18">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7ba122bf-9b1e-4f92-a7a4-9aeed274f559"/>
+			<text><![CDATA[fecha_fin]]></text>
+		</element>
+		<element kind="staticText" uuid="3fe1b172-34e1-4199-9a03-72421947e994" x="220" y="9" width="40" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="627b0ad7-a85e-416a-86aa-a2b3108321f4"/>
+			<text><![CDATA[prima]]></text>
+		</element>
+		<element kind="staticText" uuid="7de56ce2-f4b9-4b85-bff4-0358e2399664" x="280" y="10" width="65" height="19">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2e9abde4-2fd0-4093-9e6e-a861dfc9081f"/>
+			<text><![CDATA[cobertura]]></text>
+		</element>
+		<element kind="staticText" uuid="83e73c37-ae35-47c0-a1d6-e541294c367e" x="368" y="10" width="66" height="19">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="421b8155-5546-46fc-b7ff-99dba3cf6750"/>
+			<text><![CDATA[deducible]]></text>
+		</element>
+		<element kind="staticText" uuid="4b75beb4-fbb2-4673-9dda-e1255de6a0ca" x="440" y="10" width="54" height="19">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cb2a9840-b45a-4ba9-8475-ddeb4c135400"/>
+			<text><![CDATA[estado]]></text>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="27" splitType="Stretch">
+			<element kind="textField" uuid="7bfd0f3c-5939-4f40-9189-565708a0e6ee" x="-11" y="0" width="84" height="18">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7018c81f-0816-4fa2-967e-66537b295ea4"/>
+				<expression><![CDATA[$F{numero_poliza}]]></expression>
+			</element>
+			<element kind="textField" uuid="c74c8c99-a53a-4fc0-9fca-d1e73733f60e" x="74" y="0" width="73" height="18">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2b1f7b54-929c-4edd-bc1f-268863de600a"/>
+				<expression><![CDATA[$F{fecha_inicio}]]></expression>
+			</element>
+			<element kind="textField" uuid="8ead6dac-9060-4364-ae37-929100e4b083" x="151" y="0" width="60" height="20">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7ba122bf-9b1e-4f92-a7a4-9aeed274f559"/>
+				<expression><![CDATA[$F{fecha_fin}]]></expression>
+			</element>
+			<element kind="textField" uuid="7613eb00-c648-4f4b-824b-73759d122882" x="220" y="0" width="60" height="18">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="627b0ad7-a85e-416a-86aa-a2b3108321f4"/>
+				<expression><![CDATA[$F{prima}]]></expression>
+			</element>
+			<element kind="textField" uuid="79249260-9815-4a30-9a64-2932bbfbe1f1" x="280" y="0" width="70" height="18">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2e9abde4-2fd0-4093-9e6e-a861dfc9081f"/>
+				<expression><![CDATA[$F{cobertura}]]></expression>
+			</element>
+			<element kind="textField" uuid="007b16a9-1b6e-465b-83a8-8f04bb18995f" x="368" y="0" width="65" height="20">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="421b8155-5546-46fc-b7ff-99dba3cf6750"/>
+				<expression><![CDATA[$F{deducible}]]></expression>
+			</element>
+			<element kind="textField" uuid="d19121fb-772e-4900-9239-eb7a7c0fbeeb" x="440" y="0" width="59" height="20">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cb2a9840-b45a-4ba9-8475-ddeb4c135400"/>
+				<expression><![CDATA[$F{estado}]]></expression>
+			</element>
+		</band>
+	</detail>
+	<columnFooter height="45" splitType="Stretch"/>
+	<pageFooter height="54" splitType="Stretch"/>
+	<summary height="42" splitType="Stretch"/>
+</jasperReport>
