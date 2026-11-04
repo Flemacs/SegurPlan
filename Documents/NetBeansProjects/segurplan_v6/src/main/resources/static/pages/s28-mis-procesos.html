@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SEGURPLAN — Mis procesos</title>
+        <link rel="stylesheet" href="../assets/styles.css" />
+    <link rel="stylesheet" href="../assets/theme.css">
+<script src="../assets/theme.js"></script>
+<!-- pro:head -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/pro.css">
+</head>
+    <body>
+
+        <header class="site-header">
+            <div class="logo">
+                SEGURPLAN
+                <span>Plataforma de seguros y AFP</span>
+            </div>
+
+            <div class="header-right">
+
+                <span class="user-name" id="header-user">
+                    Usuario
+                </span>
+
+                <button class="bell-btn"
+                        title="Notificaciones"
+                        type="button">
+
+                    <svg width="20" height="20"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+
+                    </svg>
+
+                </button>
+
+                <button class="profile-btn"
+                        type="button">
+                    MI PERFIL
+                </button>
+
+                <!-- CERRAR SESIÓN -->
+                <button class="btn-logout"
+                        type="button">
+                    CERRAR SESIÓN
+                </button>
+
+            </div>
+        </header>
+<!-- pro:banner -->
+<div class="pro-hero" data-art="auto" data-size="lg" aria-hidden="true"><div class="pro-hero__art"></div><div class="pro-hero__in"><span class="pro-hero__k">Tu panel</span><p class="pro-hero__t">Tus seguros y tu futuro, en un solo lugar</p><p class="pro-hero__s">Cotiza, simula tu pensión y sigue tus trámites desde aquí.</p></div></div>
+
+
+        <div class="page-wrap wide">
+
+            <nav class="breadcrumb">
+                <a href="s02-panel-usuario.html">SEGURPLAN</a> &rsaquo; Historial
+            </nav>
+
+            <h1 class="page-title">Mis procesos</h1>
+            <p class="page-subtitle">
+                Cotizaciones, siniestros y simulaciones AFP en un solo lugar.
+                Usa el botón de la derecha para continuar donde lo dejaste.
+            </p>
+
+            <div class="btn-row" id="filtros" style="margin-bottom:16px">
+                <button class="btn btn-primary btn-sm" data-f="TODOS">Todos</button>
+                <button class="btn btn-outline btn-sm" data-f="COTIZACION">Cotizaciones</button>
+                <button class="btn btn-outline btn-sm" data-f="SINIESTRO">Siniestros</button>
+                <button class="btn btn-outline btn-sm" data-f="AFP">AFP</button>
+            </div>
+
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tipo</th><th>Referencia</th><th>Detalle</th>
+                                <th>Fecha</th><th>Estado</th><th>Siguiente paso</th>
+                            </tr>
+                        </thead>
+                        <tbody id="filas">
+                            <tr><td colspan="6">Cargando…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <script src="../assets/app.js"></script>
+        <script>
+            const sess = sp_requireAuth();
+            if (sess) {
+                document.getElementById('header-user').textContent =
+                        sess.nombres + ' ' + sess.apellidos;
+            }
+
+            const TIPOS = {COTIZACION: 'Cotización', SINIESTRO: 'Siniestro', AFP: 'AFP'};
+            const VERDE = ['Aceptada', 'Aprobado', 'Cerrado', 'Respondida', 'Cerrada', 'Disponible'];
+            const ROJO = ['Rechazada', 'Rechazado', 'Vencida', 'Observado'];
+            const AZUL = ['Solicitada', 'En revisión', 'Registrado', 'Registrada', 'Simulada',
+                          'Derivado', 'En evaluación', 'Evaluación recibida', 'Información completa'];
+            let datos = [], filtro = 'TODOS';
+
+            const esc = t => String(t ?? '').replace(/[&<>"']/g,
+                c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+            function badge(e) {
+                const c = VERDE.includes(e) ? 'badge-green' : ROJO.includes(e) ? 'badge-red'
+                        : AZUL.includes(e) ? 'badge-blue' : 'badge-yellow';
+                return '<span class="badge ' + c + '">' + esc(e) + '</span>';
+            }
+
+            function render() {
+                const lista = datos.filter(d => filtro === 'TODOS' || d.tipo === filtro);
+                const tb = document.getElementById('filas');
+                if (!lista.length) {
+                    tb.innerHTML = '<tr><td colspan="6">No tienes procesos en esta categoría.</td></tr>';
+                    return;
+                }
+                tb.innerHTML = lista.map((d, i) => {
+                    const fecha = d.fecha ? new Date(d.fecha).toLocaleDateString('es-PE') : '—';
+                    const cls = d.accionDestacada ? 'btn-primary' : 'btn-outline';
+                    return '<tr><td>' + TIPOS[d.tipo] + '</td><td><strong>' + esc(d.referencia) +
+                        '</strong></td><td>' + esc(d.titulo) +
+                        (d.detalle ? '<br><small>' + esc(d.detalle) + '</small>' : '') +
+                        '</td><td>' + fecha + '</td><td>' + badge(d.estado) +
+                        '</td><td><button class="btn ' + cls + ' btn-sm" data-i="' +
+                        datos.indexOf(d) + '">' + esc(d.accionTexto) + '</button></td></tr>';
+                }).join('');
+            }
+
+            document.getElementById('filas').addEventListener('click', e => {
+                const b = e.target.closest('button[data-i]');
+                if (!b) return;
+                const d = datos[Number(b.dataset.i)];
+                if (d.accionClave) sessionStorage.setItem(d.accionClave, String(d.accionValor));
+                window.location.href = d.accionUrl;
+            });
+
+            document.getElementById('filtros').addEventListener('click', e => {
+                const b = e.target.closest('button[data-f]');
+                if (!b) return;
+                filtro = b.dataset.f;
+                document.querySelectorAll('#filtros button').forEach(x =>
+                    x.className = 'btn btn-sm ' + (x === b ? 'btn-primary' : 'btn-outline'));
+                render();
+            });
+
+            (async () => {
+                try {
+                    const r = await fetch('/api/mis-procesos');
+                    if (!r.ok) throw new Error();
+                    datos = await r.json();
+                    render();
+                } catch (e) {
+                    document.getElementById('filas').innerHTML =
+                        '<tr><td colspan="6">No se pudo cargar tu historial. Intenta nuevamente.</td></tr>';
+                }
+            })();
+        </script>
+    </body>
+</html>
