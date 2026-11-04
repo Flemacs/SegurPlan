@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -54,9 +55,12 @@ public class JasperReportService {
         );
 
         try (Connection connection = dataSource.getConnection()) {
+            // Debe ser un Map MUTABLE: Jasper agrega REPORT_CONNECTION, etc.
+            Map<String, Object> parametros = new HashMap<>();
+            parametros.put("REPORT_LOCALE", new java.util.Locale("es", "PE"));
             JasperPrint filledReport = JasperFillManager.fillReport(
                     report,
-                    Map.of(),
+                    parametros,
                     connection
             );
             return JasperExportManager.exportReportToPdf(filledReport);

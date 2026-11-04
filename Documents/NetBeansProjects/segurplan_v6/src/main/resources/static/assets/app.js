@@ -674,3 +674,77 @@ async function sp_getCsrfToken() {
 
     return csrf;
 }
+
+
+// ============================================================
+// Reportes: filtro "Todo el histórico" (activo por defecto).
+// Los datos de ejemplo no caen siempre en el mes actual; sin esto
+// los reportes salen en cero. Envía anio=0&mes=0 al backend.
+// ============================================================
+(function () {
+    window.__spTodoHistorico = true;
+
+    const fetchOriginal = window.fetch.bind(window);
+    window.fetch = function (input, init) {
+        let esReporte = false;
+        try {
+            const url = typeof input === 'string' ? input : (input && input.url) || '';
+            if (window.__spTodoHistorico
+                    && url.indexOf('/api/reportes/') === 0
+                    && url.indexOf('/api/reportes/jasper') !== 0) {
+                esReporte = true;
+                input = url.replace(/([?&])anio=\d+/, '$1anio=0')
+                           .replace(/([?&])mes=\d+/, '$1mes=0');
+            }
+        } catch (e) { /* sin cambios */ }
+
+        const promesa = fetchOriginal(input, init);
+        if (!esReporte) {
+            return promesa;
+        }
+        // Para que el texto "mes/año" de la pantalla no muestre "00/0".
+        return promesa.then(async (resp) => {
+            try {
+                const tipo = resp.headers.get('content-type') || '';
+                if (!resp.ok || tipo.indexOf('json') < 0) {
+                    return resp;
+                }
+                const data = await resp.clone().json();
+                if (data && typeof data === 'object' && !Array.isArray(data)
+                        && 'mes' in data && 'anio' in data) {
+                    data.mes = 'Todo';
+                    data.anio = 'el histórico';
+                    return new Response(JSON.stringify(data), {
+                        status: resp.status,
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                }
+            } catch (e) { /* devolver la respuesta original */ }
+            return resp;
+        });
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const toolbar = document.querySelector('.report-toolbar');
+        const periodo = document.getElementById('periodo');
+        const generar = document.getElementById('btn-generar');
+        if (!toolbar || !periodo || !generar) {
+            return;
+        }
+        const wrap = document.createElement('label');
+        wrap.style.cssText = 'display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer';
+        const chk = document.createElement('input');
+        chk.type = 'checkbox';
+        chk.checked = true;
+        wrap.appendChild(chk);
+        wrap.appendChild(document.createTextNode('Todo el histórico'));
+        toolbar.insertBefore(wrap, generar);
+        periodo.disabled = true;
+
+        chk.addEventListener('change', () => {
+            window.__spTodoHistorico = chk.checked;
+            periodo.disabled = chk.checked;
+            generar.click();
+        });
+    });
+})();

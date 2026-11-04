@@ -43,8 +43,8 @@ public class ReporteService {
 
         validarPeriodo(anio, mes);
 
-        YearMonth periodo
-                = YearMonth.of(anio, mes);
+        RangoPeriodo periodo
+                = rango(anio, mes);
 
         LocalDateTime inicio
                 = periodo.atDay(1)
@@ -544,9 +544,9 @@ public class ReporteService {
             Integer anio,
             Integer mes) {
 
+        // anio = 0  -> todo el histórico | mes = 0 -> año completo
         if (anio == null
-                || anio < 2000
-                || anio > 2100) {
+                || (anio != 0 && (anio < 2000 || anio > 2100))) {
 
             throw new IllegalArgumentException(
                     "El año indicado no es válido."
@@ -554,13 +554,51 @@ public class ReporteService {
         }
 
         if (mes == null
-                || mes < 1
+                || mes < 0
                 || mes > 12) {
 
             throw new IllegalArgumentException(
                     "El mes indicado no es válido."
             );
         }
+    }
+
+    /**
+     * Rango de fechas [desde, hasta) que imita la API de YearMonth usada
+     * en este servicio: atDay(1) = desde y plusMonths(1).atDay(1) = hasta.
+     */
+    private static final class RangoPeriodo {
+
+        private final LocalDate desde;
+        private final LocalDate hasta;
+
+        private RangoPeriodo(LocalDate desde, LocalDate hasta) {
+            this.desde = desde;
+            this.hasta = hasta;
+        }
+
+        LocalDate atDay(int dia) {
+            return desde;
+        }
+
+        RangoPeriodo plusMonths(int meses) {
+            return new RangoPeriodo(hasta, hasta);
+        }
+    }
+
+    private RangoPeriodo rango(Integer anio, Integer mes) {
+        if (anio == 0) {
+            return new RangoPeriodo(
+                    LocalDate.of(2000, 1, 1),
+                    LocalDate.of(2101, 1, 1));
+        }
+        if (mes == 0) {
+            return new RangoPeriodo(
+                    LocalDate.of(anio, 1, 1),
+                    LocalDate.of(anio + 1, 1, 1));
+        }
+        YearMonth ym = YearMonth.of(anio, mes);
+        return new RangoPeriodo(ym.atDay(1), ym.plusMonths(1).atDay(1));
     }
     // =========================================================
 // REPORTE DE SINIESTROS
@@ -573,8 +611,8 @@ public class ReporteService {
 
         validarPeriodo(anio, mes);
 
-        YearMonth periodo
-                = YearMonth.of(anio, mes);
+        RangoPeriodo periodo
+                = rango(anio, mes);
 
         LocalDateTime inicio
                 = periodo.atDay(1)
@@ -888,8 +926,8 @@ public class ReporteService {
 
         validarPeriodo(anio, mes);
 
-        YearMonth periodo
-                = YearMonth.of(anio, mes);
+        RangoPeriodo periodo
+                = rango(anio, mes);
 
         LocalDateTime inicio
                 = periodo.atDay(1)
@@ -1212,7 +1250,7 @@ public class ReporteService {
 
         validarPeriodo(anio, mes);
 
-        YearMonth periodo = YearMonth.of(anio, mes);
+        RangoPeriodo periodo = rango(anio, mes);
 
         LocalDateTime inicio = periodo
                 .atDay(1)
@@ -1262,7 +1300,7 @@ public class ReporteService {
 
         validarPeriodo(anio, mes);
 
-        YearMonth periodo = YearMonth.of(anio, mes);
+        RangoPeriodo periodo = rango(anio, mes);
 
         LocalDateTime inicio
                 = periodo.atDay(1).atStartOfDay();
@@ -1395,7 +1433,7 @@ public class ReporteService {
 
         validarPeriodo(anio, mes);
 
-        YearMonth periodo = YearMonth.of(anio, mes);
+        RangoPeriodo periodo = rango(anio, mes);
 
         LocalDate inicio = periodo.atDay(1);
         LocalDate fin = periodo.plusMonths(1).atDay(1);
@@ -1544,7 +1582,7 @@ public class ReporteService {
 
         validarPeriodo(anio, mes);
 
-        YearMonth periodo = YearMonth.of(anio, mes);
+        RangoPeriodo periodo = rango(anio, mes);
 
         LocalDateTime inicio
                 = periodo.atDay(1)
@@ -1744,8 +1782,8 @@ public class ReporteService {
 
         validarPeriodo(anio, mes);
 
-        YearMonth periodo
-                = YearMonth.of(anio, mes);
+        RangoPeriodo periodo
+                = rango(anio, mes);
 
         LocalDateTime inicio
                 = periodo.atDay(1)
@@ -1958,8 +1996,8 @@ public class ReporteService {
 
         validarPeriodo(anio, mes);
 
-        YearMonth periodo
-                = YearMonth.of(anio, mes);
+        RangoPeriodo periodo
+                = rango(anio, mes);
 
         LocalDateTime inicio
                 = periodo.atDay(1)
@@ -2201,7 +2239,7 @@ public class ReporteService {
 
         validarPeriodo(anio, mes);
 
-        YearMonth periodo = YearMonth.of(anio, mes);
+        RangoPeriodo periodo = rango(anio, mes);
 
         LocalDateTime inicio = periodo
                 .atDay(1)
@@ -2374,8 +2412,8 @@ public class ReporteService {
 
         validarPeriodo(anio, mes);
 
-        YearMonth periodo
-                = YearMonth.of(anio, mes);
+        RangoPeriodo periodo
+                = rango(anio, mes);
 
         LocalDateTime inicio
                 = periodo

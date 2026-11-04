@@ -28,6 +28,10 @@ public class JasperReportController {
             fileName = codigo.toUpperCase() + ".pdf";
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
+        } catch (RuntimeException e) {
+            org.slf4j.LoggerFactory.getLogger(JasperReportController.class)
+                    .error("Error generando reporte {}", codigo, e);
+            return ResponseEntity.status(500).build();
         }
 
         return ResponseEntity.ok()
