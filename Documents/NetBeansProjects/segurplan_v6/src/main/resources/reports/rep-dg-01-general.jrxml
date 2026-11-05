@@ -1,0 +1,61 @@
+<!-- Created with Jaspersoft Studio version 7.0.8.final using JasperReports Library version 7.0.8-6f896111  -->
+<jasperReport name="rep-dg-01-general" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cabce1ae-deaf-4f3c-8e6e-58d0f188d353">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SegurPlan"/>
+	<query language="SQL"><![CDATA[SELECT 'Cotizaciones' AS modulo, COUNT(*) AS total
+FROM cotizacion
+UNION ALL
+SELECT 'Siniestros', COUNT(*)
+FROM siniestro
+UNION ALL
+SELECT 'AFP', COUNT(*)
+FROM prevision
+WHERE tipo_sistema = 'AFP']]></query>
+	<field name="modulo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="modulo"/>
+		<property name="com.jaspersoft.studio.field.label" value="modulo"/>
+	</field>
+	<field name="total" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="total"/>
+		<property name="com.jaspersoft.studio.field.label" value="total"/>
+	</field>
+	<background splitType="Stretch"/>
+	<title height="20" splitType="Stretch">
+		<element kind="staticText" uuid="52cc255c-3695-4e48-babb-be6e5edb3cd4" x="207" y="0" width="141" height="18">
+			<text><![CDATA[REP-DG-01 — Reporte general]]></text>
+		</element>
+	</title>
+	<pageHeader height="35" splitType="Stretch">
+		<element kind="textField" uuid="d40adbb1-e2b3-47f4-ad58-4d38b8092889" x="210" y="0" width="100" height="16" pattern="MMMMM dd, yyyy">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+		<element kind="textField" uuid="8af356bb-c4fa-48d3-9d9c-89f80f8681d8" x="310" y="0" width="100" height="16" pattern="HH:mm">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+	</pageHeader>
+	<columnHeader height="23" splitType="Stretch">
+		<element kind="staticText" uuid="2ccf0418-2e31-4502-8398-ada10b8025ff" x="10" y="0" width="38" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1142c397-f6ff-41f0-96da-67ae22c233d0"/>
+			<text><![CDATA[Modulo]]></text>
+		</element>
+		<element kind="staticText" uuid="276e14fa-cf18-4a50-9b33-e6c16f4f903c" x="80" y="0" width="30" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2b963ce2-4fc5-4511-a873-821b200f4c27"/>
+			<text><![CDATA[Total]]></text>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="25" splitType="Stretch">
+			<element kind="textField" uuid="b9ae16cc-f909-4f2e-8748-64e394da17b9" x="10" y="0" width="60" height="20">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1142c397-f6ff-41f0-96da-67ae22c233d0"/>
+				<expression><![CDATA[$F{modulo}]]></expression>
+			</element>
+			<element kind="textField" uuid="32d1abc7-ecd5-467e-9251-1283ef2acdbf" x="80" y="0" width="40" height="20">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2b963ce2-4fc5-4511-a873-821b200f4c27"/>
+				<expression><![CDATA[$F{total}]]></expression>
+			</element>
+		</band>
+	</detail>
+	<columnFooter height="45" splitType="Stretch"/>
+	<pageFooter height="54" splitType="Stretch"/>
+	<summary height="42" splitType="Stretch"/>
+</jasperReport>

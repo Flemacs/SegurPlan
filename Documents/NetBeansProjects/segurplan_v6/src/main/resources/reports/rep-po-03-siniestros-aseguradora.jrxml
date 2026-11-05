@@ -1,0 +1,119 @@
+<!-- Created with Jaspersoft Studio version 7.0.8.final using JasperReports Library version 7.0.8-6f896111  -->
+<jasperReport name="rep-po-03-siniestros-aseguradora" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="467a1e4f-9f86-44c2-8f78-721c567b6f8e">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SegurPlan"/>
+	<query language="SQL"><![CDATA[SELECT a.nombre AS aseguradora,
+       (SELECT COUNT(*) FROM siniestro s
+        WHERE s.id_aseguradora = a.id_aseguradora) AS total,
+       (SELECT COUNT(*) FROM siniestro s
+        WHERE s.id_aseguradora = a.id_aseguradora
+          AND s.estado = 'Aprobado') AS aprobados,
+       (SELECT COUNT(*) FROM siniestro s
+        WHERE s.id_aseguradora = a.id_aseguradora
+          AND s.estado = 'Rechazado') AS rechazados,
+       (SELECT COUNT(*) FROM siniestro s
+        WHERE s.id_aseguradora = a.id_aseguradora
+          AND s.estado = 'Observado') AS observados,
+       (SELECT COUNT(*) FROM siniestro s
+        WHERE s.id_aseguradora = a.id_aseguradora
+          AND s.resultado_evaluacion IS NOT NULL
+          AND TRIM(s.resultado_evaluacion) <> '') AS con_resultado
+FROM aseguradora a
+ORDER BY a.nombre]]></query>
+	<field name="aseguradora" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="aseguradora"/>
+		<property name="com.jaspersoft.studio.field.label" value="aseguradora"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="aseguradora"/>
+	</field>
+	<field name="total" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="total"/>
+		<property name="com.jaspersoft.studio.field.label" value="total"/>
+	</field>
+	<field name="aprobados" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="aprobados"/>
+		<property name="com.jaspersoft.studio.field.label" value="aprobados"/>
+	</field>
+	<field name="rechazados" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="rechazados"/>
+		<property name="com.jaspersoft.studio.field.label" value="rechazados"/>
+	</field>
+	<field name="observados" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="observados"/>
+		<property name="com.jaspersoft.studio.field.label" value="observados"/>
+	</field>
+	<field name="con_resultado" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="con_resultado"/>
+		<property name="com.jaspersoft.studio.field.label" value="con_resultado"/>
+	</field>
+	<background splitType="Stretch"/>
+	<title height="22" splitType="Stretch">
+		<element kind="staticText" uuid="0e550a93-7962-440e-b2eb-fb4d79acaf01" x="180" y="0" width="194" height="15">
+			<text><![CDATA[REP-PO-03 — Siniestros por aseguradora]]></text>
+		</element>
+	</title>
+	<pageHeader height="23" splitType="Stretch">
+		<element kind="textField" uuid="339ceb3d-e2d8-4608-91a8-189c890dc0a5" x="210" y="0" width="100" height="20" pattern="MMMMM dd, yyyy">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+		<element kind="textField" uuid="03fd5a6f-023f-4245-b1aa-5b988b30093b" x="310" y="0" width="100" height="20" pattern="HH:mm">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+	</pageHeader>
+	<columnHeader height="23" splitType="Stretch">
+		<element kind="staticText" uuid="f518e07c-9994-403e-8247-57bd1d724202" x="-16" y="0" width="56" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0ee94fc0-f9be-4443-b894-498509d4cc63"/>
+			<text><![CDATA[aseguradora]]></text>
+		</element>
+		<element kind="staticText" uuid="781cc896-b0e3-4d23-8d36-9eaa7937faac" x="70" y="0" width="22" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d39fd4fc-f83f-4c2b-955d-b2d047d53b20"/>
+			<text><![CDATA[total]]></text>
+		</element>
+		<element kind="staticText" uuid="b307c1ab-f5c7-4044-b502-0d35c7441024" x="110" y="0" width="50" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="af2ec1ec-36e8-485c-aaf1-df00eba23347"/>
+			<text><![CDATA[aprobados]]></text>
+		</element>
+		<element kind="staticText" uuid="e0545bf9-48a0-411e-94a6-7c2e13221ab3" x="180" y="0" width="60" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="52c21ffe-1996-42ee-8162-78e569333089"/>
+			<text><![CDATA[rechazados]]></text>
+		</element>
+		<element kind="staticText" uuid="033e89cd-2bdb-4ece-9ed4-25dc1fd83baa" x="260" y="0" width="60" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f3b92a7b-6809-4d0d-9f3f-8fe2d2b5bddb"/>
+			<text><![CDATA[observados]]></text>
+		</element>
+		<element kind="staticText" uuid="2fc85eba-f268-4e93-ae51-e0a4ebc878f2" x="350" y="0" width="70" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b62ca4e1-9a57-4a85-921d-dd62e420fc19"/>
+			<text><![CDATA[con_resultado]]></text>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<element kind="textField" uuid="c09e8b96-eb5f-4eb7-a42d-ce6626da3e1b" x="-16" y="0" width="76" height="17">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0ee94fc0-f9be-4443-b894-498509d4cc63"/>
+				<expression><![CDATA[$F{aseguradora}]]></expression>
+			</element>
+			<element kind="textField" uuid="2c8cc4f5-be4d-4112-a1c4-97968c124ed6" x="70" y="0" width="40" height="17">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d39fd4fc-f83f-4c2b-955d-b2d047d53b20"/>
+				<expression><![CDATA[$F{total}]]></expression>
+			</element>
+			<element kind="textField" uuid="29cfe301-35e9-4371-83de-895253924e8e" x="110" y="0" width="70" height="17">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="af2ec1ec-36e8-485c-aaf1-df00eba23347"/>
+				<expression><![CDATA[$F{aprobados}]]></expression>
+			</element>
+			<element kind="textField" uuid="de88d60b-17f6-49d8-b546-e3ab2c41c1b2" x="180" y="0" width="80" height="17">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="52c21ffe-1996-42ee-8162-78e569333089"/>
+				<expression><![CDATA[$F{rechazados}]]></expression>
+			</element>
+			<element kind="textField" uuid="513344da-88db-473d-8c29-55e3713f7da3" x="260" y="0" width="80" height="17">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f3b92a7b-6809-4d0d-9f3f-8fe2d2b5bddb"/>
+				<expression><![CDATA[$F{observados}]]></expression>
+			</element>
+			<element kind="textField" uuid="7e046626-738b-49d3-ba92-fe79441fa86f" x="350" y="0" width="90" height="17">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b62ca4e1-9a57-4a85-921d-dd62e420fc19"/>
+				<expression><![CDATA[$F{con_resultado}]]></expression>
+			</element>
+		</band>
+	</detail>
+	<columnFooter height="45" splitType="Stretch"/>
+	<pageFooter height="54" splitType="Stretch"/>
+	<summary height="42" splitType="Stretch"/>
+</jasperReport>

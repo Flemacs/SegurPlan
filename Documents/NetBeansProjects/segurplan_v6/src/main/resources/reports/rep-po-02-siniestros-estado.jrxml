@@ -1,0 +1,142 @@
+<!-- Created with Jaspersoft Studio version 7.0.8.final using JasperReports Library version 7.0.8-6f896111  -->
+<jasperReport name="rep-po-02-siniestros-estado" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1cd206d1-07a9-45dd-a99e-ea411f5f61be">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SegurPlan"/>
+	<query language="SQL"><![CDATA[SELECT s.numero_siniestro,
+       u.nombres || ' ' || u.apellidos AS cliente,
+       s.fecha_registro,
+       s.fecha_accidente,
+       s.placa,
+       s.marca,
+       s.modelo,
+       s.estado
+FROM siniestro s
+JOIN usuario u ON u.id_usuario = s.id_usuario
+ORDER BY s.fecha_registro DESC]]></query>
+	<field name="numero_siniestro" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="numero_siniestro"/>
+		<property name="com.jaspersoft.studio.field.label" value="numero_siniestro"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="siniestro"/>
+	</field>
+	<field name="cliente" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cliente"/>
+		<property name="com.jaspersoft.studio.field.label" value="cliente"/>
+	</field>
+	<field name="fecha_registro" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_registro"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_registro"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="siniestro"/>
+	</field>
+	<field name="fecha_accidente" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_accidente"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_accidente"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="siniestro"/>
+	</field>
+	<field name="placa" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="placa"/>
+		<property name="com.jaspersoft.studio.field.label" value="placa"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="siniestro"/>
+	</field>
+	<field name="marca" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="marca"/>
+		<property name="com.jaspersoft.studio.field.label" value="marca"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="siniestro"/>
+	</field>
+	<field name="modelo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="modelo"/>
+		<property name="com.jaspersoft.studio.field.label" value="modelo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="siniestro"/>
+	</field>
+	<field name="estado" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="estado"/>
+		<property name="com.jaspersoft.studio.field.label" value="estado"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="siniestro"/>
+	</field>
+	<background splitType="Stretch"/>
+	<title height="28" splitType="Stretch">
+		<element kind="staticText" uuid="cb1d0e90-f02a-44f0-a9d7-7bb27da940d0" x="193" y="0" width="169" height="20">
+			<text><![CDATA[REP-PO-02 — Siniestros por estado]]></text>
+		</element>
+	</title>
+	<pageHeader height="25" splitType="Stretch">
+		<element kind="textField" uuid="598183cd-8198-403c-b558-7f5297e9729d" x="210" y="0" width="100" height="13" pattern="MMMMM dd, yyyy">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+		<element kind="textField" uuid="eb4360a1-47d8-45d3-ada6-4203f44e25b7" x="310" y="0" width="100" height="22" pattern="HH:mm">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+	</pageHeader>
+	<columnHeader height="23" splitType="Stretch">
+		<element kind="staticText" uuid="1775c274-fd77-4aa4-90f1-a74e2f453b78" x="-15" y="0" width="84" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e7e7ffff-f2fc-422e-9d6e-614681bdd6b1"/>
+			<text><![CDATA[numero_siniestro]]></text>
+		</element>
+		<element kind="staticText" uuid="9404cef6-1a06-4d11-a8d5-b3b0b256d8fa" x="85" y="0" width="32" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7e3b78cd-9fdf-4b51-9a80-9175ce0a4142"/>
+			<text><![CDATA[cliente]]></text>
+		</element>
+		<element kind="staticText" uuid="2c93f6a5-e0a9-4f80-9ba4-98c68fbff1b4" x="139" y="0" width="70" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b29cb477-71e3-4fc9-869e-0d22ce1ba047"/>
+			<text><![CDATA[fecha_registro]]></text>
+		</element>
+		<element kind="staticText" uuid="e7a2fd90-c099-4b2b-9a2a-9d85b32385b2" x="229" y="0" width="80" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b997c14c-5288-4ecc-81ac-b37000532886"/>
+			<text><![CDATA[fecha_accidente]]></text>
+		</element>
+		<element kind="staticText" uuid="f0949cc8-855d-4415-b14d-256de22aac35" x="329" y="0" width="32" height="19">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2e8b5cc4-596d-4200-900c-ef631ecd3c88"/>
+			<text><![CDATA[placa]]></text>
+		</element>
+		<element kind="staticText" uuid="c446b11d-0ede-40f1-8806-d69384fbef40" x="380" y="0" width="30" height="19">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b5e9be18-0e88-4382-8b4c-f29bb6f0e151"/>
+			<text><![CDATA[marca]]></text>
+		</element>
+		<element kind="staticText" uuid="fc5e9457-20dd-48e9-b8dc-25ddc63e83b7" x="430" y="0" width="50" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b830d064-df68-4944-9d95-7d3267dcd775"/>
+			<text><![CDATA[modelo]]></text>
+		</element>
+		<element kind="staticText" uuid="11d64a21-f647-4f2a-a4d2-e1d1c345b0ee" x="480" y="0" width="40" height="19">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="215bf01b-4b2b-4d72-937f-65372d36318d"/>
+			<text><![CDATA[estado]]></text>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="23" splitType="Stretch">
+			<element kind="textField" uuid="71e500f0-9853-487a-b30c-bb1d4face9bb" x="-15" y="0" width="100" height="20">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e7e7ffff-f2fc-422e-9d6e-614681bdd6b1"/>
+				<expression><![CDATA[$F{numero_siniestro}]]></expression>
+			</element>
+			<element kind="textField" uuid="ddf14722-ee44-4db9-85ad-498dbe45d7fc" x="85" y="0" width="54" height="20">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7e3b78cd-9fdf-4b51-9a80-9175ce0a4142"/>
+				<expression><![CDATA[$F{cliente}]]></expression>
+			</element>
+			<element kind="textField" uuid="960449f8-bc70-4509-a01a-e30ef3d1f348" x="139" y="0" width="90" height="20">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b29cb477-71e3-4fc9-869e-0d22ce1ba047"/>
+				<expression><![CDATA[$F{fecha_registro}]]></expression>
+			</element>
+			<element kind="textField" uuid="48f9a570-4112-4d3f-985f-b8b54b61aa54" x="229" y="0" width="100" height="20">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b997c14c-5288-4ecc-81ac-b37000532886"/>
+				<expression><![CDATA[$F{fecha_accidente}]]></expression>
+			</element>
+			<element kind="textField" uuid="43ec3738-8a8e-470e-9861-b5f0dbbb9968" x="330" y="0" width="50" height="19">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2e8b5cc4-596d-4200-900c-ef631ecd3c88"/>
+				<expression><![CDATA[$F{placa}]]></expression>
+			</element>
+			<element kind="textField" uuid="6103c358-fd5e-4c05-8c04-9664ba992b4f" x="380" y="0" width="50" height="19">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b5e9be18-0e88-4382-8b4c-f29bb6f0e151"/>
+				<expression><![CDATA[$F{marca}]]></expression>
+			</element>
+			<element kind="textField" uuid="de47eaa9-1101-4815-a3a9-bdf34d620702" x="430" y="0" width="60" height="19">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b830d064-df68-4944-9d95-7d3267dcd775"/>
+				<expression><![CDATA[$F{modelo}]]></expression>
+			</element>
+			<element kind="textField" uuid="9cca2be8-3fd1-4752-bde1-ff46d2b2bffc" x="480" y="0" width="49" height="19">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="215bf01b-4b2b-4d72-937f-65372d36318d"/>
+				<expression><![CDATA[$F{estado}]]></expression>
+			</element>
+		</band>
+	</detail>
+	<columnFooter height="45" splitType="Stretch"/>
+	<pageFooter height="54" splitType="Stretch"/>
+	<summary height="42" splitType="Stretch"/>
+</jasperReport>

@@ -1,0 +1,153 @@
+<!-- Created with Jaspersoft Studio version 7.0.8.final using JasperReports Library version 7.0.8-6f896111  -->
+<jasperReport name="rep-mv-02-conversion-ventas" language="java" columnCount="1" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5221cc6f-8b9e-4bc9-a162-5b3c51c45583">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SegurPlan"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<query language="SQL"><![CDATA[SELECT c.id_cotizacion,
+       c.fecha_solicitud,
+       c.fecha_respuesta,
+       c.estado,
+       ct.id_contratacion,
+       ct.estado AS estado_contratacion,
+       p.numero_poliza,
+       p.estado AS estado_poliza
+FROM cotizacion c
+LEFT JOIN contratacion ct ON ct.id_cotizacion = c.id_cotizacion
+LEFT JOIN poliza p ON p.id_contratacion = ct.id_contratacion
+ORDER BY c.fecha_solicitud DESC]]></query>
+	<field name="id_cotizacion" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="id_cotizacion"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_cotizacion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cotizacion"/>
+	</field>
+	<field name="fecha_solicitud" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_solicitud"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_solicitud"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cotizacion"/>
+	</field>
+	<field name="fecha_respuesta" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_respuesta"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_respuesta"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cotizacion"/>
+	</field>
+	<field name="estado" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="estado"/>
+		<property name="com.jaspersoft.studio.field.label" value="estado"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cotizacion"/>
+	</field>
+	<field name="id_contratacion" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="id_contratacion"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_contratacion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="contratacion"/>
+	</field>
+	<field name="estado_contratacion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="estado_contratacion"/>
+		<property name="com.jaspersoft.studio.field.label" value="estado_contratacion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="contratacion"/>
+	</field>
+	<field name="numero_poliza" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="numero_poliza"/>
+		<property name="com.jaspersoft.studio.field.label" value="numero_poliza"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="poliza"/>
+	</field>
+	<field name="estado_poliza" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="estado_poliza"/>
+		<property name="com.jaspersoft.studio.field.label" value="estado_poliza"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="poliza"/>
+	</field>
+	<background splitType="Stretch"/>
+	<title height="44" splitType="Stretch">
+		<element kind="staticText" uuid="4e84f22e-07d1-4e97-b20c-2fc19beeb77c" x="316" y="14" width="170" height="30">
+			<text><![CDATA[REP-MV-02 — Conversión de ventas]]></text>
+		</element>
+	</title>
+	<pageHeader height="44" splitType="Stretch">
+		<element kind="textField" uuid="9d66479a-9666-416c-9952-49b004072afd" x="330" y="7" width="100" height="30" pattern="MMMMM dd, yyyy">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+		<element kind="textField" uuid="6425de7f-938b-47b1-befe-8873d15d7ad3" x="440" y="7" width="100" height="30" pattern="HH:mm">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+	</pageHeader>
+	<columnHeader height="39" splitType="Stretch">
+		<element kind="staticText" uuid="02505777-7261-488f-9b13-7d18f1f08c80" x="-10" y="0" width="61" height="30">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="14ff81e4-b140-4648-8ea1-fa0c541218bb"/>
+			<text><![CDATA[id_cotizacion]]></text>
+		</element>
+		<element kind="staticText" uuid="4f77feaf-6eee-4025-886a-27f55e4cec5c" x="60" y="0" width="70" height="30">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e6c9b095-8d28-458d-a56a-8807e16877c4"/>
+			<text><![CDATA[fecha_solicitud]]></text>
+		</element>
+		<element kind="staticText" uuid="0539b02b-c8eb-44a5-bd72-92d49178f915" x="230" y="0" width="100" height="30">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7dcadb77-48ef-483c-a535-ebcf43d7fc20"/>
+			<text><![CDATA[fecha_respuesta]]></text>
+		</element>
+		<element kind="staticText" uuid="a1479680-9cc4-4122-85a5-bec787512247" x="160" y="0" width="40" height="30">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="00c93369-41d1-4ef5-b53c-c5b6044da1c9"/>
+			<text><![CDATA[estado]]></text>
+		</element>
+		<element kind="staticText" uuid="8ae17c98-9da7-41c0-b6d7-c9bd690f8394" x="330" y="0" width="100" height="30">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="24808505-bf10-4b6b-bde7-af3e46e11981"/>
+			<text><![CDATA[id_contratacion]]></text>
+		</element>
+		<element kind="staticText" uuid="f6e01806-b14b-4535-a9dc-6cb97fad0dfe" x="420" y="0" width="100" height="30">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="812df811-f6b7-4354-b2ee-31f9dc52467c"/>
+			<text><![CDATA[estado_contratacion]]></text>
+		</element>
+		<element kind="staticText" uuid="19e5ac3f-d9b2-4387-b4d2-7b729076f0f7" x="530" y="0" width="70" height="19">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ee6782cc-e39c-4e37-b9ce-bf79a0d66f6d"/>
+			<text><![CDATA[numero_poliza]]></text>
+		</element>
+		<element kind="staticText" uuid="76f40954-a30f-49bd-9730-da5713969d3b" x="620" y="0" width="70" height="18">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="40685a14-3228-4442-9153-9c3daa6389e4"/>
+			<text><![CDATA[estado_poliza]]></text>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="33" splitType="Stretch">
+			<element kind="textField" uuid="d5d6982d-912b-42eb-9f67-a67998d5c7e8" x="-10" y="0" width="81" height="30">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="14ff81e4-b140-4648-8ea1-fa0c541218bb"/>
+				<expression><![CDATA[$F{id_cotizacion}]]></expression>
+			</element>
+			<element kind="textField" uuid="ee551cd5-aa5a-4f30-880a-9ffa7119a13c" x="60" y="0" width="90" height="30">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e6c9b095-8d28-458d-a56a-8807e16877c4"/>
+				<expression><![CDATA[$F{fecha_solicitud}]]></expression>
+			</element>
+			<element kind="textField" uuid="7bc77f2f-3ea0-4fcd-b090-653ecec2f459" x="230" y="0" width="100" height="30">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7dcadb77-48ef-483c-a535-ebcf43d7fc20"/>
+				<expression><![CDATA[$F{fecha_respuesta}]]></expression>
+			</element>
+			<element kind="textField" uuid="6860910b-5e16-4574-a648-24ef08b1ba60" x="160" y="0" width="60" height="30">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="00c93369-41d1-4ef5-b53c-c5b6044da1c9"/>
+				<expression><![CDATA[$F{estado}]]></expression>
+			</element>
+			<element kind="textField" uuid="37c06fff-9787-4ef5-9fe4-02d851505cb8" x="330" y="0" width="100" height="30">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="24808505-bf10-4b6b-bde7-af3e46e11981"/>
+				<expression><![CDATA[$F{id_contratacion}]]></expression>
+			</element>
+			<element kind="textField" uuid="70299595-fe26-40c9-ad7d-1d1d038dcbc1" x="420" y="0" width="100" height="30">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="812df811-f6b7-4354-b2ee-31f9dc52467c"/>
+				<expression><![CDATA[$F{estado_contratacion}]]></expression>
+			</element>
+			<element kind="textField" uuid="4213b278-a11d-49b9-bb58-c0d8b3780184" x="530" y="0" width="100" height="19">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ee6782cc-e39c-4e37-b9ce-bf79a0d66f6d"/>
+				<expression><![CDATA[$F{numero_poliza}]]></expression>
+			</element>
+			<element kind="textField" uuid="b643d314-e2f1-4dfc-875d-f78b07519173" x="620" y="1" width="100" height="30">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="40685a14-3228-4442-9153-9c3daa6389e4"/>
+				<expression><![CDATA[$F{estado_poliza}]]></expression>
+			</element>
+		</band>
+	</detail>
+	<columnFooter height="45" splitType="Stretch"/>
+	<pageFooter height="54" splitType="Stretch"/>
+	<summary height="42" splitType="Stretch"/>
+</jasperReport>
