@@ -1,0 +1,50 @@
+name: Seguridad SegurPlan
+on:
+  push:
+    branches: [main, master, SegurPlan_V4.2]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Pruebas unitarias de seguridad sin DB
+        run: mvn -B -Dtest=SeguridadRegresionTest test
+      - name: Arbol de dependencias
+        run: mvn -B dependency:tree -DoutputFile=dependency-tree.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: seguridad-dependencias
+          path: dependency-tree.txt
+  dependency-review:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: critical
+  zap-staging:
+    if: github.event_name == 'workflow_dispatch' && vars.SEGURPLAN_STAGING_URL != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: zaproxy/action-baseline@v0.14.0
+        with:
+          target: ${{ vars.SEGURPLAN_STAGING_URL }}
+          allow_issue_writing: false

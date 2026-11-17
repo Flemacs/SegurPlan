@@ -1,0 +1,96 @@
+<!-- Created with Jaspersoft Studio version 7.0.8.final using JasperReports Library version 7.0.8-6f896111  -->
+<jasperReport name="rep-dg-02-indicadores" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="60d6061c-8575-4559-b38b-38f4a7b6e13b">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SegurPlan"/>
+	<query language="SQL"><![CDATA[SELECT 'Total cotizaciones' AS indicador,
+       COUNT(*) AS valor,
+       'Cotizaciones registradas' AS referencia
+FROM cotizacion
+
+UNION ALL
+
+SELECT 'Cotizaciones aceptadas', COUNT(*), 'Estado Aceptada'
+FROM cotizacion
+WHERE estado = 'Aceptada'
+
+UNION ALL
+
+SELECT 'Prima total', COALESCE(SUM(prima), 0), 'Suma de primas de pólizas'
+FROM poliza
+
+UNION ALL
+
+SELECT 'Pólizas vigentes', COUNT(*), 'Estado Vigente'
+FROM poliza
+WHERE estado = 'Vigente'
+
+UNION ALL
+
+SELECT 'Total siniestros', COUNT(*), 'Siniestros registrados'
+FROM siniestro
+
+UNION ALL
+
+SELECT 'Total AFP', COUNT(*), 'Registros AFP'
+FROM prevision
+WHERE tipo_sistema = 'AFP']]></query>
+	<field name="indicador" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="indicador"/>
+		<property name="com.jaspersoft.studio.field.label" value="indicador"/>
+	</field>
+	<field name="valor" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="valor"/>
+		<property name="com.jaspersoft.studio.field.label" value="valor"/>
+	</field>
+	<field name="referencia" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="referencia"/>
+		<property name="com.jaspersoft.studio.field.label" value="referencia"/>
+	</field>
+	<background splitType="Stretch"/>
+	<title height="23" splitType="Stretch">
+		<element kind="staticText" uuid="8c193d1a-959e-415f-baa5-4eefb591b0a2" x="188" y="0" width="184" height="20">
+			<text><![CDATA[REP-DG-02 — Indicadores gerenciales]]></text>
+		</element>
+	</title>
+	<pageHeader height="21" splitType="Stretch">
+		<element kind="textField" uuid="2dc0104d-beff-4f0d-82c7-91e9c6743630" x="210" y="0" width="100" height="16" pattern="MMMMM dd, yyyy">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+		<element kind="textField" uuid="c37da909-1d3a-4274-abaa-785f50434a17" x="310" y="0" width="100" height="15" pattern="HH:mm">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+	</pageHeader>
+	<columnHeader height="24" splitType="Stretch">
+		<element kind="staticText" uuid="85fea87b-bd24-4265-a99b-38fc50c2111f" x="15" y="0" width="75" height="24">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0f77201a-e8e5-412a-9578-7e04b8ca502e"/>
+			<text><![CDATA[indicador]]></text>
+		</element>
+		<element kind="staticText" uuid="26ef87b7-6e64-4f00-8605-ccac99e9549a" x="131" y="0" width="59" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5a30361b-3709-4320-bdaa-049697ce4456"/>
+			<text><![CDATA[valor]]></text>
+		</element>
+		<element kind="staticText" uuid="5cc8cd34-8c96-43d4-9a34-e7a5426b1d85" x="240" y="0" width="71" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="610f29dc-0bf9-4e3f-b781-2d694e4b7dbb"/>
+			<text><![CDATA[referencia]]></text>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="25" splitType="Stretch">
+			<element kind="textField" uuid="3416cb07-2882-462e-8484-1a2c80468fdf" x="15" y="0" width="85" height="24">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0f77201a-e8e5-412a-9578-7e04b8ca502e"/>
+				<expression><![CDATA[$F{indicador}]]></expression>
+			</element>
+			<element kind="textField" uuid="5cfc6cc8-f284-44f1-9c57-07d2d5a6439e" x="131" y="0" width="68" height="19">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5a30361b-3709-4320-bdaa-049697ce4456"/>
+				<expression><![CDATA[$F{valor}]]></expression>
+			</element>
+			<element kind="textField" uuid="f38cad20-e721-49f0-b927-18c01d23cc5a" x="241" y="0" width="78" height="19">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="610f29dc-0bf9-4e3f-b781-2d694e4b7dbb"/>
+				<expression><![CDATA[$F{referencia}]]></expression>
+			</element>
+		</band>
+	</detail>
+	<columnFooter height="45" splitType="Stretch"/>
+	<pageFooter height="54" splitType="Stretch"/>
+	<summary height="42" splitType="Stretch"/>
+</jasperReport>

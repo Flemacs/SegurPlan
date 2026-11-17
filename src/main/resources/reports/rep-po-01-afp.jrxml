@@ -1,0 +1,152 @@
+<!-- Created with Jaspersoft Studio version 7.0.8.final using JasperReports Library version 7.0.8-6f896111  -->
+<jasperReport name="rep-po-01-afp" language="java" columnCount="1" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="14f0821c-1140-43fa-aab2-32e2de120799">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SegurPlan"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<query language="SQL"><![CDATA[SELECT p.id_prevision,
+       u.nombres || ' ' || u.apellidos AS usuario,
+       p.fecha_registro,
+       p.edad,
+       p.ingreso_mensual,
+       p.anios_aporte,
+       p.monto_pension_estimado,
+       p.estado
+FROM prevision p
+JOIN usuario u ON u.id_usuario = p.id_usuario
+WHERE p.tipo_sistema = 'AFP'
+ORDER BY p.fecha_registro DESC]]></query>
+	<field name="id_prevision" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="id_prevision"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_prevision"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="prevision"/>
+	</field>
+	<field name="usuario" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="usuario"/>
+		<property name="com.jaspersoft.studio.field.label" value="usuario"/>
+	</field>
+	<field name="fecha_registro" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_registro"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_registro"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="prevision"/>
+	</field>
+	<field name="edad" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="edad"/>
+		<property name="com.jaspersoft.studio.field.label" value="edad"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="prevision"/>
+	</field>
+	<field name="ingreso_mensual" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ingreso_mensual"/>
+		<property name="com.jaspersoft.studio.field.label" value="ingreso_mensual"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="prevision"/>
+	</field>
+	<field name="anios_aporte" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="anios_aporte"/>
+		<property name="com.jaspersoft.studio.field.label" value="anios_aporte"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="prevision"/>
+	</field>
+	<field name="monto_pension_estimado" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="monto_pension_estimado"/>
+		<property name="com.jaspersoft.studio.field.label" value="monto_pension_estimado"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="prevision"/>
+	</field>
+	<field name="estado" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="estado"/>
+		<property name="com.jaspersoft.studio.field.label" value="estado"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="prevision"/>
+	</field>
+	<background splitType="Stretch"/>
+	<title height="27" splitType="Stretch">
+		<element kind="staticText" uuid="7d3a4a6f-aa6e-4000-8341-536707e3d14e" x="337" y="0" width="128" height="20">
+			<text><![CDATA[REP-PO-01 — Reporte AFP]]></text>
+		</element>
+	</title>
+	<pageHeader height="33" splitType="Stretch">
+		<element kind="textField" uuid="ecf21678-f3e2-4b6d-92b7-c6308d164489" x="337" y="0" width="100" height="19" pattern="MMMMM dd, yyyy">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+		<element kind="textField" uuid="cfc224cb-2137-46df-963f-4674542c2737" x="437" y="0" width="100" height="22" pattern="HH:mm">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+	</pageHeader>
+	<columnHeader height="35" splitType="Stretch">
+		<element kind="staticText" uuid="843c2f00-4988-4cfe-ba66-7d5295e4ed22" x="-10" y="0" width="60" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="db94a3bf-0e50-4987-bda1-af01c2ebbadc"/>
+			<text><![CDATA[id_prevision]]></text>
+		</element>
+		<element kind="staticText" uuid="d856b803-90c8-4dcc-91ea-5f14f622b640" x="60" y="0" width="40" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2709c677-66b2-4a5e-8a90-f972dce7e96a"/>
+			<text><![CDATA[usuario]]></text>
+		</element>
+		<element kind="staticText" uuid="03f825ac-83c2-4fe2-9aad-c2fca70da28d" x="130" y="0" width="70" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c015f24a-4256-45ce-8e8d-a7b6e01e0490"/>
+			<text><![CDATA[fecha_registro]]></text>
+		</element>
+		<element kind="staticText" uuid="4d854e83-f9d8-47ae-8093-db1d70dfc960" x="230" y="0" width="40" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="75809fdc-9ef8-4d81-b665-e3c1ca721c70"/>
+			<text><![CDATA[edad]]></text>
+		</element>
+		<element kind="staticText" uuid="c8834ac0-2f63-4a82-a394-88a2d46c0a82" x="280" y="0" width="80" height="19">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5181bc51-bb45-4708-b9cf-7fb584703a67"/>
+			<text><![CDATA[ingreso_mensual]]></text>
+		</element>
+		<element kind="staticText" uuid="b8604a12-a59f-4f32-aa5d-18c078636b87" x="370" y="0" width="70" height="19">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f6ea8928-411a-4995-8105-66c3b7e197ab"/>
+			<text><![CDATA[anios_aporte]]></text>
+		</element>
+		<element kind="staticText" uuid="fff2de2f-ff5a-42ce-a1d9-c455f063a7f5" x="454" y="0" width="100" height="30">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0ff5e783-2529-4290-90a2-8d8c6fe0110d"/>
+			<text><![CDATA[monto_pension_estimado]]></text>
+		</element>
+		<element kind="staticText" uuid="a1333e4b-d7e3-4997-b4cd-0b25bf0bc6da" x="570" y="1" width="50" height="16">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d504c3a4-66ea-452e-b6d0-52e3900a01b8"/>
+			<text><![CDATA[estado]]></text>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="40" splitType="Stretch">
+			<element kind="textField" uuid="074d38af-97a1-4179-b89a-84d705ef98d7" x="0" y="10" width="73" height="17">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="db94a3bf-0e50-4987-bda1-af01c2ebbadc"/>
+				<expression><![CDATA[$F{id_prevision}]]></expression>
+			</element>
+			<element kind="textField" uuid="3c01fe00-2bbf-413d-a003-6e2c99aa3a32" x="60" y="10" width="60" height="17">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2709c677-66b2-4a5e-8a90-f972dce7e96a"/>
+				<expression><![CDATA[$F{usuario}]]></expression>
+			</element>
+			<element kind="textField" uuid="28d3e466-12aa-47bf-b67f-700ca8d68998" x="130" y="10" width="90" height="17">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c015f24a-4256-45ce-8e8d-a7b6e01e0490"/>
+				<expression><![CDATA[$F{fecha_registro}]]></expression>
+			</element>
+			<element kind="textField" uuid="89b47282-9ab2-4966-983d-4b7391159366" x="230" y="10" width="50" height="17">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="75809fdc-9ef8-4d81-b665-e3c1ca721c70"/>
+				<expression><![CDATA[$F{edad}]]></expression>
+			</element>
+			<element kind="textField" uuid="f05eeb24-99b2-4581-bebc-7b2f5379c102" x="280" y="10" width="100" height="16">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="5181bc51-bb45-4708-b9cf-7fb584703a67"/>
+				<expression><![CDATA[$F{ingreso_mensual}]]></expression>
+			</element>
+			<element kind="textField" uuid="ba3880a3-8e02-4c69-84e4-706c9513a697" x="370" y="9" width="84" height="19">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f6ea8928-411a-4995-8105-66c3b7e197ab"/>
+				<expression><![CDATA[$F{anios_aporte}]]></expression>
+			</element>
+			<element kind="textField" uuid="a0f39f63-4d61-40c1-a734-01b2ee87eeee" x="454" y="0" width="100" height="30">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0ff5e783-2529-4290-90a2-8d8c6fe0110d"/>
+				<expression><![CDATA[$F{monto_pension_estimado}]]></expression>
+			</element>
+			<element kind="textField" uuid="cfe6aea8-ff08-4e77-8248-4d3e24dd00ca" x="570" y="0" width="60" height="20">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d504c3a4-66ea-452e-b6d0-52e3900a01b8"/>
+				<expression><![CDATA[$F{estado}]]></expression>
+			</element>
+		</band>
+	</detail>
+	<columnFooter height="45" splitType="Stretch"/>
+	<pageFooter height="54" splitType="Stretch"/>
+	<summary height="42" splitType="Stretch"/>
+</jasperReport>

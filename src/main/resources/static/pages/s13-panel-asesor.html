@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0" />
+
+        <title>SEGURPLAN — Panel del asesor</title>
+
+        <link rel="stylesheet"
+              href="../assets/styles.css" />
+    <link rel="stylesheet" href="../assets/theme.css">
+<script src="../assets/theme.js"></script>
+<!-- pro:head -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/pro.css">
+</head>
+
+    <body>
+
+        <header class="site-header">
+
+            <div class="logo">
+                SEGURPLAN
+                <span>Plataforma de seguros y AFP</span>
+            </div>
+
+            <div class="header-right">
+
+                <span class="user-name"
+                      id="header-user">
+                    Usuario
+                </span>
+
+                <button class="bell-btn"
+                        type="button"
+                        title="Notificaciones">
+
+                    <svg width="20"
+                         height="20"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+
+                    </svg>
+
+                </button>
+
+                <button class="profile-btn"
+                        type="button">
+                    MI PERFIL
+                </button>
+
+                <button class="btn-logout"
+                        type="button">
+                    CERRAR SESIÓN
+                </button>
+
+            </div>
+
+        </header>
+
+
+<!-- pro:banner -->
+<div class="pro-hero" data-art="asesor" data-size="lg" aria-hidden="true"><div class="pro-hero__art"></div><div class="pro-hero__in"><span class="pro-hero__k">Panel del asesor</span><p class="pro-hero__t">Atiende cada solicitud con todo a la vista</p><p class="pro-hero__s">Cotizaciones, siniestros, solicitudes AFP y documentos en un mismo panel.</p></div></div>
+        <div class="page-wrap">
+
+            <nav class="breadcrumb">
+                SEGURPLAN &rsaquo; Panel del asesor
+            </nav>
+
+            <h1 class="page-title">
+                Panel del asesor
+            </h1>
+
+            <p class="page-subtitle">
+                Solicitudes asignadas y pendientes de atención
+            </p>
+
+
+            <!-- ================================================
+                 ESTADÍSTICAS
+            ================================================= -->
+
+            <div class="stats-grid cols-3">
+
+                <div class="stat-box">
+
+                    <div class="stat-value"
+                         id="cnt-cot">
+                        —
+                    </div>
+
+                    <div class="stat-label">
+                        COTIZACIONES PENDIENTES
+                    </div>
+
+                </div>
+
+
+                <div class="stat-box">
+
+                    <div class="stat-value"
+                         id="cnt-sin">
+                        —
+                    </div>
+
+                    <div class="stat-label">
+                        SINIESTROS POR REVISAR
+                    </div>
+
+                </div>
+
+
+                <div class="stat-box">
+
+                    <div class="stat-value"
+                         id="cnt-afp">
+                        —
+                    </div>
+
+                    <div class="stat-label">
+                        AFP PENDIENTES
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================
+                 MÓDULOS
+            ================================================= -->
+
+            <div class="admin-grid">
+
+                <a class="admin-btn"
+                   href="s29-gestion-cotizaciones.html">
+
+                    <div class="ab-title">
+                        COTIZACIONES
+                    </div>
+
+                    <div class="ab-sub">
+                        Responder solicitudes y registrar gestiones con la aseguradora
+                    </div>
+
+                </a>
+
+
+                <a class="admin-btn"
+                   href="s28-gestion-siniestros.html">
+
+                    <div class="ab-title">
+                        SINIESTROS
+                    </div>
+
+                    <div class="ab-sub">
+                        Revisar, derivar y evaluar siniestros
+                    </div>
+
+                </a>
+
+
+                <a class="admin-btn"
+                   href="s30-solicitudes-afp.html">
+
+                    <div class="ab-title">
+                        AFP
+                    </div>
+
+                    <div class="ab-sub">
+                        Atender orientaciones previsionales
+                    </div>
+
+                </a>
+
+
+                <a class="admin-btn"
+                   href="s28-gestion-siniestros.html">
+
+                    <div class="ab-title">
+                        DOCUMENTOS
+                    </div>
+
+                    <div class="ab-sub">
+                        Validar la documentación de cada siniestro
+                    </div>
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <footer class="site-footer">
+
+            <div class="footer-brand">
+
+                SEGURPLAN
+
+                <span>
+                    Plataforma de seguros y AFP
+                </span>
+
+            </div>
+
+            <nav class="footer-links">
+
+                <a href="#"
+                   class="btn-logout">
+                    Cerrar sesión
+                </a>
+
+            </nav>
+
+            <div class="footer-meta">
+
+                <span>
+                    © 2026 SEGURPLAN. Todos los derechos reservados.
+                </span>
+
+            </div>
+
+        </footer>
+
+
+        <script src="../assets/app.js"></script>
+
+
+        <script>
+            (function () {
+                const session = sp_getSession();
+                if (!session) { window.location.replace('s01-login.html'); return; }
+                if (session.rol !== 'Asesor' && session.rol !== 'Administrador') {
+                    window.location.replace('s02-panel-usuario.html'); return;
+                }
+                document.getElementById('header-user').textContent =
+                        session.nombres + ' ' + session.apellidos + ' — ' + session.rol;
+
+                // Contadores del panel: cada módulo tiene su propia pantalla
+                async function contar(url, filtro, id) {
+                    try {
+                        const r = await fetch(url, { credentials: 'same-origin' });
+                        if (!r.ok) { return; }
+                        const datos = await r.json();
+                        const n = Array.isArray(datos) ? datos.filter(filtro).length : 0;
+                        document.getElementById(id).textContent = String(n).padStart(2, '0');
+                    } catch (e) { /* el contador queda en — */ }
+                }
+                contar('/api/cotizaciones',
+                       c => c.estado === 'Solicitada' || c.estado === 'En revisión', 'cnt-cot');
+                contar('/api/siniestros/gestion',
+                       x => x.estado === 'Registrado' || x.estado === 'En revisión', 'cnt-sin');
+                contar('/api/previsiones/asesor/pendientes', () => true, 'cnt-afp');
+            })();
+        </script>
+
+    </body>
+</html>

@@ -1,0 +1,51 @@
+# Levanta TODO el sistema (base de datos + aplicación) con un solo comando:
+#     cp .env.example .env      (y cambie DB_PASSWORD)
+#     docker compose up --build
+# Luego abrir http://localhost:8080   ·   Swagger: http://localhost:8080/swagger-ui.html
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: SegurPlan
+      POSTGRES_USER: postgres
+      # Obligatoria: defínala en el archivo .env (no hay valor por defecto)
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD en el archivo .env (copie .env.example)}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Se ejecutan solo la primera vez (base vacía), en orden alfabético
+      - ./db/SegurPlan_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./db/datos_iniciales.sql:/docker-entrypoint-initdb.d/02_datos.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d SegurPlan"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    # La base NO se publica al exterior: solo la ve la aplicación
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/SegurPlan
+      DB_USER: postgres
+      DB_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD en el archivo .env (copie .env.example)}
+      PG_BIN_DIR: ""
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      # false en producción: oculta Swagger UI y /v3/api-docs
+      SWAGGER_ENABLED: ${SWAGGER_ENABLED:-true}
+    ports:
+      - "${PORT:-8080}:8080"
+    volumes:
+      - uploads:/app/uploads
+      - backups:/app/backups
+      - logs:/app/logs
+
+volumes:
+  pgdata:
+  uploads:
+  backups:
+  logs:

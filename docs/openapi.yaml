@@ -1,0 +1,2991 @@
+openapi: 3.0.1
+info:
+  title: SEGURPLAN API
+  version: 6.5.0
+  description: 'API REST de SEGURPLAN. Documento estático generado desde el código; la versión viva está en /v3/api-docs.
+
+
+    **Cómo probar:** 1) GET /api/csrf y copie `token`; 2) POST /api/usuarios/login; 3) Authorize → pegue el token en `csrf`; 4) POST/PUT/DELETE
+    envían X-CSRF-TOKEN.'
+servers:
+- url: http://localhost:8080
+  description: Local
+tags:
+- name: Autenticación
+  description: Registro, inicio de sesión y rutas heredadas de administración de usuarios.
+- name: Mi perfil
+  description: Datos personales y cambio de contraseña del usuario en sesión.
+- name: Catálogos
+  description: Tipos de seguro y aseguradoras activos, para los formularios.
+- name: Cotizaciones
+  description: Solicitud, consulta y respuesta de cotizaciones.
+- name: Contrataciones
+  description: Contrataciones de seguros (uso del personal).
+- name: Pagos (simulados)
+  description: Pago simulado con tarjeta, Yape o Plin. No cobra dinero real.
+- name: Pólizas
+  description: Emisión y consulta de pólizas.
+- name: AFP / Previsión
+  description: Simulación de pensión y orientación AFP.
+- name: Siniestros
+  description: Registro, seguimiento y gestión de siniestros.
+- name: Documentos
+  description: Evidencias de siniestros y adjuntos de cotización.
+- name: Notificaciones
+  description: Avisos internos del usuario (campana).
+- name: Mis procesos
+  description: Historial unificado del cliente y su siguiente paso.
+- name: Reportes (JSON)
+  description: Datos de los reportes para pantalla y exportación. Solo Administrador.
+- name: Reportes PDF (JasperReports)
+  description: Reportes en PDF generados en el servidor con plantillas .jrxml.
+- name: Admin · Usuarios
+  description: Gestión de usuarios, estados y roles.
+- name: Admin · Asesores
+  description: Alta y mantenimiento de asesores.
+- name: Admin · Roles y permisos
+  description: Roles, matriz de permisos y actividad.
+- name: Admin · Catálogos
+  description: Mantenimiento de aseguradoras y tipos de seguro.
+- name: Admin · Historial
+  description: Bitácora de cambios (inmutable).
+- name: Admin · Respaldos
+  description: Respaldo, descarga y restauración de la base de datos.
+paths:
+  /api/admin/asesores:
+    get:
+      tags:
+      - Admin · Asesores
+      summary: Listar asesores
+      description: '**Roles:** Administrador. Incluye el área de especialidad.'
+      operationId: AsesorAdminController_listarAsesores_get
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+    post:
+      tags:
+      - Admin · Asesores
+      summary: Registrar un asesor
+      description: '**Roles:** Administrador. Área de especialidad: Ventas, Siniestros o AFP.'
+      operationId: AsesorAdminController_registrarAsesor_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistroAsesorRequest'
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/admin/asesores/{idUsuario}:
+    get:
+      tags:
+      - Admin · Asesores
+      summary: Ver un asesor
+      description: '**Roles:** Administrador. Detalle del asesor.'
+      operationId: AsesorAdminController_obtenerAsesor_get
+      parameters:
+      - name: idUsuario
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+    put:
+      tags:
+      - Admin · Asesores
+      summary: Actualizar un asesor
+      description: '**Roles:** Administrador. Datos y especialidad.'
+      operationId: AsesorAdminController_actualizarAsesor_put
+      parameters:
+      - name: idUsuario
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActualizarUsuarioRequest'
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/admin/asesores/{idUsuario}/estado:
+    put:
+      tags:
+      - Admin · Asesores
+      summary: Activar o desactivar un asesor
+      description: '**Roles:** Administrador. Estado Activo o Inactivo.'
+      operationId: AsesorAdminController_cambiarEstadoAsesor_put
+      parameters:
+      - name: idUsuario
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/admin/backups:
+    get:
+      tags:
+      - Admin · Respaldos
+      summary: Listar respaldos
+      description: '**Roles:** Administrador. Archivos .sql disponibles.'
+      operationId: BackupAdminController_listar_get
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+    post:
+      tags:
+      - Admin · Respaldos
+      summary: Crear un respaldo ahora
+      description: '**Roles:** Administrador. Ejecuta pg_dump. También hay respaldo automático cada 6 horas.'
+      operationId: BackupAdminController_crear_post
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/admin/backups/{nombre}:
+    delete:
+      tags:
+      - Admin · Respaldos
+      summary: Eliminar un respaldo
+      description: '**Roles:** Administrador. Borra el archivo del servidor.'
+      operationId: BackupAdminController_eliminar_delete
+      parameters:
+      - name: nombre
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/admin/backups/{nombre}/descargar:
+    get:
+      tags:
+      - Admin · Respaldos
+      summary: Descargar un respaldo
+      description: '**Roles:** Administrador. Entrega el archivo .sql.'
+      operationId: BackupAdminController_descargar_get
+      parameters:
+      - name: nombre
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Archivo
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/admin/backups/{nombre}/restaurar:
+    post:
+      tags:
+      - Admin · Respaldos
+      summary: Restaurar un respaldo
+      description: '**Roles:** Administrador. Operación destructiva: reemplaza los datos actuales.'
+      operationId: BackupAdminController_restaurar_post
+      parameters:
+      - name: nombre
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/admin/catalogos/aseguradoras:
+    get:
+      tags:
+      - Admin · Catálogos
+      summary: Listar aseguradoras (todas)
+      description: '**Roles:** Administrador. Incluye las inactivas.'
+      operationId: CatalogoAdminController_listarAseguradoras_get
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+    post:
+      tags:
+      - Admin · Catálogos
+      summary: Crear una aseguradora
+      description: '**Roles:** Administrador. Alta en el catálogo.'
+      operationId: CatalogoAdminController_crearAseguradora_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AseguradoraRequest'
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/admin/catalogos/aseguradoras/{id}:
+    put:
+      tags:
+      - Admin · Catálogos
+      summary: Actualizar una aseguradora
+      description: '**Roles:** Administrador. Datos de la aseguradora.'
+      operationId: CatalogoAdminController_actualizarAseguradora_put
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AseguradoraRequest'
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/admin/catalogos/aseguradoras/{id}/estado:
+    put:
+      tags:
+      - Admin · Catálogos
+      summary: Activar o desactivar una aseguradora
+      description: '**Roles:** Administrador. Una aseguradora inactiva deja de ofrecerse en los formularios.'
+      operationId: CatalogoAdminController_estadoAseguradora_put
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CambiarEstadoRequest'
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/admin/catalogos/tipos-seguro:
+    get:
+      tags:
+      - Admin · Catálogos
+      summary: Listar tipos de seguro (todos)
+      description: '**Roles:** Administrador. Incluye los inactivos.'
+      operationId: CatalogoAdminController_listarTiposSeguro_get
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+    post:
+      tags:
+      - Admin · Catálogos
+      summary: Crear un tipo de seguro
+      description: '**Roles:** Administrador. Alta en el catálogo.'
+      operationId: CatalogoAdminController_crearTipoSeguro_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TipoSeguroRequest'
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/admin/catalogos/tipos-seguro/{id}:
+    put:
+      tags:
+      - Admin · Catálogos
+      summary: Actualizar un tipo de seguro
+      description: '**Roles:** Administrador. Datos del tipo.'
+      operationId: CatalogoAdminController_actualizarTipoSeguro_put
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TipoSeguroRequest'
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/admin/catalogos/tipos-seguro/{id}/estado:
+    put:
+      tags:
+      - Admin · Catálogos
+      summary: Activar o desactivar un tipo de seguro
+      description: '**Roles:** Administrador. Un tipo inactivo deja de ofrecerse.'
+      operationId: CatalogoAdminController_estadoTipoSeguro_put
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CambiarEstadoRequest'
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/admin/historial:
+    get:
+      tags:
+      - Admin · Historial
+      summary: Listar el historial de cambios
+      description: '**Roles:** Administrador. Bitácora inmutable (un trigger impide UPDATE y DELETE).'
+      operationId: HistorialAdminController_listarHistorial_get
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/admin/historial/entidad/{entidad}:
+    get:
+      tags:
+      - Admin · Historial
+      summary: Historial por entidad
+      description: '**Roles:** Administrador. Filtra por tipo de registro.'
+      operationId: HistorialAdminController_listarPorEntidad_get
+      parameters:
+      - name: entidad
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/admin/roles:
+    get:
+      tags:
+      - Admin · Roles y permisos
+      summary: Listar roles
+      description: '**Roles:** Administrador. Roles del sistema.'
+      operationId: RolAdminController_listarRoles_get
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/admin/roles/{idRol}:
+    get:
+      tags:
+      - Admin · Roles y permisos
+      summary: Ver un rol
+      description: '**Roles:** Administrador. Detalle del rol.'
+      operationId: RolAdminController_obtenerRol_get
+      parameters:
+      - name: idRol
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/admin/roles/{idRol}/permisos:
+    get:
+      tags:
+      - Admin · Roles y permisos
+      summary: Ver la matriz de permisos de un rol
+      description: '**Roles:** Administrador. La matriz se guarda y administra; la autorización real es por rol (SecurityConfig).'
+      operationId: PermisoAdminController_obtener_get
+      parameters:
+      - name: idRol
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+    put:
+      tags:
+      - Admin · Roles y permisos
+      summary: Guardar la matriz de permisos de un rol
+      description: '**Roles:** Administrador. Actualiza la matriz; no cambia la autorización real, que es por rol.'
+      operationId: PermisoAdminController_guardar_put
+      parameters:
+      - name: idRol
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/admin/usuarios:
+    get:
+      tags:
+      - Admin · Usuarios
+      summary: Listar usuarios
+      description: '**Roles:** Administrador. Todos los usuarios.'
+      operationId: UsuarioAdminController_listarUsuarios_get
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/admin/usuarios/{idUsuario}:
+    get:
+      tags:
+      - Admin · Usuarios
+      summary: Ver un usuario
+      description: '**Roles:** Administrador. Detalle del usuario.'
+      operationId: UsuarioAdminController_obtenerUsuario_get
+      parameters:
+      - name: idUsuario
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+    put:
+      tags:
+      - Admin · Usuarios
+      summary: Actualizar un usuario
+      description: '**Roles:** Administrador. Datos personales del usuario.'
+      operationId: UsuarioAdminController_actualizarUsuario_put
+      parameters:
+      - name: idUsuario
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActualizarUsuarioRequest'
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/admin/usuarios/{idUsuario}/actividad:
+    get:
+      tags:
+      - Admin · Roles y permisos
+      summary: Actividad de un usuario
+      description: '**Roles:** Administrador. Acciones registradas en el historial.'
+      operationId: PermisoAdminController_actividad_get
+      parameters:
+      - name: idUsuario
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/admin/usuarios/{idUsuario}/estado:
+    put:
+      tags:
+      - Admin · Usuarios
+      summary: Activar o desactivar un usuario
+      description: '**Roles:** Administrador. Estado Activo o Inactivo.'
+      operationId: UsuarioAdminController_cambiarEstado_put
+      parameters:
+      - name: idUsuario
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/admin/usuarios/{idUsuario}/rol:
+    put:
+      tags:
+      - Admin · Usuarios
+      summary: Cambiar el rol de un usuario
+      description: '**Roles:** Administrador. Cliente, Asesor o Administrador.'
+      operationId: UsuarioAdminController_cambiarRol_put
+      parameters:
+      - name: idUsuario
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CambiarRolRequest'
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/catalogos/aseguradoras:
+    get:
+      tags:
+      - Catálogos
+      summary: Listar aseguradoras activas
+      description: '**Roles:** Cualquier usuario autenticado. Solo devuelve las aseguradoras en estado Activo.'
+      operationId: CatalogoController_listarAseguradoras_get
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/catalogos/tipos-seguro:
+    get:
+      tags:
+      - Catálogos
+      summary: Listar tipos de seguro activos
+      description: '**Roles:** Cualquier usuario autenticado. Solo devuelve los tipos en estado Activo.'
+      operationId: CatalogoController_listarTiposSeguro_get
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/contrataciones:
+    post:
+      tags:
+      - Contrataciones
+      summary: Registrar una contratación
+      description: '**Roles:** Asesor, Administrador. Crea la contratación de una cotización aceptada.'
+      operationId: ContratacionController_crear_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContratacionRequest'
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/contrataciones/pendientes:
+    get:
+      tags:
+      - Contrataciones
+      summary: Listar contrataciones pendientes
+      description: '**Roles:** Asesor, Administrador. Contrataciones aún sin póliza.'
+      operationId: ContratacionController_listarPendientes_get
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/cotizaciones:
+    post:
+      tags:
+      - Cotizaciones
+      summary: Solicitar una cotización
+      description: '**Roles:** Cualquier usuario autenticado. El solicitante es siempre el usuario en sesión. Admite datosJson con el formulario
+        dinámico.'
+      operationId: CotizacionController_crear_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CotizacionRequest'
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+    get:
+      tags:
+      - Cotizaciones
+      summary: Listar todas las cotizaciones
+      description: '**Roles:** Asesor, Administrador. Listado general para el personal.'
+      operationId: CotizacionController_listarTodas_get
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/cotizaciones/usuario/{idUsuario}:
+    get:
+      tags:
+      - Cotizaciones
+      summary: Listar cotizaciones de un usuario
+      description: '**Roles:** Dueño del registro, Asesor o Administrador. Cotizaciones del usuario indicado.'
+      operationId: CotizacionController_listarPorUsuario_get
+      parameters:
+      - name: idUsuario
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/cotizaciones/{idCotizacion}:
+    get:
+      tags:
+      - Cotizaciones
+      summary: Ver una cotización
+      description: '**Roles:** Dueño del registro, Asesor o Administrador. Detalle de la cotización.'
+      operationId: CotizacionController_buscarPorId_get
+      parameters:
+      - name: idCotizacion
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/cotizaciones/{idCotizacion}/respuesta:
+    put:
+      tags:
+      - Cotizaciones
+      summary: Responder una cotización
+      description: '**Roles:** Asesor, Administrador. Registra prima, cobertura, deducible y vigencia, y notifica al cliente.'
+      operationId: CotizacionController_responderCotizacion_put
+      parameters:
+      - name: idCotizacion
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RespuestaCotizacionRequest'
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/cotizaciones/{id}/comunicaciones:
+    post:
+      tags:
+      - Cotizaciones
+      summary: Registrar comunicación con la aseguradora
+      description: '**Roles:** Asesor, Administrador. Deja constancia de un contacto con la aseguradora sobre la cotización.'
+      operationId: CotizacionExtraController_registrar_post
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+    get:
+      tags:
+      - Cotizaciones
+      summary: Listar comunicaciones con la aseguradora
+      description: '**Roles:** Asesor, Administrador. Historial de contactos de la cotización.'
+      operationId: CotizacionExtraController_listar_get
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/cotizaciones/{id}/pdf:
+    get:
+      tags:
+      - Cotizaciones
+      summary: Descargar la cotización en PDF
+      description: '**Roles:** Dueño del registro, Asesor o Administrador. PDF generado con el generador propio (SimplePdf/PdfService).'
+      operationId: CotizacionExtraController_pdf_get
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: PDF
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/csrf:
+    get:
+      tags:
+      - Autenticación
+      summary: Obtener el token CSRF
+      description: '**Roles:** Público (sin sesión). Devuelve headerName, parameterName y token. Envíe el token en la cabecera X-CSRF-TOKEN en
+        POST, PUT y DELETE.'
+      operationId: CsrfController_obtenerToken_get
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+      security: []
+  /api/documentos/asesor/siniestro/{idSiniestro}:
+    get:
+      tags:
+      - Documentos
+      summary: Listar evidencias (vista del asesor)
+      description: '**Roles:** Asesor, Administrador. Todas las evidencias del siniestro.'
+      operationId: DocumentoController_listarParaRevision_get
+      parameters:
+      - name: idSiniestro
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/documentos/cotizacion/{idCotizacion}:
+    post:
+      tags:
+      - Documentos
+      summary: Adjuntar un archivo a una cotización
+      description: '**Roles:** Cualquier usuario autenticado. multipart/form-data. PDF, JPG o PNG hasta 10 MB.'
+      operationId: DocumentoGestionController_adjuntar_post
+      parameters:
+      - name: idCotizacion
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                archivo:
+                  type: string
+                  format: binary
+                tipoDocumento:
+                  type: string
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+    get:
+      tags:
+      - Documentos
+      summary: Listar adjuntos de una cotización
+      description: '**Roles:** Dueño del registro, Asesor o Administrador. Adjuntos de la cotización.'
+      operationId: DocumentoGestionController_listarAdjuntos_get
+      parameters:
+      - name: idCotizacion
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/documentos/siniestro/{idSiniestro}:
+    post:
+      tags:
+      - Documentos
+      summary: Subir una evidencia de siniestro
+      description: '**Roles:** Cualquier usuario autenticado. multipart/form-data. PDF, JPG o PNG hasta 10 MB; video hasta 100 MB. Solo el dueño.'
+      operationId: DocumentoController_subirEvidencia_post
+      parameters:
+      - name: idSiniestro
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                archivo:
+                  type: string
+                  format: binary
+                tipoDocumento:
+                  type: string
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+    get:
+      tags:
+      - Documentos
+      summary: Listar evidencias de mi siniestro
+      description: '**Roles:** Cualquier usuario autenticado. Solo el dueño del siniestro.'
+      operationId: DocumentoController_listarEvidencias_get
+      parameters:
+      - name: idSiniestro
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/documentos/{idDocumento}:
+    delete:
+      tags:
+      - Documentos
+      summary: Eliminar una evidencia
+      description: '**Roles:** Cualquier usuario autenticado. Solo el dueño y mientras el caso lo permita.'
+      operationId: DocumentoController_eliminarEvidencia_delete
+      parameters:
+      - name: idDocumento
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/documentos/{id}/archivo:
+    get:
+      tags:
+      - Documentos
+      summary: Descargar o ver un archivo
+      description: '**Roles:** Dueño del registro, Asesor o Administrador. Entrega el archivo de forma segura.'
+      operationId: DocumentoGestionController_archivo_get
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Archivo
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/documentos/{id}/validacion:
+    put:
+      tags:
+      - Documentos
+      summary: Validar, observar o rechazar un documento
+      description: '**Roles:** Asesor, Administrador. Exige motivo al observar o rechazar; avisa al cliente.'
+      operationId: DocumentoGestionController_validar_put
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/mis-procesos:
+    get:
+      tags:
+      - Mis procesos
+      summary: Historial unificado del cliente
+      description: '**Roles:** Cliente. Cotizaciones, siniestros y simulaciones AFP con el siguiente paso de cada una.'
+      operationId: HistorialClienteController_listar_get
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/notificaciones:
+    get:
+      tags:
+      - Notificaciones
+      summary: Listar mis notificaciones
+      description: '**Roles:** Cualquier usuario autenticado. Incluye el contador de no leídas.'
+      operationId: NotificacionController_listar_get
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/notificaciones/leidas:
+    put:
+      tags:
+      - Notificaciones
+      summary: Marcar todas como leídas
+      description: '**Roles:** Cualquier usuario autenticado. Todas las del usuario en sesión.'
+      operationId: NotificacionController_marcarTodas_put
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/notificaciones/{id}/leida:
+    put:
+      tags:
+      - Notificaciones
+      summary: Marcar una notificación como leída
+      description: '**Roles:** Cualquier usuario autenticado. Solo las propias.'
+      operationId: NotificacionController_marcarLeida_put
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/pagos:
+    post:
+      tags:
+      - Pagos (simulados)
+      summary: Pagar una contratación (simulado)
+      description: '**Roles:** Cliente. Tarjeta, Yape o Plin (todo simulado). Si se aprueba, registra la contratación. Una tarjeta con número
+        válido se aprueba, salvo si termina en 0002 (Fondos insuficientes) o en 0069 (Tarjeta vencida).'
+      operationId: PagoController_pagar_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PagoRequest'
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/pagos/datos-qr:
+    get:
+      tags:
+      - Pagos (simulados)
+      summary: Datos del QR de pago
+      description: '**Roles:** Cliente. Número y nombre del comercio para Yape/Plin (simulado).'
+      operationId: PagoController_datosQr_get
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/polizas:
+    post:
+      tags:
+      - Pólizas
+      summary: Generar una póliza
+      description: '**Roles:** Asesor, Administrador. Emite la póliza de una contratación y notifica al cliente.'
+      operationId: PolizaController_generar_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PolizaRequest'
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/polizas/mis-polizas:
+    get:
+      tags:
+      - Pólizas
+      summary: Listar mis pólizas
+      description: '**Roles:** Cliente. Pólizas del cliente en sesión.'
+      operationId: PolizaController_misPolizas_get
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/polizas/usuario/{idUsuario}:
+    get:
+      tags:
+      - Pólizas
+      summary: Listar pólizas de un usuario
+      description: '**Roles:** Dueño del registro, Asesor o Administrador. Pólizas del usuario indicado.'
+      operationId: PolizaController_listarPorUsuario_get
+      parameters:
+      - name: idUsuario
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/polizas/{id}/pdf:
+    get:
+      tags:
+      - Pólizas
+      summary: Descargar la póliza en PDF
+      description: '**Roles:** Dueño del registro, Asesor o Administrador. PDF generado con el generador propio (SimplePdf/PdfService).'
+      operationId: PolizaPdfController_pdf_get
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: PDF
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/previsiones:
+    post:
+      tags:
+      - AFP / Previsión
+      summary: Registrar una simulación AFP
+      description: '**Roles:** Cualquier usuario autenticado. Calcula y guarda la proyección de pensión.'
+      operationId: PrevisionController_simular_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrevisionRequest'
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/previsiones/asesor/pendientes:
+    get:
+      tags:
+      - AFP / Previsión
+      summary: Listar solicitudes AFP pendientes
+      description: '**Roles:** Asesor, Administrador. Orientaciones por atender.'
+      operationId: PrevisionController_solicitudesAsesor_get
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/previsiones/mis-simulaciones:
+    get:
+      tags:
+      - AFP / Previsión
+      summary: Listar mis simulaciones AFP
+      description: '**Roles:** Cualquier usuario autenticado. Simulaciones del usuario en sesión.'
+      operationId: PrevisionController_misSimulaciones_get
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/previsiones/{idPrevision}:
+    get:
+      tags:
+      - AFP / Previsión
+      summary: Ver una simulación AFP
+      description: '**Roles:** Cualquier usuario autenticado. Solo el dueño de la simulación.'
+      operationId: PrevisionController_obtener_get
+      parameters:
+      - name: idPrevision
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/previsiones/{idPrevision}/respuesta:
+    put:
+      tags:
+      - AFP / Previsión
+      summary: Responder una solicitud AFP
+      description: '**Roles:** Asesor, Administrador. Registra la respuesta y notifica al cliente.'
+      operationId: PrevisionController_responder_put
+      parameters:
+      - name: idPrevision
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/previsiones/{idPrevision}/solicitar-orientacion:
+    put:
+      tags:
+      - AFP / Previsión
+      summary: Solicitar orientación AFP
+      description: '**Roles:** Cliente. Notifica a los asesores.'
+      operationId: PrevisionController_solicitarOrientacion_put
+      parameters:
+      - name: idPrevision
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/reportes/afp:
+    get:
+      tags:
+      - Reportes (JSON)
+      summary: Reporte AFP
+      description: '**Roles:** Administrador. Parámetros anio y mes.'
+      operationId: ReporteController_reporteAfp_get
+      parameters:
+      - name: anio
+        in: query
+        required: true
+        schema:
+          type: integer
+      - name: mes
+        in: query
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/reportes/general:
+    get:
+      tags:
+      - Reportes (JSON)
+      summary: Reporte general
+      description: '**Roles:** Administrador. Parámetros anio y mes (0 = todo el histórico / año completo).'
+      operationId: ReporteController_reporteGeneral_get
+      parameters:
+      - name: anio
+        in: query
+        required: true
+        schema:
+          type: integer
+      - name: mes
+        in: query
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/reportes/gerencia/indicadores:
+    get:
+      tags:
+      - Reportes (JSON)
+      summary: Indicadores de gerencia
+      description: '**Roles:** Administrador. Parámetros anio y mes.'
+      operationId: ReporteController_indicadoresGerenciales_get
+      parameters:
+      - name: anio
+        in: query
+        required: true
+        schema:
+          type: integer
+      - name: mes
+        in: query
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/reportes/jasper/{codigo}/pdf:
+    get:
+      tags:
+      - Reportes PDF (JasperReports)
+      summary: Descargar un reporte PDF (JasperReports)
+      description: '**Roles:** Administrador. Códigos: REP-DG-01, REP-DG-02, REP-LA-01, REP-MV-01, REP-MV-02, REP-MV-05, REP-OT-02, REP-PO-01,
+        REP-PO-02, REP-PO-03. Código desconocido: 404.'
+      operationId: JasperReportController_descargarPdf_get
+      parameters:
+      - name: codigo
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: PDF
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/reportes/logistica/documentos:
+    get:
+      tags:
+      - Reportes (JSON)
+      summary: Reporte de documentos
+      description: '**Roles:** Administrador. Parámetros anio y mes.'
+      operationId: ReporteController_documentosPorTipoEstado_get
+      parameters:
+      - name: anio
+        in: query
+        required: true
+        schema:
+          type: integer
+      - name: mes
+        in: query
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/reportes/marketing/cartera-polizas:
+    get:
+      tags:
+      - Reportes (JSON)
+      summary: Cartera de pólizas
+      description: '**Roles:** Administrador. Parámetros anio y mes.'
+      operationId: ReporteController_carteraPolizas_get
+      parameters:
+      - name: anio
+        in: query
+        required: true
+        schema:
+          type: integer
+      - name: mes
+        in: query
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/reportes/marketing/conversion-ventas:
+    get:
+      tags:
+      - Reportes (JSON)
+      summary: Conversión de ventas
+      description: '**Roles:** Administrador. Parámetros anio y mes.'
+      operationId: ReporteController_conversionVentas_get
+      parameters:
+      - name: anio
+        in: query
+        required: true
+        schema:
+          type: integer
+      - name: mes
+        in: query
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/reportes/marketing/cotizaciones-estado:
+    get:
+      tags:
+      - Reportes (JSON)
+      summary: Cotizaciones por estado
+      description: '**Roles:** Administrador. Parámetros anio y mes.'
+      operationId: ReporteController_cotizacionesPorEstado_get
+      parameters:
+      - name: anio
+        in: query
+        required: true
+        schema:
+          type: integer
+      - name: mes
+        in: query
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/reportes/operaciones/afp:
+    get:
+      tags:
+      - Reportes (JSON)
+      summary: Reporte operativo AFP
+      description: '**Roles:** Administrador. Parámetros anio y mes.'
+      operationId: ReporteController_reporteAfpPorPeriodo_get
+      parameters:
+      - name: anio
+        in: query
+        required: true
+        schema:
+          type: integer
+      - name: mes
+        in: query
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/reportes/operaciones/siniestros-aseguradora:
+    get:
+      tags:
+      - Reportes (JSON)
+      summary: Siniestros por aseguradora
+      description: '**Roles:** Administrador. Parámetros anio y mes.'
+      operationId: ReporteController_siniestrosPorAseguradora_get
+      parameters:
+      - name: anio
+        in: query
+        required: true
+        schema:
+          type: integer
+      - name: mes
+        in: query
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/reportes/siniestros:
+    get:
+      tags:
+      - Reportes (JSON)
+      summary: Reporte de siniestros
+      description: '**Roles:** Administrador. Parámetros anio y mes.'
+      operationId: ReporteController_reporteSiniestros_get
+      parameters:
+      - name: anio
+        in: query
+        required: true
+        schema:
+          type: integer
+      - name: mes
+        in: query
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/reportes/trazabilidad:
+    get:
+      tags:
+      - Reportes (JSON)
+      summary: Trazabilidad
+      description: '**Roles:** Administrador. Parámetros anio y mes.'
+      operationId: ReporteController_trazabilidad_get
+      parameters:
+      - name: anio
+        in: query
+        required: true
+        schema:
+          type: integer
+      - name: mes
+        in: query
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/siniestros:
+    post:
+      tags:
+      - Siniestros
+      summary: Registrar un siniestro
+      description: '**Roles:** Cualquier usuario autenticado. Crea el expediente en estado Registrado.'
+      operationId: SiniestroController_registrar_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiniestroRequest'
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/siniestros/asesor/pendientes:
+    get:
+      tags:
+      - Siniestros
+      summary: Listar siniestros pendientes
+      description: '**Roles:** Asesor, Administrador. Siniestros por revisar.'
+      operationId: SiniestroController_listarPendientesAsesor_get
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/siniestros/asesor/{idSiniestro}:
+    get:
+      tags:
+      - Siniestros
+      summary: Ver un siniestro (vista del asesor)
+      description: '**Roles:** Asesor, Administrador. Detalle completo para revisión.'
+      operationId: SiniestroController_obtenerParaRevision_get
+      parameters:
+      - name: idSiniestro
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/siniestros/gestion:
+    get:
+      tags:
+      - Siniestros
+      summary: Listar siniestros para gestión
+      description: '**Roles:** Asesor, Administrador. Todos los siniestros con su estado.'
+      operationId: SiniestroGestionController_listar_get
+      parameters:
+      - name: estado
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/siniestros/gestion/{id}:
+    get:
+      tags:
+      - Siniestros
+      summary: Ver un siniestro para gestión
+      description: '**Roles:** Asesor, Administrador. Detalle, estados siguientes permitidos y evidencias.'
+      operationId: SiniestroGestionController_detalle_get
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/siniestros/gestion/{id}/derivar:
+    put:
+      tags:
+      - Siniestros
+      summary: Derivar el siniestro a la aseguradora
+      description: '**Roles:** Asesor, Administrador. Solo desde Información completa. Estado resultante: Derivado.'
+      operationId: SiniestroGestionController_derivar_put
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/siniestros/gestion/{id}/estado:
+    put:
+      tags:
+      - Siniestros
+      summary: Cambiar el estado del siniestro
+      description: '**Roles:** Asesor, Administrador. Valida la transición con la máquina de estados (no permite saltos).'
+      operationId: SiniestroGestionController_estado_put
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/siniestros/gestion/{id}/evaluacion:
+    put:
+      tags:
+      - Siniestros
+      summary: Registrar la evaluación de la aseguradora
+      description: '**Roles:** Asesor, Administrador. Dictamen, monto aprobado y fecha de evaluación.'
+      operationId: SiniestroGestionController_evaluacion_put
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/siniestros/gestion/{id}/revision:
+    post:
+      tags:
+      - Siniestros
+      summary: Iniciar revisión o solicitar información
+      description: '**Roles:** Asesor, Administrador. Cambia a En revisión o Información pendiente.'
+      operationId: SiniestroGestionController_revision_post
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/siniestros/mis-siniestros:
+    get:
+      tags:
+      - Siniestros
+      summary: Listar mis siniestros
+      description: '**Roles:** Cualquier usuario autenticado. Siniestros del usuario en sesión.'
+      operationId: SiniestroController_misSiniestros_get
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/siniestros/{idSiniestro}:
+    get:
+      tags:
+      - Siniestros
+      summary: Ver mi siniestro
+      description: '**Roles:** Cualquier usuario autenticado. Solo el dueño del siniestro.'
+      operationId: SiniestroController_obtener_get
+      parameters:
+      - name: idSiniestro
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/siniestros/{idSiniestro}/derivar:
+    put:
+      tags:
+      - Siniestros
+      summary: Derivar a la aseguradora (ruta heredada)
+      description: '**Roles:** Asesor, Administrador. Versión anterior; use PUT /api/siniestros/gestion/{id}/derivar.'
+      operationId: SiniestroController_derivarAseguradora_put
+      parameters:
+      - name: idSiniestro
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/siniestros/{id}/resumen.pdf:
+    get:
+      tags:
+      - Siniestros
+      summary: Resumen del siniestro en PDF
+      description: '**Roles:** Dueño del registro, Asesor o Administrador. PDF generado con el generador propio.'
+      operationId: SiniestroGestionController_resumenPdf_get
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: PDF
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/siniestros/{id}/timeline:
+    get:
+      tags:
+      - Siniestros
+      summary: Línea de tiempo del siniestro
+      description: '**Roles:** Dueño del registro, Asesor o Administrador. Historial cronológico de estados.'
+      operationId: SiniestroGestionController_timeline_get
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/usuarios/admin:
+    get:
+      tags:
+      - Autenticación
+      summary: Listar usuarios (ruta heredada)
+      description: '**Roles:** Administrador. Duplicado de GET /api/admin/usuarios; se conserva por compatibilidad.'
+      operationId: UsuarioController_listarUsuarios_get
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/usuarios/admin/{idUsuario}:
+    get:
+      tags:
+      - Autenticación
+      summary: Ver un usuario (ruta heredada)
+      description: '**Roles:** Administrador. Duplicado de GET /api/admin/usuarios/{idUsuario}.'
+      operationId: UsuarioController_obtenerUsuario_get
+      parameters:
+      - name: idUsuario
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+    put:
+      tags:
+      - Autenticación
+      summary: Actualizar un usuario (ruta heredada)
+      description: '**Roles:** Administrador. Duplicado de PUT /api/admin/usuarios/{idUsuario}.'
+      operationId: UsuarioController_actualizarUsuario_put
+      parameters:
+      - name: idUsuario
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActualizarUsuarioRequest'
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/usuarios/admin/{idUsuario}/estado:
+    put:
+      tags:
+      - Autenticación
+      summary: Activar o desactivar un usuario (ruta heredada)
+      description: '**Roles:** Administrador. Duplicado de PUT /api/admin/usuarios/{idUsuario}/estado.'
+      operationId: UsuarioController_cambiarEstado_put
+      parameters:
+      - name: idUsuario
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/usuarios/login:
+    post:
+      tags:
+      - Autenticación
+      summary: Iniciar sesión
+      description: '**Roles:** Público (sin sesión). Crea la sesión (cookie JSESSIONID). Tras 5 intentos fallidos del mismo correo (o 20 de la
+        misma IP) responde 429 durante 15 minutos.'
+      operationId: UsuarioController_login_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '429':
+          description: Demasiados intentos fallidos; espere (cabecera Retry-After).
+      security: []
+  /api/usuarios/perfil:
+    get:
+      tags:
+      - Mi perfil
+      summary: Ver mi perfil
+      description: '**Roles:** Cualquier usuario autenticado. Datos del usuario en sesión.'
+      operationId: PerfilController_obtener_get
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+    put:
+      tags:
+      - Mi perfil
+      summary: Actualizar mi perfil
+      description: '**Roles:** Cualquier usuario autenticado. Cambia nombres, teléfono y dirección del usuario en sesión.'
+      operationId: PerfilController_actualizar_put
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/usuarios/perfil/password:
+    put:
+      tags:
+      - Mi perfil
+      summary: Cambiar mi contraseña
+      description: '**Roles:** Cualquier usuario autenticado. Exige la contraseña actual y cumple la política (8+ caracteres, letras y números).'
+      operationId: PerfilController_cambiarPassword_put
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+        '401':
+          description: No hay sesión iniciada.
+        '403':
+          description: El rol no alcanza o el registro pertenece a otro usuario.
+  /api/usuarios/registro:
+    post:
+      tags:
+      - Autenticación
+      summary: Registrar un cliente nuevo
+      description: '**Roles:** Público (sin sesión). Crea una cuenta con rol Cliente. Contraseña: mínimo 8 caracteres con letras y números.'
+      operationId: UsuarioController_registrar_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistroRequest'
+      responses:
+        '200':
+          description: Correcto
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: 'Datos inválidos o regla de negocio incumplida ({"mensaje": ...}).'
+      security: []
+components:
+  securitySchemes:
+    sesion:
+      type: apiKey
+      in: cookie
+      name: JSESSIONID
+      description: Cookie que crea POST /api/usuarios/login
+    csrf:
+      type: apiKey
+      in: header
+      name: X-CSRF-TOKEN
+      description: Token de GET /api/csrf (POST, PUT y DELETE)
+  schemas:
+    RegistroAsesorRequest:
+      type: object
+      properties:
+        nombres:
+          type: string
+        apellidos:
+          type: string
+        correo:
+          type: string
+        telefono:
+          type: string
+        password:
+          type: string
+        areaEspecialidad:
+          type: string
+    ActualizarUsuarioRequest:
+      type: object
+      properties:
+        nombres:
+          type: string
+        apellidos:
+          type: string
+        telefono:
+          type: string
+        areaEspecialidad:
+          type: string
+    AseguradoraRequest:
+      type: object
+      properties:
+        nombre:
+          type: string
+        ruc:
+          type: string
+        telefono:
+          type: string
+        correo:
+          type: string
+    CambiarEstadoRequest:
+      type: object
+      properties:
+        estado:
+          type: string
+    TipoSeguroRequest:
+      type: object
+      properties:
+        nombre:
+          type: string
+        descripcion:
+          type: string
+    ContratacionRequest:
+      type: object
+      properties:
+        idCotizacion:
+          type: integer
+          format: int64
+        idUsuario:
+          type: integer
+          format: int64
+        aceptaCondiciones:
+          type: boolean
+    CotizacionRequest:
+      type: object
+      properties:
+        idUsuario:
+          type: integer
+          format: int64
+        idTipoSeguro:
+          type: integer
+        idAseguradora:
+          type: integer
+        descripcionSolicitud:
+          type: string
+        datosJson:
+          type: string
+    RespuestaCotizacionRequest:
+      type: object
+      properties:
+        cobertura:
+          type: string
+        vigencia:
+          type: string
+          format: date
+        estado:
+          type: string
+        precio:
+          type: number
+        deducible:
+          type: number
+    PagoRequest:
+      type: object
+      properties:
+        idCotizacion:
+          type: integer
+          format: int64
+        aceptaCondiciones:
+          type: boolean
+        metodo:
+          type: string
+        celular:
+          type: string
+        numeroTarjeta:
+          type: string
+        titular:
+          type: string
+        vencimiento:
+          type: string
+        cvv:
+          type: string
+    PolizaRequest:
+      type: object
+      properties:
+        idContratacion:
+          type: integer
+          format: int64
+        fechaInicio:
+          type: string
+          format: date
+        fechaFin:
+          type: string
+          format: date
+        prima:
+          type: number
+        cobertura:
+          type: string
+        deducible:
+          type: number
+        condiciones:
+          type: string
+    PrevisionRequest:
+      type: object
+      properties:
+        edad:
+          type: integer
+        ingresoMensual:
+          type: number
+        aniosAporte:
+          type: integer
+        consulta:
+          type: string
+    SiniestroRequest:
+      type: object
+      properties:
+        tipoSiniestro:
+          type: string
+        fechaAccidente:
+          type: string
+          format: date
+        placa:
+          type: string
+        marca:
+          type: string
+        modelo:
+          type: string
+        anio:
+          type: integer
+        lugar:
+          type: string
+        descripcion:
+          type: string
+        observaciones:
+          type: string
+        idAseguradora:
+          type: integer
+    CambiarRolRequest:
+      type: object
+      properties:
+        idRol:
+          type: integer
+    RegistroRequest:
+      type: object
+      properties:
+        nombres:
+          type: string
+        apellidos:
+          type: string
+        correo:
+          type: string
+        telefono:
+          type: string
+        password:
+          type: string
+    LoginRequest:
+      type: object
+      properties:
+        correo:
+          type: string
+        password:
+          type: string
+security:
+- sesion: []
+  csrf: []
