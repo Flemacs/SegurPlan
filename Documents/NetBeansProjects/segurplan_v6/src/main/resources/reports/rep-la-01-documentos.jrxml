@@ -1,0 +1,114 @@
+<!-- Created with Jaspersoft Studio version 7.0.8.final using JasperReports Library version 7.0.8-6f896111  -->
+<jasperReport name="rep-la-01-documentos" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b530ad8b-1c58-4acc-acc1-5a1a63a87242">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SegurPlan"/>
+	<query language="SQL"><![CDATA[SELECT id_documento,
+       tipo_documento,
+       nombre_archivo,
+       version,
+       fecha_carga,
+       estado
+FROM documento
+ORDER BY fecha_carga DESC]]></query>
+	<field name="id_documento" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="id_documento"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_documento"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="documento"/>
+	</field>
+	<field name="tipo_documento" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="tipo_documento"/>
+		<property name="com.jaspersoft.studio.field.label" value="tipo_documento"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="documento"/>
+	</field>
+	<field name="nombre_archivo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nombre_archivo"/>
+		<property name="com.jaspersoft.studio.field.label" value="nombre_archivo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="documento"/>
+	</field>
+	<field name="version" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="version"/>
+		<property name="com.jaspersoft.studio.field.label" value="version"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="documento"/>
+	</field>
+	<field name="fecha_carga" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_carga"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_carga"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="documento"/>
+	</field>
+	<field name="estado" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="estado"/>
+		<property name="com.jaspersoft.studio.field.label" value="estado"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="documento"/>
+	</field>
+	<background splitType="Stretch"/>
+	<title height="27" splitType="Stretch">
+		<element kind="staticText" uuid="9b2b55ed-ac72-47e5-8df7-37479cc97470" x="176" y="0" width="203" height="19">
+			<text><![CDATA[REP-LA-01 — Documentos por tipo y estado]]></text>
+		</element>
+	</title>
+	<pageHeader height="35" splitType="Stretch">
+		<element kind="textField" uuid="d7045dca-1af3-4cd2-8a62-36341e464c55" x="220" y="6" width="100" height="22" pattern="MMMMM dd, yyyy">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+		<element kind="textField" uuid="6ead7465-c958-4a6e-8046-d32ac870f2e7" x="320" y="6" width="100" height="22" pattern="HH:mm">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+	</pageHeader>
+	<columnHeader height="25" splitType="Stretch">
+		<element kind="staticText" uuid="d6d31522-77b7-4c8f-a170-fa2b43a04403" x="-17" y="0" width="66" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e676fc54-9820-4b51-aca7-3e4a3dc502f9"/>
+			<text><![CDATA[id_documento]]></text>
+		</element>
+		<element kind="staticText" uuid="bb6ac22d-26d2-4477-9fbd-8e29475253b1" x="60" y="0" width="74" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="663740f4-30e4-4152-b80e-a82a4bb3f9e5"/>
+			<text><![CDATA[tipo_documento]]></text>
+		</element>
+		<element kind="staticText" uuid="41ed7b57-98bb-49fc-9e65-2125c9ec7a4d" x="170" y="0" width="76" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7521100d-b72f-4a89-8879-8042a7f13355"/>
+			<text><![CDATA[nombre_archivo]]></text>
+		</element>
+		<element kind="staticText" uuid="ffa35d19-942b-478b-99bf-52c78fd49108" x="280" y="0" width="38" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fe07836f-3e27-497f-a200-0ca69b04e6f6"/>
+			<text><![CDATA[version]]></text>
+		</element>
+		<element kind="staticText" uuid="49835c8f-bfd6-4c62-b9ce-909db580ab6c" x="340" y="0" width="68" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="67d5ea16-4ed0-493f-af79-503f292a1023"/>
+			<text><![CDATA[fecha_carga]]></text>
+		</element>
+		<element kind="staticText" uuid="11887a8a-ad9e-46c1-afd5-f7dcd11f0e2f" x="430" y="0" width="38" height="20">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1724809b-9efd-4a9f-9fa4-9af1052ab2a5"/>
+			<text><![CDATA[estado]]></text>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="29" splitType="Stretch">
+			<element kind="textField" uuid="b4585ebc-c38a-46e5-9090-61f44a182416" x="0" y="0" width="86" height="18">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e676fc54-9820-4b51-aca7-3e4a3dc502f9"/>
+				<expression><![CDATA[$F{id_documento}]]></expression>
+			</element>
+			<element kind="textField" uuid="19be66bd-4964-4a8a-b086-274b4ae6aabd" x="60" y="0" width="94" height="16">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="663740f4-30e4-4152-b80e-a82a4bb3f9e5"/>
+				<expression><![CDATA[$F{tipo_documento}]]></expression>
+			</element>
+			<element kind="textField" uuid="ea172f23-a6b1-4236-95fc-a209e33dd358" x="170" y="0" width="100" height="18">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7521100d-b72f-4a89-8879-8042a7f13355"/>
+				<expression><![CDATA[$F{nombre_archivo}]]></expression>
+			</element>
+			<element kind="textField" uuid="1ef1244c-bf19-490c-ad2a-d7f13baad703" x="290" y="0" width="60" height="18">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fe07836f-3e27-497f-a200-0ca69b04e6f6"/>
+				<expression><![CDATA[$F{version}]]></expression>
+			</element>
+			<element kind="textField" uuid="4137240f-e11c-4666-a9c2-53a3278b05bb" x="340" y="0" width="80" height="18">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="67d5ea16-4ed0-493f-af79-503f292a1023"/>
+				<expression><![CDATA[$F{fecha_carga}]]></expression>
+			</element>
+			<element kind="textField" uuid="74abe8fb-27e0-45af-be2f-74cf7661f9a5" x="430" y="0" width="70" height="18">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1724809b-9efd-4a9f-9fa4-9af1052ab2a5"/>
+				<expression><![CDATA[$F{estado}]]></expression>
+			</element>
+		</band>
+	</detail>
+	<columnFooter height="45" splitType="Stretch"/>
+	<pageFooter height="51" splitType="Stretch"/>
+	<summary height="42" splitType="Stretch"/>
+</jasperReport>
