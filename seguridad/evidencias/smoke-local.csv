@@ -1,0 +1,6 @@
+﻿"fecha","metodo","ruta","http","nota"
+"2026-11-12T02:01:58.3045637-05:00","GET","/v3/api-docs","200","Respuesta HTTP recibida"
+"2026-11-12T02:01:58.3317485-05:00","GET","/swagger-ui/index.html","200","Respuesta HTTP recibida"
+"2026-11-12T02:01:58.4338324-05:00","GET","/api/csrf","200","Respuesta HTTP recibida"
+"2026-11-12T02:01:58.5489826-05:00","GET","/api/admin/asesores","401","Respuesta HTTP de error recibida"
+"2026-11-12T02:01:58.5489826-05:00","GET","/api/admin/catalogos/aseguradoras","401","Respuesta HTTP de error recibida"

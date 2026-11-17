@@ -1,0 +1,9 @@
+# Nmap 7.993 scan initiated Thu Nov 12 03:58:29 2026 as: "C:\\Program Files (x86)\\Nmap\\nmap.exe" -sT -sV -p 8080 -oN .\\seguridad\\evidencias\\nmap\\escaneo-segurplan.txt 127.0.0.1
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.00s latency).
+
+PORT     STATE SERVICE VERSION
+8080/tcp open  http    Apache Tomcat (language: en)
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Thu Nov 12 03:58:36 2026 -- 1 IP address (1 host up) scanned in 7.03 seconds
