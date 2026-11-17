@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@io.swagger.v3.oas.annotations.tags.Tag(name = "Cotizaciones", description = "Solicitud, consulta y respuesta de cotizaciones.")
 @RestController
 @RequestMapping("/api/cotizaciones")
 public class CotizacionController {
@@ -34,6 +35,7 @@ public class CotizacionController {
         return ResponseEntity.status(403).body(e);
     }
 
+    @io.swagger.v3.oas.annotations.Operation(summary = "Solicitar una cotización", description = "**Roles:** Cualquier usuario autenticado. El solicitante es siempre el usuario en sesión. Admite datosJson con el formulario dinámico.")
     @PostMapping
     public ResponseEntity<?> crear(
             @RequestBody CotizacionRequest request) {
@@ -77,14 +79,22 @@ public class CotizacionController {
                     .body(error);
         }
     }
+    @io.swagger.v3.oas.annotations.Operation(summary = "Ver una cotización", description = "**Roles:** Dueño del registro, Asesor o Administrador. Detalle de la cotización.")
     @GetMapping("/{idCotizacion}")
 public ResponseEntity<?> buscarPorId(
-        @PathVariable Long idCotizacion) {
+        @PathVariable Long idCotizacion,
+        org.springframework.security.core.Authentication auth) {
 
     try {
 
         Cotizacion cotizacion =
                 cotizacionService.buscarPorId(idCotizacion);
+
+        // Solo el dueño o el personal pueden ver la cotización
+        if (!acceso.puedeVer(auth,
+                cotizacion.getUsuario().getIdUsuario())) {
+            return prohibido();
+        }
 
         Map<String, Object> respuesta =
                 new HashMap<>();
@@ -186,9 +196,16 @@ public ResponseEntity<?> buscarPorId(
     }
 }
 
+    @io.swagger.v3.oas.annotations.Operation(summary = "Listar cotizaciones de un usuario", description = "**Roles:** Dueño del registro, Asesor o Administrador. Cotizaciones del usuario indicado.")
     @GetMapping("/usuario/{idUsuario}")
-    public ResponseEntity<List<Cotizacion>> listarPorUsuario(
-            @PathVariable Long idUsuario) {
+    public ResponseEntity<?> listarPorUsuario(
+            @PathVariable Long idUsuario,
+            org.springframework.security.core.Authentication auth) {
+
+        // Un cliente solo puede listar sus propias cotizaciones
+        if (!acceso.puedeVer(auth, idUsuario)) {
+            return prohibido();
+        }
 
         return ResponseEntity.ok(
                 cotizacionService.listarPorUsuario(idUsuario)
@@ -196,6 +213,7 @@ public ResponseEntity<?> buscarPorId(
     }
 
     
+    @io.swagger.v3.oas.annotations.Operation(summary = "Listar todas las cotizaciones", description = "**Roles:** Asesor, Administrador. Listado general para el personal.")
     @GetMapping
     public ResponseEntity<?> listarTodas() {
 
@@ -257,6 +275,7 @@ public ResponseEntity<?> buscarPorId(
 
     return ResponseEntity.ok(respuesta);
 }
+    @io.swagger.v3.oas.annotations.Operation(summary = "Responder una cotización", description = "**Roles:** Asesor, Administrador. Registra prima, cobertura, deducible y vigencia, y notifica al cliente.")
     @PutMapping("/{idCotizacion}/respuesta")
 public ResponseEntity<?> responderCotizacion(
         @PathVariable Long idCotizacion,

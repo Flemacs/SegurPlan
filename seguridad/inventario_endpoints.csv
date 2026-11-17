@@ -1,0 +1,128 @@
+controlador,metodo_anotacion,ruta_aproximada,observacion
+AsesorAdminController.java,REQUEST,/api/admin/asesores/api/admin/asesores,REVISAR: mapping dinámico/sobrecarga
+AsesorAdminController.java,GET,/api/admin/asesores,Fuente Java
+AsesorAdminController.java,GET,/api/admin/asesores/{idUsuario},Fuente Java
+AsesorAdminController.java,POST,/api/admin/asesores,Fuente Java
+AsesorAdminController.java,PUT,/api/admin/asesores/{idUsuario},Fuente Java
+AsesorAdminController.java,PUT,/api/admin/asesores/{idUsuario}/estado,Fuente Java
+BackupAdminController.java,REQUEST,/api/admin/backups/api/admin/backups,REVISAR: mapping dinámico/sobrecarga
+BackupAdminController.java,GET,/api/admin/backups,Fuente Java
+BackupAdminController.java,POST,/api/admin/backups,Fuente Java
+BackupAdminController.java,GET,/api/admin/backups/{nombre}/descargar,Fuente Java
+BackupAdminController.java,POST,/api/admin/backups/{nombre}/restaurar,Fuente Java
+BackupAdminController.java,DELETE,/api/admin/backups/{nombre},Fuente Java
+CatalogoAdminController.java,REQUEST,/api/admin/catalogos/api/admin/catalogos,REVISAR: mapping dinámico/sobrecarga
+CatalogoAdminController.java,GET,/api/admin/catalogos/aseguradoras,Fuente Java
+CatalogoAdminController.java,POST,/api/admin/catalogos/aseguradoras,Fuente Java
+CatalogoAdminController.java,PUT,/api/admin/catalogos/aseguradoras/{id},Fuente Java
+CatalogoAdminController.java,PUT,/api/admin/catalogos/aseguradoras/{id}/estado,Fuente Java
+CatalogoAdminController.java,GET,/api/admin/catalogos/tipos-seguro,Fuente Java
+CatalogoAdminController.java,POST,/api/admin/catalogos/tipos-seguro,Fuente Java
+CatalogoAdminController.java,PUT,/api/admin/catalogos/tipos-seguro/{id},Fuente Java
+CatalogoAdminController.java,PUT,/api/admin/catalogos/tipos-seguro/{id}/estado,Fuente Java
+CatalogoController.java,REQUEST,/api/catalogos/api/catalogos,REVISAR: mapping dinámico/sobrecarga
+CatalogoController.java,GET,/api/catalogos/tipos-seguro,Fuente Java
+CatalogoController.java,GET,/api/catalogos/aseguradoras,Fuente Java
+ContratacionController.java,REQUEST,/api/contrataciones/api/contrataciones,REVISAR: mapping dinámico/sobrecarga
+ContratacionController.java,GET,/api/contrataciones/pendientes,Fuente Java
+ContratacionController.java,POST,/api/contrataciones,Fuente Java
+CotizacionController.java,REQUEST,/api/cotizaciones/api/cotizaciones,REVISAR: mapping dinámico/sobrecarga
+CotizacionController.java,POST,/api/cotizaciones,Fuente Java
+CotizacionController.java,GET,/api/cotizaciones/{idCotizacion},Fuente Java
+CotizacionController.java,GET,/api/cotizaciones/usuario/{idUsuario},Fuente Java
+CotizacionController.java,GET,/api/cotizaciones,Fuente Java
+CotizacionController.java,PUT,/api/cotizaciones/{idCotizacion}/respuesta,Fuente Java
+CotizacionExtraController.java,REQUEST,/api/cotizaciones/api/cotizaciones,REVISAR: mapping dinámico/sobrecarga
+CotizacionExtraController.java,POST,/api/cotizaciones/{id}/comunicaciones,Fuente Java
+CotizacionExtraController.java,GET,/api/cotizaciones/{id}/comunicaciones,Fuente Java
+CotizacionExtraController.java,GET,/api/cotizaciones/{id}/pdf,Fuente Java
+CsrfController.java,GET,/api/csrf,Fuente Java
+DocumentoController.java,REQUEST,/api/documentos/api/documentos,REVISAR: mapping dinámico/sobrecarga
+DocumentoController.java,POST,/api/documentos/siniestro/{idSiniestro},Fuente Java
+DocumentoController.java,GET,/api/documentos/siniestro/{idSiniestro},Fuente Java
+DocumentoController.java,DELETE,/api/documentos/{idDocumento},Fuente Java
+DocumentoController.java,GET,/api/documentos/asesor/siniestro/{idSiniestro},Fuente Java
+DocumentoGestionController.java,REQUEST,/api/documentos/api/documentos,REVISAR: mapping dinámico/sobrecarga
+DocumentoGestionController.java,PUT,/api/documentos/{id}/validacion,Fuente Java
+DocumentoGestionController.java,GET,/api/documentos/{id}/archivo,Fuente Java
+DocumentoGestionController.java,POST,/api/documentos/cotizacion/{idCotizacion},Fuente Java
+DocumentoGestionController.java,GET,/api/documentos/cotizacion/{idCotizacion},Fuente Java
+HistorialAdminController.java,REQUEST,/api/admin/historial/api/admin/historial,REVISAR: mapping dinámico/sobrecarga
+HistorialAdminController.java,GET,/api/admin/historial,Fuente Java
+HistorialAdminController.java,GET,/api/admin/historial/entidad/{entidad},Fuente Java
+HistorialClienteController.java,REQUEST,/api/mis-procesos/api/mis-procesos,REVISAR: mapping dinámico/sobrecarga
+HistorialClienteController.java,GET,/api/mis-procesos,Fuente Java
+JasperReportController.java,REQUEST,/api/reportes/jasper/api/reportes/jasper,REVISAR: mapping dinámico/sobrecarga
+JasperReportController.java,GET,/api/reportes/jasper/{codigo}/pdf,Fuente Java
+NotificacionController.java,REQUEST,/api/notificaciones/api/notificaciones,REVISAR: mapping dinámico/sobrecarga
+NotificacionController.java,GET,/api/notificaciones,Fuente Java
+NotificacionController.java,PUT,/api/notificaciones/{id}/leida,Fuente Java
+NotificacionController.java,PUT,/api/notificaciones/leidas,Fuente Java
+PagoController.java,REQUEST,/api/pagos/api/pagos,REVISAR: mapping dinámico/sobrecarga
+PagoController.java,GET,/api/pagos/datos-qr,Fuente Java
+PagoController.java,POST,/api/pagos,Fuente Java
+PerfilController.java,REQUEST,/api/usuarios/perfil/api/usuarios/perfil,REVISAR: mapping dinámico/sobrecarga
+PerfilController.java,GET,/api/usuarios/perfil,Fuente Java
+PerfilController.java,PUT,/api/usuarios/perfil,Fuente Java
+PerfilController.java,PUT,/api/usuarios/perfil/password,Fuente Java
+PermisoAdminController.java,REQUEST,/api/admin/api/admin,REVISAR: mapping dinámico/sobrecarga
+PermisoAdminController.java,GET,/api/admin/roles/{idRol}/permisos,Fuente Java
+PermisoAdminController.java,PUT,/api/admin/roles/{idRol}/permisos,Fuente Java
+PermisoAdminController.java,GET,/api/admin/usuarios/{idUsuario}/actividad,Fuente Java
+PolizaController.java,REQUEST,/api/polizas/api/polizas,REVISAR: mapping dinámico/sobrecarga
+PolizaController.java,POST,/api/polizas,Fuente Java
+PolizaController.java,GET,/api/polizas/usuario/{idUsuario},Fuente Java
+PolizaController.java,GET,/api/polizas/mis-polizas,Fuente Java
+PolizaPdfController.java,REQUEST,/api/polizas/api/polizas,REVISAR: mapping dinámico/sobrecarga
+PolizaPdfController.java,GET,/api/polizas/{id}/pdf,Fuente Java
+PrevisionController.java,REQUEST,/api/previsiones/api/previsiones,REVISAR: mapping dinámico/sobrecarga
+PrevisionController.java,POST,/api/previsiones,Fuente Java
+PrevisionController.java,GET,/api/previsiones/mis-simulaciones,Fuente Java
+PrevisionController.java,GET,/api/previsiones/{idPrevision},Fuente Java
+PrevisionController.java,PUT,/api/previsiones/{idPrevision}/solicitar-orientacion,Fuente Java
+PrevisionController.java,GET,/api/previsiones/asesor/pendientes,Fuente Java
+PrevisionController.java,PUT,/api/previsiones/{idPrevision}/respuesta,Fuente Java
+ReporteController.java,REQUEST,/api/reportes/api/reportes,REVISAR: mapping dinámico/sobrecarga
+ReporteController.java,GET,/api/reportes/general,Fuente Java
+ReporteController.java,GET,/api/reportes/siniestros,Fuente Java
+ReporteController.java,GET,/api/reportes/afp,Fuente Java
+ReporteController.java,GET,/api/reportes/marketing/cotizaciones-estado,Fuente Java
+ReporteController.java,GET,/api/reportes/marketing/conversion-ventas,Fuente Java
+ReporteController.java,GET,/api/reportes/marketing/cartera-polizas,Fuente Java
+ReporteController.java,GET,/api/reportes/logistica/documentos,Fuente Java
+ReporteController.java,GET,/api/reportes/operaciones/afp,Fuente Java
+ReporteController.java,GET,/api/reportes/operaciones/siniestros-aseguradora,Fuente Java
+ReporteController.java,GET,/api/reportes/gerencia/indicadores,Fuente Java
+ReporteController.java,GET,/api/reportes/trazabilidad,Fuente Java
+RolAdminController.java,REQUEST,/api/admin/roles/api/admin/roles,REVISAR: mapping dinámico/sobrecarga
+RolAdminController.java,GET,/api/admin/roles,Fuente Java
+RolAdminController.java,GET,/api/admin/roles/{idRol},Fuente Java
+SiniestroController.java,REQUEST,/api/siniestros/api/siniestros,REVISAR: mapping dinámico/sobrecarga
+SiniestroController.java,POST,/api/siniestros,Fuente Java
+SiniestroController.java,GET,/api/siniestros/mis-siniestros,Fuente Java
+SiniestroController.java,GET,/api/siniestros/{idSiniestro},Fuente Java
+SiniestroController.java,PUT,/api/siniestros/{idSiniestro}/derivar,Fuente Java
+SiniestroController.java,GET,/api/siniestros/asesor/pendientes,Fuente Java
+SiniestroController.java,GET,/api/siniestros/asesor/{idSiniestro},Fuente Java
+SiniestroGestionController.java,REQUEST,/api/siniestros/api/siniestros,REVISAR: mapping dinámico/sobrecarga
+SiniestroGestionController.java,GET,/api/siniestros/gestion,Fuente Java
+SiniestroGestionController.java,GET,/api/siniestros/gestion/{id},Fuente Java
+SiniestroGestionController.java,POST,/api/siniestros/gestion/{id}/revision,Fuente Java
+SiniestroGestionController.java,PUT,/api/siniestros/gestion/{id}/derivar,Fuente Java
+SiniestroGestionController.java,PUT,/api/siniestros/gestion/{id}/evaluacion,Fuente Java
+SiniestroGestionController.java,PUT,/api/siniestros/gestion/{id}/estado,Fuente Java
+SiniestroGestionController.java,GET,/api/siniestros/{id}/timeline,Fuente Java
+SiniestroGestionController.java,GET,/api/siniestros/{id}/resumen.pdf,Fuente Java
+UsuarioAdminController.java,REQUEST,/api/admin/usuarios/api/admin/usuarios,REVISAR: mapping dinámico/sobrecarga
+UsuarioAdminController.java,GET,/api/admin/usuarios,Fuente Java
+UsuarioAdminController.java,GET,/api/admin/usuarios/{idUsuario},Fuente Java
+UsuarioAdminController.java,PUT,/api/admin/usuarios/{idUsuario},Fuente Java
+UsuarioAdminController.java,PUT,/api/admin/usuarios/{idUsuario}/estado,Fuente Java
+UsuarioAdminController.java,PUT,/api/admin/usuarios/{idUsuario}/rol,Fuente Java
+UsuarioController.java,REQUEST,/api/usuarios/api/usuarios,REVISAR: mapping dinámico/sobrecarga
+UsuarioController.java,POST,/api/usuarios/registro,Fuente Java
+UsuarioController.java,POST,/api/usuarios/login,Fuente Java
+UsuarioController.java,GET,/api/usuarios/admin,Fuente Java
+UsuarioController.java,GET,/api/usuarios/admin/{idUsuario},Fuente Java
+UsuarioController.java,PUT,/api/usuarios/admin/{idUsuario},Fuente Java
+UsuarioController.java,PUT,/api/usuarios/admin/{idUsuario}/estado,Fuente Java

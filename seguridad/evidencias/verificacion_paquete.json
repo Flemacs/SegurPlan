@@ -1,0 +1,14 @@
+{
+  "pom": true,
+  "swagger_dependency": true,
+  "security_config": true,
+  "junit_security": true,
+  "ci_workflow": true,
+  "jmeter": true,
+  "zap_script": true,
+  "smoke_script": true,
+  "endpoint_inventory_rows": 127,
+  "maven_test_executed": false,
+  "zap_executed": false,
+  "jmeter_executed": false
+}

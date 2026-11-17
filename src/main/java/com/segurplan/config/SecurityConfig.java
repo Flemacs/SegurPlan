@@ -1,5 +1,6 @@
 package com.segurplan.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 
 @Configuration
 public class SecurityConfig {
@@ -18,12 +21,18 @@ public class SecurityConfig {
     private final ApiAuthenticationEntryPoint authenticationEntryPoint;
     private final ApiAccessDeniedHandler accessDeniedHandler;
 
+    /** Swagger UI y /v3/api-docs solo se exponen si SWAGGER_ENABLED=true. */
+    private final boolean swaggerHabilitado;
+
     public SecurityConfig(
             ApiAuthenticationEntryPoint authenticationEntryPoint,
-            ApiAccessDeniedHandler accessDeniedHandler) {
+            ApiAccessDeniedHandler accessDeniedHandler,
+            @Value("${springdoc.api-docs.enabled:true}")
+            boolean swaggerHabilitado) {
 
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.accessDeniedHandler = accessDeniedHandler;
+        this.swaggerHabilitado = swaggerHabilitado;
     }
 
     // =====================================================
@@ -45,6 +54,35 @@ public class SecurityConfig {
             HttpSecurity http) throws Exception {
 
         http
+
+                // =================================================
+                // CABECERAS DE SEGURIDAD (RNF04)
+                // =================================================
+                .headers(headers -> headers
+                .contentSecurityPolicy(csp -> csp.policyDirectives(
+                        "default-src 'self'; "
+                        + "img-src 'self' data: blob:; "
+                        + "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+                        + "font-src 'self' data: https://fonts.gstatic.com; "
+                        + "script-src 'self' 'unsafe-inline'; "
+                        + "connect-src 'self'; "
+                        + "frame-ancestors 'none'; "
+                        + "form-action 'self'; "
+                        + "base-uri 'self'; "
+                        // blob: permite ver evidencias (PDF, imagen, video) descargadas con sesión
+                        + "object-src 'self' blob:; "
+                        + "media-src 'self' blob:"))
+                .frameOptions(frame -> frame.deny())
+                .referrerPolicy(ref -> ref.policy(
+                        ReferrerPolicyHeaderWriter.ReferrerPolicy
+                                .STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
+                .httpStrictTransportSecurity(hsts -> hsts
+                        .includeSubDomains(true)
+                        .maxAgeInSeconds(31536000))
+                .addHeaderWriter(new StaticHeadersWriter(
+                        "Permissions-Policy",
+                        "camera=(), microphone=(), geolocation=()"))
+                )
 
                 // =================================================
                 // CSRF
@@ -256,11 +294,30 @@ public class SecurityConfig {
                         "Asesor",
                         "Administrador"
                 )
+                // Historial unificado del cliente (cotizaciones, siniestros, AFP)
+                .requestMatchers(
+                        "/api/mis-procesos",
+                        "/api/mis-procesos/**"
+                ).hasRole(
+                        "Cliente"
+                )
+                // Documentación Swagger / OpenAPI (solo si está habilitada)
+                .requestMatchers(
+                        swaggerHabilitado
+                                ? new String[]{
+                                        "/swagger-ui.html",
+                                        "/swagger-ui/**",
+                                        "/v3/api-docs",
+                                        "/v3/api-docs/**",
+                                        "/v3/api-docs.yaml"}
+                                : new String[]{"/__swagger_deshabilitado__"}
+                ).permitAll()
                 // =================================================
                 // RESTO DE ENDPOINTS
                 // =================================================
-                // Por ahora conservamos el comportamiento actual:
-                // cualquier usuario autenticado puede acceder.
+                // Cualquier otra ruta exige sesión. Los controladores
+                // vuelven a comprobar que el dato pertenezca al usuario
+                // (AccesoService) cuando el recurso tiene dueño.
                 .anyRequest()
                 .authenticated()
                 )
