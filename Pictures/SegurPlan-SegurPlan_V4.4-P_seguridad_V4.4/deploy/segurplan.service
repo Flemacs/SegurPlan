@@ -1,0 +1,16 @@
+[Unit]
+Description=SegurPlan - Plataforma de seguros y AFP
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=appuser
+Group=appuser
+WorkingDirectory=/opt/segurplan
+EnvironmentFile=/etc/segurplan.env
+ExecStart=/usr/bin/java -Xms256m -Xmx512m -XX:+UseG1GC -Xlog:gc*:file=/var/log/segurplan/gc.log:time,uptime:filecount=5,filesize=10m -jar /opt/segurplan/segurplan.jar
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

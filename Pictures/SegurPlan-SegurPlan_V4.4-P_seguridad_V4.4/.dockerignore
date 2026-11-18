@@ -1,0 +1,7 @@
+target
+.git
+logs
+backups
+uploads
+node_modules
+*.md

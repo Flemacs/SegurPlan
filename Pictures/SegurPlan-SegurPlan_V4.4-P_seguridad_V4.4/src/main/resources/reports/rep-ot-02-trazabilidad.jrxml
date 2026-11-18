@@ -1,0 +1,134 @@
+<!-- Created with Jaspersoft Studio version 7.0.8.final using JasperReports Library version 7.0.8-6f896111  -->
+<jasperReport name="rep-ot-02-trazabilidad" language="java" columnCount="1" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="364e0869-d0fe-4acb-8359-6167f50790a4">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SegurPlan"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<query language="SQL"><![CDATA[SELECT h.fecha_hora,
+       COALESCE(u.nombres || ' ' || u.apellidos, 'Sistema') AS usuario,
+       h.entidad,
+       h.id_registro,
+       h.accion,
+       h.valor_anterior,
+       h.valor_nuevo
+FROM historial h
+LEFT JOIN usuario u ON u.id_usuario = h.id_usuario
+ORDER BY h.fecha_hora DESC]]></query>
+	<field name="fecha_hora" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="fecha_hora"/>
+		<property name="com.jaspersoft.studio.field.label" value="fecha_hora"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="historial"/>
+	</field>
+	<field name="usuario" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="usuario"/>
+		<property name="com.jaspersoft.studio.field.label" value="usuario"/>
+	</field>
+	<field name="entidad" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="entidad"/>
+		<property name="com.jaspersoft.studio.field.label" value="entidad"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="historial"/>
+	</field>
+	<field name="id_registro" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="id_registro"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_registro"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="historial"/>
+	</field>
+	<field name="accion" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="accion"/>
+		<property name="com.jaspersoft.studio.field.label" value="accion"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="historial"/>
+	</field>
+	<field name="valor_anterior" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="valor_anterior"/>
+		<property name="com.jaspersoft.studio.field.label" value="valor_anterior"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="historial"/>
+	</field>
+	<field name="valor_nuevo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="valor_nuevo"/>
+		<property name="com.jaspersoft.studio.field.label" value="valor_nuevo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="historial"/>
+	</field>
+	<background splitType="Stretch"/>
+	<title height="21" splitType="Stretch">
+		<element kind="staticText" uuid="b98b90e4-84c4-41dd-8ce5-38c9b96b8ef2" x="314" y="0" width="175" height="19">
+			<text><![CDATA[REP-OT-02 — Historial y trazabilidad]]></text>
+		</element>
+	</title>
+	<pageHeader height="23" splitType="Stretch">
+		<element kind="textField" uuid="c7212b94-1e1c-47f7-8f6d-1a0ff6cc251a" x="330" y="0" width="100" height="14" pattern="MMMMM dd, yyyy">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+		<element kind="textField" uuid="8d4ba435-4df5-491d-b2b9-54cf31d1eb7c" x="430" y="0" width="100" height="20" pattern="HH:mm">
+			<expression><![CDATA[new java.util.Date()]]></expression>
+		</element>
+	</pageHeader>
+	<columnHeader height="32" splitType="Stretch">
+		<element kind="staticText" uuid="fbe4bca6-2057-4b3c-8463-451b40fa2dcd" x="-10" y="0" width="70" height="19">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="08fba39b-96e5-4b80-a29e-b853c51cbed2"/>
+			<text><![CDATA[fecha_hora]]></text>
+		</element>
+		<element kind="staticText" uuid="3e505d6d-7489-40b6-beb2-81eeaabaa5ba" x="69" y="0" width="60" height="18">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6af81103-c3cd-4a12-9cce-3d656d0bc169"/>
+			<text><![CDATA[usuario]]></text>
+		</element>
+		<element kind="staticText" uuid="9be25f63-0bcc-4244-825b-f7a43dd800b6" x="140" y="0" width="60" height="18">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="42ed6c85-4343-43be-b5df-36bad2f753b4"/>
+			<text><![CDATA[entidad]]></text>
+		</element>
+		<element kind="staticText" uuid="210b5d20-7cac-4add-9016-e9b328393bbc" x="220" y="0" width="60" height="19">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2ba8d419-baac-4fcc-b4bc-4f7f7a2a30b2"/>
+			<text><![CDATA[id_registro]]></text>
+		</element>
+		<element kind="staticText" uuid="5f5f3f20-246f-4c55-944b-412b097b3db0" x="290" y="0" width="60" height="19">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="86b49248-4cff-4e07-abb4-b71d0fa48501"/>
+			<text><![CDATA[accion]]></text>
+		</element>
+		<element kind="staticText" uuid="d08f606a-47f5-4b4f-9465-850346bf93ff" x="370" y="0" width="100" height="19">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d760ab5c-ebbf-4f7a-bcc8-8ba714b68d99"/>
+			<text><![CDATA[valor_anterior]]></text>
+		</element>
+		<element kind="staticText" uuid="560f19b1-2b96-4650-93e0-5bcd2c8ee1f4" x="480" y="0" width="120" height="29">
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f011388f-723d-418f-8067-8e1efe7e41dc"/>
+			<text><![CDATA[valor_nuevo]]></text>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="35" splitType="Stretch">
+			<element kind="textField" uuid="5dec6d0c-aa56-4403-8204-a590c497c466" x="-11" y="0" width="80" height="18">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="08fba39b-96e5-4b80-a29e-b853c51cbed2"/>
+				<expression><![CDATA[$F{fecha_hora}]]></expression>
+			</element>
+			<element kind="textField" uuid="f67f6862-4ec2-4a4b-b52f-fee2de133094" x="69" y="0" width="71" height="18">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6af81103-c3cd-4a12-9cce-3d656d0bc169"/>
+				<expression><![CDATA[$F{usuario}]]></expression>
+			</element>
+			<element kind="textField" uuid="e34ac1e8-1e39-41b3-ad25-e4b4767ac78e" x="140" y="0" width="70" height="18">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="42ed6c85-4343-43be-b5df-36bad2f753b4"/>
+				<expression><![CDATA[$F{entidad}]]></expression>
+			</element>
+			<element kind="textField" uuid="40612999-d187-4421-9faa-d920730773a7" x="220" y="0" width="70" height="18">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2ba8d419-baac-4fcc-b4bc-4f7f7a2a30b2"/>
+				<expression><![CDATA[$F{id_registro}]]></expression>
+			</element>
+			<element kind="textField" uuid="b85ef7be-f8db-4524-86b0-72f2d27269a3" x="290" y="0" width="70" height="18">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="86b49248-4cff-4e07-abb4-b71d0fa48501"/>
+				<expression><![CDATA[$F{accion}]]></expression>
+			</element>
+			<element kind="textField" uuid="3328882f-4f40-4d53-8340-6649c4a766c7" x="370" y="0" width="100" height="18">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d760ab5c-ebbf-4f7a-bcc8-8ba714b68d99"/>
+				<expression><![CDATA[$F{valor_anterior}]]></expression>
+			</element>
+			<element kind="textField" uuid="0d12a8dd-1de6-4588-ac28-d4cc6a7ef47b" x="480" y="0" width="120" height="29">
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f011388f-723d-418f-8067-8e1efe7e41dc"/>
+				<expression><![CDATA[$F{valor_nuevo}]]></expression>
+			</element>
+		</band>
+	</detail>
+</jasperReport>

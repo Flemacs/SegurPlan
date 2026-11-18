@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEGURPLAN — Gestión de siniestros</title>
+<link rel="stylesheet" href="../assets/styles.css">
+<link rel="stylesheet" href="../assets/theme.css">
+<script src="../assets/theme.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+  <div class="header-right">
+    <span class="user-name" id="usuario-header">Usuario</span>
+    <button class="bell-btn" title="Notificaciones" type="button">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </button>
+    <button class="profile-btn" type="button">MI PERFIL</button>
+    <button class="btn-logout" type="button">CERRAR SESIÓN</button>
+  </div>
+</header>
+<div class="page-wrap wide">
+  <nav class="breadcrumb">SEGURPLAN &rsaquo; Asesoría &rsaquo; Gestión de siniestros</nav>
+  <h1 class="page-title">Gestión de siniestros</h1>
+  <p class="page-subtitle">Revise el expediente, solicite información, derive a la aseguradora y registre el dictamen.</p>
+  <div id="aviso" class="notice" style="display:none" role="alert"></div>
+  <div class="sp-grid">
+    <div class="card">
+      <div class="card-header"><div><h2>Siniestros</h2><p id="contador">Cargando...</p></div></div>
+      <div class="card-body">
+        <div class="sp-chips" id="chips"></div>
+        <div class="table-wrap"><table class="sp-table"><thead><tr><th>N°</th><th>Cliente</th><th>Placa</th><th>Estado</th><th>Registro</th></tr></thead><tbody id="tbody"></tbody></table></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div><h2 id="det-titulo">Detalle del siniestro</h2><p id="det-sub">Seleccione un siniestro de la lista.</p></div></div>
+      <div class="card-body" id="detalle"><div class="sp-vacio">Sin selección.</div></div>
+    </div>
+  </div>
+</div>
+<footer class="site-footer">
+  <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+  <nav class="footer-links"><a href="../index.html">Inicio</a></nav>
+  <div class="footer-meta"><span>© 2026 SEGURPLAN. Todos los derechos reservados.</span></div>
+</footer>
+<script src="../assets/app.js"></script>
+<script src="../assets/sp-extras.js"></script>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const ses = sp_getSession();
+  if (!ses) { location.replace('s01-login.html'); return; }
+  const rol = String(ses.rol || '').toLowerCase();
+  if (rol !== 'asesor' && rol !== 'administrador') {
+    alert('Esta sección es exclusiva para asesores y administradores.');
+    location.replace('s02-panel-usuario.html'); return;
+  }
+  const ESTADOS = ['Registrado','En revisión','Información pendiente','Información completa','Derivado','En evaluación','Evaluación recibida','Observado','Aprobado','Rechazado','Cerrado'];
+  const ITEMS = ['Fotografías del vehículo','Parte policial','Licencia de conducir','Tarjeta de propiedad','Descripción más detallada','Datos de terceros involucrados'];
+  const DICT = ['Aprobado','Observado','Rechazado'];
+  let filtro = '', actual = null;
+
+  function aviso(msg, tipo) { spToast(msg, tipo === 'error' ? 'err' : 'ok'); }
+  function badge(e) {
+    const c = { 'Aprobado':'badge-green','Cerrado':'badge-gray','Rechazado':'badge-red','Observado':'badge-yellow','Información pendiente':'badge-yellow' }[e] || 'badge-blue';
+    return '<span class="badge ' + c + '">' + spEsc(e) + '</span>';
+  }
+
+  function pintarChips() {
+    $('chips').innerHTML = ['Todos'].concat(ESTADOS).map(e =>
+      '<button type="button" class="sp-chip' + ((e === 'Todos' ? '' : e) === filtro ? ' on' : '') + '" data-e="' + (e === 'Todos' ? '' : spEsc(e)) + '">' + spEsc(e) + '</button>').join('');
+    $('chips').querySelectorAll('.sp-chip').forEach(b => b.addEventListener('click', () => { filtro = b.dataset.e; pintarChips(); cargarLista(); }));
+  }
+  async function cargarLista() {
+    try {
+      const lista = await spApi('GET', '/api/siniestros/gestion' + (filtro ? '?estado=' + encodeURIComponent(filtro) : ''));
+      $('contador').textContent = lista.length + (lista.length === 1 ? ' siniestro' : ' siniestros');
+      $('tbody').innerHTML = lista.length ? lista.map(s =>
+        '<tr class="fila' + (actual && actual.idSiniestro === s.idSiniestro ? ' sel' : '') + '" data-id="' + s.idSiniestro + '"><td>' + spEsc(s.numeroSiniestro) + '</td><td>' +
+        spEsc(s.cliente) + '</td><td>' + spEsc(s.placa || '-') + '</td><td>' + badge(s.estado) + '</td><td>' + spFecha(s.fechaRegistro) + '</td></tr>').join('')
+        : '<tr><td colspan="5" class="sp-vacio">No hay siniestros en este estado.</td></tr>';
+      $('tbody').querySelectorAll('tr.fila').forEach(tr => tr.addEventListener('click', () => abrir(tr.dataset.id)));
+    } catch (e) { aviso(e.message, 'error'); }
+  }
+
+  async function abrir(id) {
+    try {
+      actual = await spApi('GET', '/api/siniestros/gestion/' + id);
+      history.replaceState(null, '', '#' + id);
+      sessionStorage.setItem('sp_last_sin', id);
+      let docs = [];
+      try { docs = await spApi('GET', '/api/documentos/asesor/siniestro/' + id); } catch (e) { docs = []; }
+      pintarDetalle(docs);
+      cargarLista();
+    } catch (e) { aviso(e.message, 'error'); }
+  }
+
+  function pintarDetalle(docs) {
+    const s = actual;
+    $('det-titulo').textContent = 'Siniestro ' + s.numeroSiniestro;
+    $('det-sub').innerHTML = badge(s.estado) + ' &nbsp;' + spEsc(s.descripcionEstado || '');
+    const sig = (s.proximosPasos || []).map(p => p.estado);
+    let acciones = '';
+    sig.filter(e => DICT.indexOf(e) === -1 && e !== 'Información pendiente').forEach(e => {
+      const etiqueta = e === 'Información completa' ? 'Aprobar para derivación' : e === 'Derivado' ? 'Derivar a la aseguradora'
+        : e === 'En revisión' ? (s.estado === 'Registrado' ? 'Iniciar revisión' : 'Devolver a revisión') : 'Pasar a: ' + e;
+      acciones += '<button class="btn btn-primary btn-sm" type="button" data-estado="' + spEsc(e) + '">' + spEsc(etiqueta) + '</button>';
+    });
+    const puedeInfo = sig.indexOf('Información pendiente') !== -1;
+    const puedeDictamen = sig.some(e => DICT.indexOf(e) !== -1) && (s.estado === 'En evaluación' || s.estado === 'Evaluación recibida' || s.estado === 'Observado');
+
+    let h = '<dl class="sp-kv">' +
+      '<dt>Cliente</dt><dd>' + spEsc(s.cliente) + ' · ' + spEsc(s.correoCliente) + (s.telefonoCliente ? ' · ' + spEsc(s.telefonoCliente) : '') + '</dd>' +
+      '<dt>Aseguradora</dt><dd>' + spEsc(s.aseguradora || '-') + '</dd>' +
+      '<dt>Vehículo</dt><dd>' + spEsc([s.placa, s.marca, s.modelo, s.anio].filter(Boolean).join(' · ') || '-') + '</dd>' +
+      '<dt>Accidente</dt><dd>' + spFecha(s.fechaAccidente) + ' · ' + spEsc(s.lugar || '-') + '</dd>' +
+      '<dt>Descripción</dt><dd>' + spEsc(s.descripcion || '-') + '</dd>' +
+      '<dt>Derivado</dt><dd>' + spFecha(s.fechaDerivacion) + '</dd>' +
+      '<dt>Evaluación</dt><dd>' + spEsc(s.resultadoEvaluacion || '-') + (s.montoAprobado ? ' · <b>S/ ' + Number(s.montoAprobado).toFixed(2) + '</b>' : '') + '</dd></dl>';
+
+    h += '<div class="sp-bloque"><h3>Acciones disponibles</h3>' +
+         (acciones || puedeInfo || puedeDictamen ? '<div class="sp-acciones">' + acciones + '</div>' : '<p style="font-size:13px;color:#5a6a7e">No hay más acciones: el caso está cerrado.</p>') +
+         '<div class="form-group" style="margin-top:10px"><label for="nota">Observación (opcional, se registra en el historial)</label><input class="form-control" id="nota" maxlength="300"></div></div>';
+
+    if (puedeInfo) {
+      h += '<div class="sp-bloque"><h3>Solicitar información adicional al cliente</h3><div class="sp-chips" id="items">' +
+        ITEMS.map(i => '<button type="button" class="sp-chip" data-i="' + spEsc(i) + '">' + spEsc(i) + '</button>').join('') + '</div>' +
+        '<textarea class="form-control" id="msg-info" rows="3" maxlength="500" placeholder="Mensaje para el cliente (opcional si marcó elementos)"></textarea>' +
+        '<div class="sp-acciones"><button class="btn btn-secondary btn-sm" id="btn-info" type="button">SOLICITAR INFORMACIÓN</button></div></div>';
+    }
+    if (puedeDictamen) {
+      h += '<div class="sp-bloque"><h3>Registrar evaluación de la aseguradora</h3><div class="form-row">' +
+        '<div class="form-group"><label for="dict">Dictamen *</label><select class="form-control" id="dict">' + DICT.map(d => '<option>' + d + '</option>').join('') + '</select></div>' +
+        '<div class="form-group"><label for="monto">Monto aprobado (S/)</label><input class="form-control" id="monto" type="number" min="0" step="0.01"></div></div>' +
+        '<div class="form-row"><div class="form-group"><label for="fev">Fecha de evaluación</label><input class="form-control" id="fev" type="date"></div></div>' +
+        '<div class="form-group"><label for="obs">Observaciones / motivo</label><textarea class="form-control" id="obs" rows="3" maxlength="500"></textarea></div>' +
+        '<div class="sp-acciones"><button class="btn btn-primary btn-sm" id="btn-eval" type="button">REGISTRAR EVALUACIÓN</button></div></div>';
+    }
+
+    h += '<div class="sp-bloque"><h3>Evidencias del cliente (' + docs.length + ')</h3>' + (docs.length ? '<table class="sp-table"><tbody>' + docs.map(d =>
+      '<tr><td>' + spEsc(d.tipoDocumento) + '<br><small>' + spEsc(d.nombreArchivo) + '</small></td><td>' + badge(d.estado) +
+      (d.observacion ? '<br><small>' + spEsc(d.observacion) + '</small>' : '') + '</td><td style="white-space:nowrap">' +
+      '<button class="btn btn-outline btn-sm" type="button" data-ver="' + d.idDocumento + '">Ver</button> ' +
+      '<button class="btn btn-outline btn-sm" type="button" data-val="Validado" data-doc="' + d.idDocumento + '">Validar</button> ' +
+      '<button class="btn btn-outline btn-sm" type="button" data-val="Observado" data-doc="' + d.idDocumento + '">Observar</button> ' +
+      '<button class="btn btn-outline btn-sm" type="button" data-val="Rechazado" data-doc="' + d.idDocumento + '">Rechazar</button></td></tr>').join('') + '</tbody></table>'
+      : '<p style="font-size:13px;color:#5a6a7e">El cliente aún no cargó evidencias.</p>') + '</div>';
+
+    h += '<div class="sp-bloque"><h3>Línea de tiempo</h3>' + ((s.eventos || []).length ? '<ul class="sp-tl">' + s.eventos.map(e =>
+      '<li><b>' + spEsc(e.accion) + '</b> — ' + spEsc(e.usuario || 'Sistema') + '<small>' + spFecha(e.fecha) + '</small>' + spEsc(e.detalle || '') + '</li>').join('') + '</ul>'
+      : '<p style="font-size:13px;color:#5a6a7e">Sin movimientos.</p>') + '</div>' +
+      '<div class="sp-acciones"><button class="btn btn-outline btn-sm" id="btn-pdf" type="button">DESCARGAR RESUMEN EN PDF</button></div>';
+
+    $('detalle').innerHTML = h;
+    enlazar();
+  }
+
+  async function ejecutar(promesa, ok) {
+    try { const r = await promesa; aviso(ok || r.mensaje); await abrir(actual.idSiniestro); }
+    catch (e) { aviso(e.message, 'error'); }
+  }
+  function enlazar() {
+    const id = actual.idSiniestro;
+    $('detalle').querySelectorAll('[data-estado]').forEach(b => b.addEventListener('click', () => {
+      const e = b.dataset.estado, nota = ($('nota') || {}).value || '';
+      if (e === 'Información completa') ejecutar(spApi('POST', '/api/siniestros/gestion/' + id + '/revision', { accion: 'APROBAR_DERIVACION', mensaje: nota }));
+      else if (e === 'En revisión' && actual.estado === 'Registrado') ejecutar(spApi('POST', '/api/siniestros/gestion/' + id + '/revision', { accion: 'INICIAR' }));
+      else if (e === 'Derivado') { if (confirm('¿Derivar este siniestro a la aseguradora?')) ejecutar(spApi('PUT', '/api/siniestros/gestion/' + id + '/derivar')); }
+      else ejecutar(spApi('PUT', '/api/siniestros/gestion/' + id + '/estado', { estado: e, observacion: nota }));
+    }));
+    const items = $('items');
+    if (items) items.querySelectorAll('.sp-chip').forEach(c => c.addEventListener('click', () => c.classList.toggle('on')));
+    const bi = $('btn-info');
+    if (bi) bi.addEventListener('click', () => {
+      const marcados = Array.from(items.querySelectorAll('.sp-chip.on')).map(c => c.dataset.i);
+      ejecutar(spApi('POST', '/api/siniestros/gestion/' + id + '/revision', { accion: 'PENDIENTE_INFO', items: marcados, mensaje: $('msg-info').value }));
+    });
+    const be = $('btn-eval');
+    if (be) be.addEventListener('click', () => ejecutar(spApi('PUT', '/api/siniestros/gestion/' + id + '/evaluacion', {
+      dictamen: $('dict').value, monto: $('monto').value, fechaEvaluacion: $('fev').value, observaciones: $('obs').value })));
+    $('detalle').querySelectorAll('[data-ver]').forEach(b => b.addEventListener('click', () => spAbrirArchivo('/api/documentos/' + b.dataset.ver + '/archivo')));
+    $('detalle').querySelectorAll('[data-val]').forEach(b => b.addEventListener('click', () => {
+      const est = b.dataset.val; let obs = '';
+      if (est !== 'Validado') { obs = prompt('Indique el motivo (obligatorio):') || ''; if (!obs.trim()) return; }
+      ejecutar(spApi('PUT', '/api/documentos/' + b.dataset.doc + '/validacion', { estado: est, observacion: obs }));
+    }));
+    $('btn-pdf').addEventListener('click', () => spDescargar('/api/siniestros/' + id + '/resumen.pdf', 'siniestro-' + actual.numeroSiniestro + '.pdf'));
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    $('usuario-header').textContent = ses.nombres + ' ' + ses.apellidos + ' — ' + ses.rol;
+    pintarChips(); cargarLista();
+    const h = location.hash.replace('#', '');
+    if (/^\d+$/.test(h)) abrir(h);
+  });
+})();
+</script>
+</body></html>
