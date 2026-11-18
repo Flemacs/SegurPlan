@@ -1,0 +1,7 @@
+requisito,caso,tecnica,resultado
+SEC-01,SeguridadRegresionTest.contrasenasSeAlmacenanComoHashBCryptConSalDistinta,JUnit,PENDIENTE
+SEC-02,SeguridadRegresionTest.ataquesDeFuerzaBrutaPorUsuarioQuedanBloqueados,JUnit,PENDIENTE
+SEC-03,Acceso a admin con Cliente,Burp/ZAP,PENDIENTE
+SEC-04,CSRF en POST/PUT,Burp/ZAP,PENDIENTE
+SEC-05,SQLi y XSS,Revision manual/ZAP,PENDIENTE
+SEC-06,Resiliencia y latencia,JMeter,PENDIENTE

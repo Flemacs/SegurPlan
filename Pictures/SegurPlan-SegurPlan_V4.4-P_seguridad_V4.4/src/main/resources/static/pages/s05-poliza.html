@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>SEGURPLAN — Contratación</title>
+        <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="stylesheet" href="../assets/theme.css">
+<script src="../assets/theme.js"></script>
+<style>
+/* ===== Ventana de pago (simulado) ===== */
+.pay-overlay{position:fixed;inset:0;background:rgba(10,20,40,.6);display:none;align-items:center;justify-content:center;z-index:1000;padding:16px}
+.pay-overlay.open{display:flex}
+.pay-modal{background:var(--white,#fff);color:var(--text,#1a2535);width:100%;max-width:480px;max-height:94vh;display:flex;flex-direction:column;border-radius:10px;box-shadow:var(--shadow-lg);overflow:hidden}
+.pay-head{padding:16px 20px 12px;border-bottom:1px solid var(--border,#c8d3e0);display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.pay-head h3{margin:0 0 2px;font-size:13px;color:var(--text-sub,#5a6a7e);font-weight:600}
+.pay-total{font-size:28px;font-weight:700;color:var(--primary,#1c3f6e);line-height:1.1}
+.pay-sim{font-size:10px;background:var(--warn-bg,#fff4e0);color:var(--warn-text,#8a4d00);padding:2px 8px;border-radius:99px;font-weight:700;margin-left:6px;vertical-align:middle}
+.pay-close{background:none;border:0;font-size:26px;line-height:1;cursor:pointer;color:var(--text-sub,#5a6a7e)}
+.pay-close:disabled{opacity:.4;cursor:not-allowed}
+.pay-tabs{display:flex;gap:8px;padding:12px 20px 0}
+.pay-tab{flex:1;padding:10px 8px;border:1px solid var(--border,#c8d3e0);background:transparent;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;color:var(--text-sub,#5a6a7e);font-family:inherit}
+.pay-tab.active{border-color:var(--accent,#0f6cbf);background:var(--info-bg,#e3f0ff);color:var(--info-text,#0a4f8f)}
+.pay-body{padding:14px 20px;overflow:auto}
+.pay-field{margin-bottom:12px}
+.pay-field label{display:block;font-size:12px;font-weight:600;color:var(--text-sub,#5a6a7e);margin-bottom:4px}
+.pay-field input{width:100%;box-sizing:border-box;padding:9px 10px;border:1px solid var(--border,#c8d3e0);border-radius:6px;font-size:14px;background:var(--white,#fff);color:var(--text,#1a2535);font-family:inherit}
+.pay-field input:focus{outline:2px solid var(--border-focus,#0f6cbf);border-color:var(--border-focus,#0f6cbf)}
+.pay-row{display:flex;gap:10px}
+.pay-row .pay-field{flex:1}
+.pay-hint{font-size:12px;color:var(--text-sub,#5a6a7e);margin:6px 0 0}
+.pay-link{background:none;border:0;padding:0;color:var(--accent,#0f6cbf);font-size:12px;font-weight:600;cursor:pointer;text-decoration:underline;font-family:inherit}
+.pay-error{display:none;background:var(--error-bg,#fdecea);color:var(--error-text,#b00020);padding:9px 12px;border-radius:6px;font-size:13px;font-weight:600;margin-bottom:12px}
+.pay-foot{padding:12px 20px;border-top:1px solid var(--border,#c8d3e0);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.pay-card{border-radius:12px;padding:14px 16px;color:#fff;background:linear-gradient(135deg,#1c3f6e,#2a5298);margin-bottom:14px;font-family:'Courier New',monospace;box-shadow:var(--shadow,0 2px 8px rgba(0,0,0,.15))}
+.pay-card .brand{font-size:12px;text-align:right;font-weight:700;letter-spacing:1px;font-family:var(--font,sans-serif);min-height:15px}
+.pay-card .num{font-size:19px;letter-spacing:2px;margin:12px 0 10px;white-space:nowrap}
+.pay-card .meta{display:flex;justify-content:space-between;gap:8px;font-size:12px;text-transform:uppercase}
+.pay-card .meta span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pay-wallets{display:flex;gap:8px;margin-bottom:12px}
+.pay-wallet{flex:1;padding:8px;border:2px solid var(--border,#c8d3e0);border-radius:8px;background:transparent;cursor:pointer;font-weight:700;font-family:inherit;color:var(--text,#1a2535)}
+.pay-wallet[data-w="YAPE"].active{border-color:#742284;background:#742284;color:#fff}
+.pay-wallet[data-w="PLIN"].active{border-color:#00a1d6;background:#00a1d6;color:#fff}
+.pay-qr{display:flex;flex-direction:column;align-items:center}
+.pay-qr-box{position:relative;width:200px;height:200px;background:#fff;border:3px solid #742284;border-radius:10px;padding:6px;box-sizing:border-box}
+.pay-qr-box.plin{border-color:#00a1d6}
+.pay-qr-expired{position:absolute;inset:0;background:rgba(255,255,255,.94);display:none;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-weight:700;color:#444;border-radius:8px;text-align:center;font-size:13px}
+.pay-qr-info{text-align:center;margin:8px 0 2px;font-size:13px}
+.pay-qr-info strong{font-size:15px}
+.pay-steps{font-size:12px;color:var(--text-sub,#5a6a7e);margin:8px 0 12px;padding-left:18px}
+.pay-ok{padding:18px 20px;overflow:auto;text-align:center}
+.pay-ok .tick{width:56px;height:56px;border-radius:50%;background:var(--success-bg,#e6f4ea);color:var(--success-text,#1a6b3a);display:flex;align-items:center;justify-content:center;font-size:30px;margin:4px auto 10px}
+.pay-ok h4{margin:0 0 2px;font-size:18px}
+.pay-receipt{border:1px dashed var(--border,#c8d3e0);border-radius:8px;padding:10px 14px;text-align:left;font-size:13px;margin-top:12px}
+.pay-receipt .t{font-weight:700;margin-bottom:4px}
+.pay-receipt .r{display:flex;justify-content:space-between;gap:12px;padding:3px 0}
+.pay-receipt .r span:first-child{color:var(--text-sub,#5a6a7e)}
+.pay-receipt .r span:last-child{text-align:right;font-weight:600;word-break:break-word}
+</style>
+</head>
+    <body>
+
+        <header class="site-header">
+            <div class="logo">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+            <div class="header-right">
+                <span class="user-name">Usuario</span>
+                <button class="bell-btn" title="Notificaciones">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                </button>
+                <button class="profile-btn">MI PERFIL</button>
+            </div>
+        </header>
+
+        <div class="page-wrap narrow">
+            <nav class="breadcrumb">SEGURPLAN &rsaquo; Cotizaciones &rsaquo; Contratación</nav>
+            <h1 class="page-title">Confirmar contratación</h1>
+
+            <div class="status-block info" id="estado-contratacion">
+                Revise la información antes de continuar
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 id="titulo-cotizacion">Cotización</h2>
+                    <p id="tipo-seguro">—</p>
+                </div>
+
+                <div class="card-body">
+                    <dl class="data-grid">
+                        <dt>Nº Cotización</dt><dd id="cotizacion-id">—</dd>
+                        <dt>Aseguradora</dt><dd id="aseguradora">—</dd>
+                        <dt>Tipo de seguro</dt><dd id="tipo">—</dd>
+                        <dt>Contratante</dt><dd id="contratante">—</dd>
+                        <dt>Cobertura</dt><dd id="cobertura">—</dd>
+                        <dt>Prima a pagar</dt><dd id="precio">—</dd>
+                        <dt>Vigencia</dt><dd id="vigencia">—</dd>
+                        <dt>Estado</dt><dd id="estado">—</dd>
+                    </dl>
+
+                    <hr class="divider">
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="aceptar-condiciones">
+                            Acepto las condiciones de contratación de la cotización.
+                        </label>
+                    </div>
+
+                    <hr class="divider">
+
+                    <div class="status-block info" style="display:block; margin:0 0 12px;">
+                        Al continuar se abrirá la ventana de pago. Medios disponibles:
+                        <strong>Tarjeta</strong>, <strong>Yape</strong> y <strong>Plin</strong>
+                        (pago simulado: no se cobra dinero real).
+                    </div>
+
+                    <div id="comprobante" class="pay-receipt" style="display:none;"></div>
+                </div>
+
+                <div class="card-footer">
+                    <button class="btn btn-primary" id="btn-confirmar" type="button">
+                        PAGAR Y CONFIRMAR CONTRATACIÓN
+                    </button>
+                    <button class="btn btn-secondary" type="button" onclick="history.back()">
+                        ← VOLVER
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Ventana de pago (simulado) ===== -->
+        <div class="pay-overlay" id="pay-overlay" role="dialog" aria-modal="true" aria-labelledby="pay-title">
+            <div class="pay-modal">
+
+                <div class="pay-head">
+                    <div>
+                        <h3 id="pay-title">Total a pagar <span class="pay-sim">SIMULADO</span></h3>
+                        <div class="pay-total" id="pay-total">S/ 0.00</div>
+                        <div class="pay-hint" id="pay-ref"></div>
+                    </div>
+                    <button class="pay-close" id="pay-close" type="button" aria-label="Cerrar">&times;</button>
+                </div>
+
+                <div id="pay-view-form" style="display:flex; flex-direction:column; min-height:0;">
+
+                    <div class="pay-tabs">
+                        <button class="pay-tab active" type="button" data-m="TARJETA">💳 Tarjeta</button>
+                        <button class="pay-tab" type="button" data-m="BILLETERA">📱 Yape / Plin</button>
+                    </div>
+
+                    <div class="pay-body">
+
+                        <div class="pay-error" id="pay-error"></div>
+
+                        <!-- TARJETA -->
+                        <div id="pay-pane-tarjeta">
+                            <div class="pay-card">
+                                <div class="brand" id="pay-card-brand">TARJETA</div>
+                                <div class="num" id="pay-card-num">•••• •••• •••• ••••</div>
+                                <div class="meta"><span id="pay-card-name">NOMBRE DEL TITULAR</span><span id="pay-card-exp">MM/AA</span></div>
+                            </div>
+
+                            <div class="pay-field">
+                                <label for="pago-titular">Titular de la tarjeta</label>
+                                <input type="text" id="pago-titular" maxlength="120" autocomplete="off" placeholder="Como figura en la tarjeta">
+                            </div>
+                            <div class="pay-field">
+                                <label for="pago-numero">Número de tarjeta</label>
+                                <input type="text" id="pago-numero" inputmode="numeric" maxlength="23" autocomplete="off" placeholder="0000 0000 0000 0000">
+                            </div>
+                            <div class="pay-row">
+                                <div class="pay-field">
+                                    <label for="pago-venc">Vencimiento (MM/AA)</label>
+                                    <input type="text" id="pago-venc" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="12/30">
+                                </div>
+                                <div class="pay-field">
+                                    <label for="pago-cvv">CVV</label>
+                                    <input type="password" id="pago-cvv" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="123">
+                                </div>
+                            </div>
+                            <p class="pay-hint">
+                                Aprobada: 4111 1111 1111 1111 · Rechazada: 4000 0000 0000 0002.
+                                <button class="pay-link" type="button" id="pay-demo">Rellenar datos de prueba</button>
+                            </p>
+                        </div>
+
+                        <!-- BILLETERA DIGITAL -->
+                        <div id="pay-pane-billetera" style="display:none;">
+                            <div class="pay-wallets">
+                                <button class="pay-wallet active" type="button" data-w="YAPE">Yape</button>
+                                <button class="pay-wallet" type="button" data-w="PLIN">Plin</button>
+                            </div>
+
+                            <div class="pay-qr">
+                                <div class="pay-qr-box" id="pay-qr-box">
+                                    <div id="pay-qr-svg" style="width:100%; height:100%;"></div>
+                                    <div class="pay-qr-expired" id="pay-qr-expired">
+                                        <span>QR vencido</span>
+                                        <button class="btn btn-secondary" type="button" id="pay-qr-renovar">GENERAR NUEVO QR</button>
+                                    </div>
+                                </div>
+                                <div class="pay-qr-info">
+                                    <div id="pay-qr-nombre">—</div>
+                                    <strong id="pay-qr-numero">—</strong>
+                                    <div class="pay-hint" id="pay-qr-timer"></div>
+                                </div>
+                            </div>
+
+                            <ol class="pay-steps">
+                                <li>Abre <span id="pay-steps-app">Yape</span> y escanea el código QR.</li>
+                                <li>Confirma el monto y el nombre del comercio.</li>
+                                <li>Ingresa tu celular y pulsa “Ya realicé el pago”.</li>
+                            </ol>
+
+                            <div class="pay-field">
+                                <label for="pay-celular">Tu celular (el que usaste para pagar)</label>
+                                <input type="text" id="pay-celular" inputmode="numeric" maxlength="11" autocomplete="off" placeholder="987 654 321">
+                            </div>
+                            <p class="pay-hint">Simulación: un celular terminado en 000 será rechazado (saldo insuficiente).</p>
+                        </div>
+                    </div>
+
+                    <div class="pay-foot">
+                        <button class="btn btn-secondary" type="button" id="pay-cancel">CANCELAR</button>
+                        <button class="btn btn-primary" type="button" id="pay-submit">PAGAR</button>
+                    </div>
+                </div>
+
+                <div class="pay-ok" id="pay-view-ok" style="display:none;">
+                    <div class="tick">✓</div>
+                    <h4>¡Pago aprobado!</h4>
+                    <div class="pay-hint">Tu contratación fue registrada correctamente.</div>
+                    <div class="pay-receipt" id="pay-receipt"></div>
+                    <div style="margin-top:16px;">
+                        <button class="btn btn-primary" type="button" id="pay-continuar">CONTINUAR</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <footer class="site-footer">
+            <div class="footer-brand">SEGURPLAN<span>Plataforma de seguros y AFP</span></div>
+            <nav class="footer-links">
+                <a href="../index.html">Inicio</a>
+                <a href="s02-panel-usuario.html">Mi panel</a>
+            </nav>
+            <div class="footer-meta">
+                <span>© 2026 SEGURPLAN. Todos los derechos reservados.</span>
+            </div>
+        </footer>
+
+
+        <script src="../assets/app.js"></script>
+        <script src="../assets/qr.js"></script>
+
+        <script>
+                  document.addEventListener('DOMContentLoaded', async function () {
+
+                      iniciarModalPago();
+
+                      const session = sp_getSession();
+
+                      if (!session) {
+                          window.location.href = 's01-login.html';
+                          return;
+                      }
+
+                      const userName = document.querySelector('.user-name');
+
+                      if (userName) {
+                          userName.textContent =
+                                  'Usuario: ' +
+                                  session.nombres + ' ' +
+                                  session.apellidos;
+                      }
+
+                      const idCotizacion =
+                              sessionStorage.getItem('sp_last_quote');
+
+                      if (!idCotizacion) {
+                          alert('No se encontró una cotización seleccionada.');
+                          window.location.href = 's02-panel-usuario.html';
+                          return;
+                      }
+
+                      // Obtener los datos de la cotización.
+                      const result = await sp_getCotizacion(idCotizacion);
+
+                      if (!result.ok) {
+                          alert(result.error);
+                          return;
+                      }
+
+                      const q = result.cotizacion;
+
+                      // Comprobar que la cotización pertenece al usuario.
+                      if (Number(q.idUsuario) !== Number(session.id_usuario)) {
+                          alert('La cotización no pertenece al usuario actual.');
+                          window.location.href = 's02-panel-usuario.html';
+                          return;
+                      }
+
+                      // Solo pueden contratarse cotizaciones disponibles.
+                      if (q.estado !== 'Disponible') {
+                          alert('Esta cotización no está disponible para contratación.');
+                          window.location.href = 's04-cotizacion-recibida.html';
+                          return;
+                      }
+
+                      const ref =
+                              'COT-' +
+                              String(q.idCotizacion).padStart(6, '0');
+
+                      // Mostrar los datos de la cotización.
+                      document.getElementById('titulo-cotizacion').textContent = ref;
+                      document.getElementById('cotizacion-id').textContent = ref;
+                      document.getElementById('tipo-seguro').textContent =
+                              q.tipoSeguro || '—';
+                      document.getElementById('aseguradora').textContent =
+                              q.aseguradora || '—';
+                      document.getElementById('tipo').textContent =
+                              q.tipoSeguro || '—';
+                      document.getElementById('contratante').textContent =
+                              q.nombreSolicitante || '—';
+                      document.getElementById('cobertura').textContent =
+                              q.cobertura || '—';
+                      document.getElementById('precio').textContent =
+                              formatearMonto(q.precio);
+                      document.getElementById('vigencia').textContent =
+                              formatearFecha(q.vigencia);
+                      document.getElementById('estado').textContent =
+                              q.estado;
+
+                      // Asociar el botón de confirmación: abre la ventana de pago.
+                      cotActual = q;
+                      refCot = ref;
+
+                      byId('btn-confirmar')
+                              .addEventListener('click', abrirModalPago);
+
+                  });
+
+
+                  function formatearMonto(valor) {
+                      if (valor === null || valor === undefined || valor === '') {
+                          return '—';
+                      }
+                      return 'S/ ' + Number(valor).toLocaleString('es-PE', {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2
+                      });
+                  }
+
+
+                  /* =====================================================
+                   VENTANA DE PAGO (SIMULADO): TARJETA / YAPE / PLIN
+                   ===================================================== */
+
+                  let cotActual = null;
+                  let refCot = '';
+                  let datosQr = null;
+                  let metodoActual = 'TARJETA';
+                  let billeteraActual = 'YAPE';
+                  let qrTimer = null;
+                  let qrExpira = 0;
+                  let procesando = false;
+                  let pagado = false;
+
+                  const QR_VIGENCIA_MS = 5 * 60 * 1000;
+
+                  function byId(id) {
+                      return document.getElementById(id);
+                  }
+
+                  function iniciarModalPago() {
+
+                      document.querySelectorAll('.pay-tab').forEach(function (b) {
+                          b.addEventListener('click', function () {
+                              seleccionarMetodo(b.dataset.m);
+                          });
+                      });
+
+                      document.querySelectorAll('.pay-wallet').forEach(function (b) {
+                          b.addEventListener('click', function () {
+                              seleccionarBilletera(b.dataset.w);
+                          });
+                      });
+
+                      byId('pay-close').addEventListener('click', cerrarModalPago);
+                      byId('pay-cancel').addEventListener('click', cerrarModalPago);
+                      byId('pay-continuar').addEventListener('click', cerrarModalPago);
+                      byId('pay-submit').addEventListener('click', enviarPago);
+                      byId('pay-qr-renovar').addEventListener('click', generarQr);
+                      byId('pay-demo').addEventListener('click', rellenarDatosPrueba);
+
+                      byId('pay-overlay').addEventListener('mousedown', function (e) {
+                          if (e.target === this) {
+                              cerrarModalPago();
+                          }
+                      });
+
+                      document.addEventListener('keydown', function (e) {
+                          if (e.key === 'Escape' && byId('pay-overlay').classList.contains('open')) {
+                              cerrarModalPago();
+                          }
+                      });
+
+                      // --- Tarjeta: formato y vista previa en vivo ---
+                      byId('pago-numero').addEventListener('input', function () {
+                          const d = this.value.replace(/\D/g, '').slice(0, 19);
+                          this.value = d.replace(/(.{4})/g, '$1 ').trim();
+                          actualizarVistaTarjeta();
+                      });
+
+                      byId('pago-venc').addEventListener('input', function () {
+                          let d = this.value.replace(/\D/g, '').slice(0, 4);
+                          if (d.length > 2) {
+                              d = d.slice(0, 2) + '/' + d.slice(2);
+                          }
+                          this.value = d;
+                          actualizarVistaTarjeta();
+                      });
+
+                      byId('pago-titular').addEventListener('input', actualizarVistaTarjeta);
+
+                      // --- Billetera: celular con formato 987 654 321 ---
+                      byId('pay-celular').addEventListener('input', function () {
+                          const d = this.value.replace(/\D/g, '').slice(0, 9);
+                          this.value = d.replace(/(\d{3})(?=\d)/g, '$1 ').trim();
+                      });
+                  }
+
+                  function abrirModalPago() {
+
+                      if (pagado || !cotActual) {
+                          return;
+                      }
+
+                      if (!byId('aceptar-condiciones').checked) {
+                          alert('Debe aceptar las condiciones para continuar.');
+                          return;
+                      }
+
+                      byId('pay-total').textContent = formatearMonto(cotActual.precio);
+                      byId('pay-ref').textContent = 'Cotización ' + refCot;
+
+                      limpiarError();
+                      seleccionarMetodo(metodoActual);
+
+                      byId('pay-overlay').classList.add('open');
+                      document.body.style.overflow = 'hidden';
+
+                      cargarDatosQr();
+
+                      if (metodoActual === 'TARJETA') {
+                          byId('pago-titular').focus();
+                      }
+                  }
+
+                  function cerrarModalPago() {
+
+                      if (procesando) {
+                          return;
+                      }
+
+                      detenerTimerQr();
+                      byId('pay-overlay').classList.remove('open');
+                      document.body.style.overflow = '';
+                      byId('pago-cvv').value = '';
+                  }
+
+                  function seleccionarMetodo(m) {
+
+                      metodoActual = m;
+
+                      document.querySelectorAll('.pay-tab').forEach(function (b) {
+                          b.classList.toggle('active', b.dataset.m === m);
+                      });
+
+                      byId('pay-pane-tarjeta').style.display = (m === 'TARJETA') ? 'block' : 'none';
+                      byId('pay-pane-billetera').style.display = (m === 'BILLETERA') ? 'block' : 'none';
+
+                      limpiarError();
+
+                      if (m === 'BILLETERA') {
+                          byId('pay-submit').textContent = 'YA REALICÉ EL PAGO';
+                          generarQr();
+                      } else {
+                          byId('pay-submit').textContent =
+                                  'PAGAR ' + formatearMonto(cotActual ? cotActual.precio : null);
+                          detenerTimerQr();
+                          byId('pay-submit').disabled = false;
+                      }
+                  }
+
+                  function seleccionarBilletera(w) {
+
+                      billeteraActual = w;
+
+                      document.querySelectorAll('.pay-wallet').forEach(function (b) {
+                          b.classList.toggle('active', b.dataset.w === w);
+                      });
+
+                      byId('pay-qr-box').classList.toggle('plin', w === 'PLIN');
+                      byId('pay-steps-app').textContent = (w === 'YAPE') ? 'Yape' : 'Plin';
+
+                      generarQr();
+                  }
+
+                  /* ---------- Vista previa de la tarjeta ---------- */
+
+                  function marcaTarjeta(d) {
+                      if (/^4/.test(d)) { return 'VISA'; }
+                      if (/^(5[1-5]|2[2-7])/.test(d)) { return 'MASTERCARD'; }
+                      if (/^3[47]/.test(d)) { return 'AMEX'; }
+                      return 'TARJETA';
+                  }
+
+                  function actualizarVistaTarjeta() {
+
+                      const digitos = byId('pago-numero').value.replace(/\D/g, '');
+                      const relleno = (digitos + '################').slice(0, 16);
+
+                      byId('pay-card-num').textContent =
+                              relleno.replace(/#/g, '•').replace(/(.{4})/g, '$1 ').trim();
+
+                      byId('pay-card-brand').textContent = marcaTarjeta(digitos);
+
+                      byId('pay-card-name').textContent =
+                              byId('pago-titular').value.trim() || 'NOMBRE DEL TITULAR';
+
+                      byId('pay-card-exp').textContent =
+                              byId('pago-venc').value || 'MM/AA';
+                  }
+
+                  function rellenarDatosPrueba() {
+
+                      const ses = sp_getSession();
+
+                      if (!byId('pago-titular').value.trim()) {
+                          byId('pago-titular').value =
+                                  ses ? (ses.nombres + ' ' + ses.apellidos) : 'CLIENTE DE PRUEBA';
+                      }
+
+                      byId('pago-numero').value = '4111 1111 1111 1111';
+                      byId('pago-venc').value = '12/30';
+                      byId('pago-cvv').value = '123';
+
+                      actualizarVistaTarjeta();
+                  }
+
+                  /* ---------- Código QR (Yape / Plin) ---------- */
+
+                  async function cargarDatosQr() {
+
+                      if (datosQr) {
+                          return;
+                      }
+
+                      try {
+
+                          const r = await fetch('/api/pagos/datos-qr', {
+                              credentials: 'same-origin'
+                          });
+
+                          if (!r.ok) {
+                              throw new Error('HTTP ' + r.status);
+                          }
+
+                          datosQr = await r.json();
+
+                          if (metodoActual === 'BILLETERA') {
+                              generarQr();
+                          }
+
+                      } catch (e) {
+                          console.error('No se pudieron cargar los datos del QR:', e);
+                          byId('pay-qr-nombre').textContent =
+                                  'No se pudo cargar el código QR. Use tarjeta o intente de nuevo.';
+                      }
+                  }
+
+                  function generarQr() {
+
+                      detenerTimerQr();
+
+                      if (!datosQr || !cotActual) {
+                          return;
+                      }
+
+                      const payload = [
+                          'SEGURPLAN',
+                          billeteraActual,
+                          datosQr.numero,
+                          Number(cotActual.precio).toFixed(2),
+                          'PEN',
+                          refCot,
+                          Date.now()
+                      ].join('|');
+
+                      try {
+                          byId('pay-qr-svg').innerHTML = SPQr.toSvg(payload, {border: 1});
+                      } catch (e) {
+                          console.error('Error generando el QR:', e);
+                          mostrarError('No se pudo generar el código QR.');
+                          return;
+                      }
+
+                      byId('pay-qr-nombre').textContent = datosQr.nombre;
+                      byId('pay-qr-numero').textContent =
+                              billeteraActual === 'YAPE' ? 'Yapear a ' + datosQr.numeroFormateado
+                              : 'Plinear a ' + datosQr.numeroFormateado;
+
+                      byId('pay-qr-expired').style.display = 'none';
+                      byId('pay-submit').disabled = false;
+                      limpiarError();
+
+                      qrExpira = Date.now() + QR_VIGENCIA_MS;
+                      tickQr();
+                      qrTimer = setInterval(tickQr, 1000);
+                  }
+
+                  function tickQr() {
+
+                      const restante = qrExpira - Date.now();
+
+                      if (restante <= 0) {
+                          detenerTimerQr();
+                          byId('pay-qr-timer').textContent = 'El código QR venció.';
+                          byId('pay-qr-expired').style.display = 'flex';
+                          byId('pay-submit').disabled = true;
+                          return;
+                      }
+
+                      const m = Math.floor(restante / 60000);
+                      const sg = Math.floor((restante % 60000) / 1000);
+
+                      byId('pay-qr-timer').textContent =
+                              'El código vence en ' + String(m).padStart(2, '0') + ':' +
+                              String(sg).padStart(2, '0');
+                  }
+
+                  function detenerTimerQr() {
+                      if (qrTimer) {
+                          clearInterval(qrTimer);
+                          qrTimer = null;
+                      }
+                  }
+
+                  /* ---------- Mensajes y estado de los botones ---------- */
+
+                  function mostrarError(msg) {
+                      const e = byId('pay-error');
+                      e.textContent = msg;
+                      e.style.display = 'block';
+                      e.scrollIntoView({block: 'nearest'});
+                  }
+
+                  function limpiarError() {
+                      const e = byId('pay-error');
+                      e.textContent = '';
+                      e.style.display = 'none';
+                  }
+
+                  function bloquearPago(bloquear) {
+                      byId('pay-submit').disabled = bloquear;
+                      byId('pay-cancel').disabled = bloquear;
+                      byId('pay-close').disabled = bloquear;
+                      byId('pay-submit').textContent = bloquear
+                              ? 'PROCESANDO PAGO...'
+                              : (metodoActual === 'BILLETERA'
+                                      ? 'YA REALICÉ EL PAGO'
+                                      : 'PAGAR ' + formatearMonto(cotActual.precio));
+                  }
+
+                  /* ---------- Envío del pago ---------- */
+
+                  async function enviarPago() {
+
+                      if (procesando || pagado) {
+                          return;
+                      }
+
+                      limpiarError();
+
+                      const cuerpo = {
+                          idCotizacion: Number(cotActual.idCotizacion),
+                          aceptaCondiciones: byId('aceptar-condiciones').checked
+                      };
+
+                      if (metodoActual === 'TARJETA') {
+
+                          const titular = byId('pago-titular').value.trim();
+                          const numero = byId('pago-numero').value;
+                          const venc = byId('pago-venc').value.trim();
+                          const cvv = byId('pago-cvv').value;
+
+                          if (!titular || !numero || !venc || !cvv) {
+                              mostrarError('Complete todos los datos de la tarjeta.');
+                              return;
+                          }
+
+                          cuerpo.metodo = 'TARJETA';
+                          cuerpo.titular = titular;
+                          cuerpo.numeroTarjeta = numero;
+                          cuerpo.vencimiento = venc;
+                          cuerpo.cvv = cvv;
+
+                      } else {
+
+                          if (Date.now() > qrExpira) {
+                              mostrarError('El código QR venció. Genere uno nuevo.');
+                              return;
+                          }
+
+                          const celular = byId('pay-celular').value.replace(/\D/g, '');
+
+                          if (!/^9\d{8}$/.test(celular)) {
+                              mostrarError('Ingrese su celular de 9 dígitos (empieza con 9).');
+                              return;
+                          }
+
+                          cuerpo.metodo = billeteraActual;
+                          cuerpo.celular = celular;
+                      }
+
+                      procesando = true;
+                      bloquearPago(true);
+
+                      try {
+
+                          const csrf = await sp_getCsrfToken();
+
+                          const response = await fetch('/api/pagos', {
+                              method: 'POST',
+                              credentials: 'same-origin',
+                              headers: {
+                                  'Content-Type': 'application/json',
+                                  [csrf.headerName]: csrf.token
+                              },
+                              body: JSON.stringify(cuerpo)
+                          });
+
+                          const texto = await response.text();
+                          let resultado = {};
+
+                          if (texto) {
+                              try {
+                                  resultado = JSON.parse(texto);
+                              } catch {
+                                  resultado = {mensaje: texto};
+                              }
+                          }
+
+                          // El CVV nunca se conserva en el formulario.
+                          byId('pago-cvv').value = '';
+
+                          if (!response.ok) {
+
+                              console.warn('Pago no completado:', response.status, resultado);
+
+                              let mensaje = resultado.mensaje || resultado.detail;
+
+                              if (!mensaje) {
+                                  if (response.status === 401) {
+                                      mensaje = 'Tu sesión ha expirado. Inicia sesión nuevamente.';
+                                  } else if (response.status === 403) {
+                                      mensaje = 'Acceso denegado. Solo los clientes pueden pagar y contratar.';
+                                  } else {
+                                      mensaje = 'No se pudo procesar el pago. HTTP ' + response.status;
+                                  }
+                              }
+
+                              mostrarError(mensaje);
+                              return;
+                          }
+
+                          pagado = true;
+                          mostrarExito(resultado);
+
+                      } catch (error) {
+
+                          console.error('Error en el pago:', error);
+                          mostrarError(error.message || 'No se pudo conectar con el servidor.');
+
+                      } finally {
+
+                          procesando = false;
+
+                          if (!pagado) {
+                              bloquearPago(false);
+
+                              if (metodoActual === 'BILLETERA' && Date.now() > qrExpira) {
+                                  byId('pay-submit').disabled = true;
+                              }
+                          }
+                      }
+                  }
+
+                  /* ---------- Comprobante ---------- */
+
+                  function llenarComprobante(contenedor, r) {
+
+                      contenedor.textContent = '';
+
+                      const titulo = document.createElement('div');
+                      titulo.className = 't';
+                      titulo.textContent = 'Comprobante de pago (simulado)';
+                      contenedor.appendChild(titulo);
+
+                      const filas = [
+                          ['Referencia', r.referencia],
+                          ['Método', r.metodo],
+                          ['Detalle', r.detalle],
+                          ['N° de operación', r.numeroOperacion],
+                          ['Monto', formatearMonto(r.monto)],
+                          ['Fecha', r.fechaPago
+                                      ? new Date(r.fechaPago).toLocaleString('es-PE') : null],
+                          ['N° de contratación', r.idContratacion]
+                      ];
+
+                      filas.forEach(function (f) {
+
+                          if (f[1] === null || f[1] === undefined || f[1] === '') {
+                              return;
+                          }
+
+                          const fila = document.createElement('div');
+                          fila.className = 'r';
+
+                          const a = document.createElement('span');
+                          a.textContent = f[0];
+
+                          const b = document.createElement('span');
+                          b.textContent = String(f[1]);
+
+                          fila.appendChild(a);
+                          fila.appendChild(b);
+                          contenedor.appendChild(fila);
+                      });
+                  }
+
+                  function mostrarExito(r) {
+
+                      detenerTimerQr();
+
+                      sessionStorage.setItem(
+                              'sp_last_contratacion',
+                              String(r.idContratacion)
+                              );
+
+                      // Ventana: vista de éxito
+                      byId('pay-view-form').style.display = 'none';
+                      byId('pay-view-ok').style.display = 'block';
+                      llenarComprobante(byId('pay-receipt'), r);
+                      byId('pay-receipt').querySelector('.t').style.display = 'none';
+                      byId('pay-close').disabled = false;
+
+                      // Página: estado y comprobante
+                      byId('estado-contratacion').textContent =
+                              'Pago aprobado y contratación registrada correctamente';
+
+                      byId('estado').textContent = 'Aceptada';
+
+                      const comp = byId('comprobante');
+                      comp.style.display = 'block';
+                      llenarComprobante(comp, r);
+
+                      const boton = byId('btn-confirmar');
+                      boton.textContent = 'CONTRATACIÓN CONFIRMADA';
+                      boton.disabled = true;
+
+                      byId('aceptar-condiciones').disabled = true;
+                  }
+
+
+                  /* =====================================================
+                   FORMATEAR FECHAS
+                   ===================================================== */
+
+                  function formatearFecha(fecha) {
+
+                      if (!fecha) {
+                          return '—';
+                      }
+
+                      const partes = fecha.split('-');
+
+                      if (partes.length !== 3) {
+                          return fecha;
+                      }
+
+                      return (
+                              partes[2] + '/' +
+                              partes[1] + '/' +
+                              partes[0]
+                              );
+                  }
+
+        </script>
+
+    </body>
+</html>
