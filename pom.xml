@@ -23,7 +23,7 @@
 
     <properties>
         <java.version>21</java.version>
-        <jasperreports.version>7.0.8</jasperreports.version>
+        <jasperreports.version>7.1.1</jasperreports.version>
         <springdoc.version>3.0.3</springdoc.version>
     </properties>
 
