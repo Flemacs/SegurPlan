@@ -33,6 +33,7 @@ import org.springframework.security.web.context
 
 import org.springframework.web.bind.annotation.*;
 
+@io.swagger.v3.oas.annotations.tags.Tag(name = "Autenticación", description = "Registro, inicio de sesión y rutas heredadas de administración de usuarios.")
 @RestController
 @RequestMapping("/api/usuarios")
 public class UsuarioController {
@@ -42,21 +43,26 @@ public class UsuarioController {
     private final SegurplanUserDetailsService
             usuarioDetailsService;
     private final com.segurplan.service.NotificacionService notificaciones;
+    private final com.segurplan.service.LoginAttemptService intentos;
 
     public UsuarioController(
             UsuarioService usuarioService,
             SegurplanUserDetailsService usuarioDetailsService,
-            com.segurplan.service.NotificacionService notificaciones) {
+            com.segurplan.service.NotificacionService notificaciones,
+            com.segurplan.service.LoginAttemptService intentos) {
         this.usuarioService = usuarioService;
         this.usuarioDetailsService =
                 usuarioDetailsService;
         this.notificaciones = notificaciones;
+        this.intentos = intentos;
     }
 
     // =====================================================
     // REGISTRO
     // =====================================================
 
+    @io.swagger.v3.oas.annotations.Operation(summary = "Registrar un cliente nuevo", description = "**Roles:** Público (sin sesión). Crea una cuenta con rol Cliente. Contraseña: mínimo 8 caracteres con letras y números.")
+    @io.swagger.v3.oas.annotations.security.SecurityRequirements
     @PostMapping("/registro")
     public ResponseEntity<?> registrar(
             @RequestBody RegistroRequest request) {
@@ -122,15 +128,40 @@ public class UsuarioController {
     // LOGIN
     // =====================================================
 
+    @io.swagger.v3.oas.annotations.Operation(summary = "Iniciar sesión", description = "**Roles:** Público (sin sesión). Crea la sesión (cookie JSESSIONID). Tras 5 intentos fallidos del mismo correo (o 20 de la misma IP) responde 429 durante 15 minutos.")
+    @io.swagger.v3.oas.annotations.security.SecurityRequirements
     @PostMapping("/login")
     public ResponseEntity<?> login(
             @RequestBody LoginRequest request,
             HttpServletRequest httpRequest) {
 
+        // Bloqueo temporal por intentos fallidos (fuerza bruta)
+        String claveUsuario = "u:" + (request.getCorreo() == null
+                ? ""
+                : request.getCorreo().trim().toLowerCase());
+        String claveIp = "ip:" + httpRequest.getRemoteAddr();
+
+        if (intentos.estaBloqueado(claveUsuario)
+                || intentos.estaBloqueado(claveIp)) {
+
+            long minutos = Math.max(
+                    intentos.minutosRestantes(claveUsuario),
+                    intentos.minutosRestantes(claveIp));
+
+            return ResponseEntity
+                    .status(429)
+                    .header("Retry-After", String.valueOf(minutos * 60))
+                    .body(Map.of("mensaje",
+                            "Demasiados intentos fallidos. "
+                            + "Intente nuevamente en " + minutos
+                            + " minuto(s)."));
+        }
+
         try {
 
             LoginResponse respuesta =
                     usuarioService.login(request);
+            intentos.registrarExito(claveUsuario);
 
             var usuarioAutenticado =
                     usuarioDetailsService
@@ -182,6 +213,9 @@ public class UsuarioController {
 
         } catch (RuntimeException e) {
 
+            intentos.registrarFallo(claveUsuario);
+            intentos.registrarFallo(claveIp);
+
             return ResponseEntity
                     .badRequest()
                     .body(
@@ -197,6 +231,7 @@ public class UsuarioController {
     // ADMIN - LISTAR USUARIOS
     // =====================================================
 
+    @io.swagger.v3.oas.annotations.Operation(summary = "Listar usuarios (ruta heredada)", description = "**Roles:** Administrador. Duplicado de GET /api/admin/usuarios; se conserva por compatibilidad.")
     @GetMapping("/admin")
     public ResponseEntity<?> listarUsuarios() {
 
@@ -224,6 +259,7 @@ public class UsuarioController {
     // ADMIN - OBTENER USUARIO
     // =====================================================
 
+    @io.swagger.v3.oas.annotations.Operation(summary = "Ver un usuario (ruta heredada)", description = "**Roles:** Administrador. Duplicado de GET /api/admin/usuarios/{idUsuario}.")
     @GetMapping("/admin/{idUsuario}")
     public ResponseEntity<?> obtenerUsuario(
             @PathVariable Long idUsuario) {
@@ -253,6 +289,7 @@ public class UsuarioController {
     // ADMIN - ACTUALIZAR USUARIO
     // =====================================================
 
+    @io.swagger.v3.oas.annotations.Operation(summary = "Actualizar un usuario (ruta heredada)", description = "**Roles:** Administrador. Duplicado de PUT /api/admin/usuarios/{idUsuario}.")
     @PutMapping("/admin/{idUsuario}")
     public ResponseEntity<?> actualizarUsuario(
             @PathVariable Long idUsuario,
@@ -299,6 +336,7 @@ public class UsuarioController {
     // ADMIN - CAMBIAR ESTADO
     // =====================================================
 
+    @io.swagger.v3.oas.annotations.Operation(summary = "Activar o desactivar un usuario (ruta heredada)", description = "**Roles:** Administrador. Duplicado de PUT /api/admin/usuarios/{idUsuario}/estado.")
     @PutMapping("/admin/{idUsuario}/estado")
     public ResponseEntity<?> cambiarEstado(
             @PathVariable Long idUsuario,
