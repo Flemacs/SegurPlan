@@ -20,7 +20,7 @@ jobs:
         run: mvn -B -Dtest=SeguridadRegresionTest test
       - name: Arbol de dependencias
         run: mvn -B dependency:tree -DoutputFile=dependency-tree.txt
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: seguridad-dependencias
