@@ -17,6 +17,8 @@
     <groupId>com.segurplan</groupId>
     <artifactId>segurplan</artifactId>
     <version>6.5.0</version>
+    <!-- Configurado como WAR para despliegue en Tomcat / WildFly -->
+    <packaging>war</packaging>
 
     <name>segurplan</name>
     <description>Plataforma de seguros y AFP SEGURPLAN</description>
@@ -33,6 +35,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc</artifactId>
+        </dependency>
+
+        <!-- Evita conflicto entre el Tomcat embebido y el servidor externo (Tomcat/WildFly) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Seguridad y autenticación -->
@@ -66,14 +75,14 @@
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
-        <!-- Swagger / OpenAPI: documentación y pruebas de endpoints en /swagger-ui.html -->
+        <!-- Swagger / OpenAPI -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc.version}</version>
         </dependency>
 
-        <!-- JasperReports: reportes PDF por plantilla .jrxml (versión que generó los JRXML) -->
+        <!-- JasperReports -->
         <dependency>
             <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
@@ -116,12 +125,20 @@
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
 
+            <!-- Plugin requerido para empaquetar en formato WAR sin web.xml -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
